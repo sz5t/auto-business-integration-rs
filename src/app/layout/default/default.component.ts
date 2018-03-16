@@ -18,6 +18,7 @@ export class LayoutDefaultComponent {
         public settings: SettingsService) {
         // scroll to top in change page
         router.events.subscribe(evt => {
+            console.log(evt);
             if (!this.isFetching && evt instanceof RouteConfigLoadStart) {
                 this.isFetching = true;
             }

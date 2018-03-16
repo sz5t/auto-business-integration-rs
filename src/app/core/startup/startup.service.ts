@@ -61,13 +61,13 @@ export class StartupService {
         // }
         // mock
         const app: any = {
-            name: `ng-alain`,
-            description: `Ng-zorro admin panel front-end framework`
+            name: `自动化业务装配系统`,
+            description: `自动化业务装配系统`
         };
         const user: any = {
             name: 'Admin',
             avatar: './assets/img/zorro.svg',
-            email: 'cipchk@qq.com',
+            email: 'admin@sinoforce.com',
             token: '123456789'
         };
         // 应用信息：包括站点名、描述、年份
@@ -77,24 +77,26 @@ export class StartupService {
         // ACL：设置权限为全量
         this.aclService.setFull(true);
         // 初始化菜单
-        this.menuService.add([
-            {
-                text: '主导航',
-                group: true,
-                children: [
-                    {
-                        text: '仪表盘',
-                        link: '/dashboard',
-                        icon: 'icon-speedometer'
-                    },
-                    {
-                        text: '快捷菜单',
-                        icon: 'icon-rocket',
-                        shortcut_root: true
-                    }
-                ]
-            }
-        ]);
+        this.menuService.add(
+            [
+                {
+                    text: '主导航',
+                    group: true,
+                    children: [
+                        {
+                            text: '仪表盘',
+                            icon: 'icon-speedometer'
+                        },
+                        {
+                            text: '快捷菜单',
+                            icon: 'icon-rocket',
+                            shortcut_root: true
+                        }
+                    ]
+                }
+            ]
+        );
+
         // 设置页面标题的后缀
         this.titleService.suffix = app.name;
 
@@ -108,7 +110,7 @@ export class StartupService {
             // http
             // this.viaHttp(resolve, reject);
             // mock
-            this.viaMock(resolve, reject);
+            this.viaHttp(resolve, reject);
         });
     }
 }

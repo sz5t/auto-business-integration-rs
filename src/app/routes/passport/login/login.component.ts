@@ -6,6 +6,7 @@ import { NzMessageService } from 'ng-zorro-antd';
 import { SocialService, SocialOpenType, ITokenService, DA_SERVICE_TOKEN } from '@delon/auth';
 import { ReuseTabService } from '@delon/abc';
 import { environment } from '@env/environment';
+import {removeSuffix} from "@angular/language-service/src/utils";
 
 @Component({
     selector: 'passport-login',
@@ -29,7 +30,7 @@ export class UserLoginComponent implements OnDestroy {
         @Optional() @Inject(ReuseTabService) private reuseTabService: ReuseTabService,
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
         this.form = fb.group({
-            userName: [null, [Validators.required, Validators.minLength(5)]],
+            userName: [null, [Validators.required, Validators.minLength(1)]],
             password: [null, Validators.required],
             mobile: [null, [Validators.required, Validators.pattern(/^1\d{10}$/)]],
             captcha: [null, [Validators.required]],
@@ -82,14 +83,19 @@ export class UserLoginComponent implements OnDestroy {
         setTimeout(() => {
             this.loading = false;
             if (this.type === 0) {
-                if (this.userName.value !== 'admin' || this.password.value !== '888888') {
+                if (this.userName.value !== '1' || this.password.value !== '1') {
                     this.error = `账户或密码错误`;
                     return;
                 }
             }
 
+            debugger;
             // 清空路由复用信息
-            this.reuseTabService.clear();
+            if(this.reuseTabService){
+                this.reuseTabService.clear();
+            }
+
+            // 保存当前用户信息
             this.tokenService.set({
                 token: '123456789',
                 name: this.userName.value,
@@ -97,6 +103,8 @@ export class UserLoginComponent implements OnDestroy {
                 id: 10000,
                 time: +new Date
             });
+
+            // 跳转至系统页面
             this.router.navigate(['/']);
         }, 1000);
     }

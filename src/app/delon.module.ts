@@ -143,12 +143,12 @@ import {
     AdUtilsModule,
     AdFullContentModule,
     AdXlsxModule,
-    AdZipModule,
+    AdZipModule, AdReuseTabModule,
     //AdNumberToChineseModule
 } from '@delon/abc';
 export const ABCMODULES = [
     AdSimpleTableModule,
-    // AdReuseTabModule,
+    AdReuseTabModule,
     AdAvatarListModule,
     AdChartsModule,
     AdCountDownModule,
@@ -203,7 +203,7 @@ import { DelonCacheModule } from '@delon/cache';
         AdAvatarListModule.forRoot(), AdDescListModule.forRoot(), AdEllipsisModule.forRoot(), AdExceptionModule.forRoot(), AdExceptionModule.forRoot(),
         AdNoticeIconModule.forRoot(), AdNumberInfoModule.forRoot(), AdProHeaderModule.forRoot(), AdResultModule.forRoot(), AdStandardFormRowModule.forRoot(),
         AdTagSelectModule.forRoot(), AdTrendModule.forRoot(), AdUtilsModule.forRoot(), AdChartsModule.forRoot(), AdCountDownModule.forRoot(), AdSimpleTableModule.forRoot(),
-        // AdReuseTabModule.forRoot(),
+        AdReuseTabModule.forRoot(),
         AdFullContentModule.forRoot(), AdXlsxModule.forRoot(), AdZipModule.forRoot(), //AdNumberToChineseModule.forRoot(),
         // auth
         AlainAuthModule.forRoot({
@@ -216,7 +216,7 @@ import { DelonCacheModule } from '@delon/cache';
         // cache
         DelonCacheModule.forRoot(),
         // mock
-        ...MOCKMODULE 
+        ...MOCKMODULE
     ]
 })
 export class DelonModule {

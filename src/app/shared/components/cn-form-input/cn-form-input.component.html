@@ -25,5 +25,10 @@
         <i class="{{config.suffix}}"></i>
       </ng-template>
     </nz-input>
+    <div *ngIf="config.validations">
+      <div *ngFor="let validator of config.validations">
+        <div nz-form-explain *ngIf="formGroup.controls[config.name].dirty&&formGroup.controls[config.name].hasError(validator.validator)">{{validator.errorMessage}}</div>
+      </div>
+    </div>
   </div>
 </div>

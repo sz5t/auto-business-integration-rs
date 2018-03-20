@@ -6,12 +6,11 @@ import { _HttpClient } from '@delon/theme';
   templateUrl: './cn-grid-input.component.html',
 })
 export class CnGridInputComponent implements OnInit {
-    @Input() config;
-    constructor(
-        private http: _HttpClient
-    ) { }
+  @Input() config;
+  constructor(
+      private http: _HttpClient
+  ) { }
 
-    ngOnInit() {
-    }
-
+  ngOnInit() {
+  }
 }

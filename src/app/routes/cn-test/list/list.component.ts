@@ -280,9 +280,14 @@ export class ListComponent implements OnInit {
         // 单选(check=select)，如果是未勾选，第一次点击选中，再次点击取消选中
         // 多选（check=select），如果是未勾选，第一次点击选中，再次点击取消选中
         // 多勾选单选中行（check》select）勾选和行选中各自独立，互不影响
-        console.log('行',data);
+       // console.log('行',data);
         console.log('update',edit);
 
+    }
+
+    userNameChange(name?){
+        console.log('子页面返回');
+        console.log('子页面',name);
     }
 
 }

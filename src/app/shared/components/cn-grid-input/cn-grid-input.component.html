@@ -1,5 +1,6 @@
 <nz-input
-  [(ngModel)]="value"
+(ngModelChange)="userNameChange($event)" 
+[(ngModel)]="value"
   [nzId]="config.name"
   [nzSize]="config.size"
   [nzType]="config.inputType"
@@ -7,3 +8,5 @@
   [nzDisabled]="config.disabled"
   [nzReadonly]="config.readonly"
 >
+
+<!-- [(ngModel)]="value" -->

@@ -1,7 +1,9 @@
 import {
   ComponentFactoryResolver, ComponentRef, Directive, Input, OnChanges, OnInit, Type,
   ViewContainerRef,
-  forwardRef
+  forwardRef,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import {
   NzCheckboxComponent,
@@ -34,6 +36,8 @@ export class GridEditorDirective implements OnInit, OnChanges,ControlValueAccess
   propagateChange = (_: any) => {
     console.log('变化');
   };
+  onChange = (_: any) => {};
+  onTouched = () => {};
   writeValue(obj: any): void {
     if(obj){
       this.value= obj;
@@ -48,12 +52,14 @@ export class GridEditorDirective implements OnInit, OnChanges,ControlValueAccess
   }
   registerOnTouched(fn: any): void {
     console.log('registerOnTouched');
+    this.onTouched = fn;
   }
   setDisabledState?(isDisabled: boolean): void {
     console.log('setDisabledState');
   }
   @Input() config;
   @Input()  value;
+  @Output() updateValue =new EventEmitter();
   component: ComponentRef<any>;
   constructor(private resolver: ComponentFactoryResolver, private container: ViewContainerRef) { }
   ngOnChanges() {
@@ -73,10 +79,22 @@ export class GridEditorDirective implements OnInit, OnChanges,ControlValueAccess
     this.component = this.container.createComponent(comp);
     this.component.instance.config = this.config;
     this.component.instance.setValue(this.value);
+    this.component.instance.updateValue.subscribe(event => {
+      this.setValue(event)
+    });
+   
   }
 
   getValue(){
-    return this.component.instance.getValue();
+    return  this.value;
+  }
+
+  //组件将值写回
+  setValue(data?){
+   console.log('resolverupdateValue触发',data);
+   this.value=data;
+   this.updateValue.emit(data);
+   console.log('resolverupdateValue触发后',data);
   }
 }
 

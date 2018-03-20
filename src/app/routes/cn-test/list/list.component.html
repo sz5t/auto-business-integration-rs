@@ -65,26 +65,17 @@
                             <ng-container *ngIf="!editCache[data.key].edit">
                                 {{data.name}}
                             </ng-container>
-                            <ng-container *ngIf="editCache[data.key].edit" CnGridEditorDirective    [config]="tested" [(ngModel)]="editCache[data.key].data.name"  >
+                            <ng-container *ngIf="editCache[data.key].edit" CnGridEditorDirective   [(ngModel)]="editCache[data.key].data.name"  [config]="tested"   [value]="editCache[data.key].data.name" (updateValue)="userNameChange($event)" >
                                     <!-- [(ngModel)]="editCache[data.key].data.name" -->
                               
                             </ng-container>
+                            {{editCache[data.key].data.name}}
                         </td>
-                        <td nz-td>
-                            <ng-container *ngIf="!editCache[data.key].edit">
+                        <td nz-td>              
                                 {{data.age}}
-                            </ng-container>
-                            <ng-container *ngIf="editCache[data.key].edit">
-                                <input type="text" nz-input [(ngModel)]="editCache[data.key].data.age">
-                            </ng-container>
                         </td>
-                        <td nz-td>
-                            <ng-container *ngIf="!editCache[data.key].edit">
+                        <td nz-td>                          
                                 {{data.address}}
-                            </ng-container>
-                            <ng-container *ngIf="editCache[data.key].edit">
-                                <input type="text" nz-input [(ngModel)]="editCache[data.key].data.address">
-                            </ng-container>
                         </td>
                         <td nz-td>
                             <a (click)="startEdit(data.key)">Edit</a>

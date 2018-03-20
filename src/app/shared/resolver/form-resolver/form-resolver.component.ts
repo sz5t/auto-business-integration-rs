@@ -20,17 +20,18 @@ export class FormResolverComponent implements OnInit, OnChanges {
       'disabled': false,
       'readonly': false,
       'size': 'default',
-      /*'validations': [
+      'validations': [
         {
           'validator': 'required',
-          'errorMessage': ''
+          'errorMessage': '不能为空'
         },
         {
           'validator': 'minLength',
           'length': 6,
-          'errorMessage': ''
+          'errorMessage': '最小长度为6'
         }
-      ]*/
+      ],
+      'validation': [Validators.required]
     },
     {
       'type': 'input',
@@ -206,9 +207,7 @@ export class FormResolverComponent implements OnInit, OnChanges {
     }
   }
   createGroup() {
-    const group = this.formBuilder.group({
-      userName:[null, [Validators.required]]
-    });
+    const group = this.formBuilder.group({});
     this.controls.forEach(control => group.addControl(control.name, this.createControl(control)));
     return group;
   }
@@ -216,6 +215,10 @@ export class FormResolverComponent implements OnInit, OnChanges {
   createControl(config) {
     const {disabled, validation, value} = config;
     return this.formBuilder.control({disabled, value}, validation);
+  }
+
+  getFormControl(name) {
+    return this.form.controls[name];
   }
 
   _submitForm($event) {

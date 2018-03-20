@@ -74,6 +74,10 @@ export class GridEditorDirective implements OnInit, OnChanges,ControlValueAccess
     this.component.instance.config = this.config;
     this.component.instance.setValue(this.value);
   }
+
+  getValue(){
+    return this.component.instance.getValue();
+  }
 }
 
 

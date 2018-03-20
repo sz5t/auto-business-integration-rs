@@ -1,6 +1,6 @@
 import {Component, EventEmitter, OnChanges, OnInit, Output} from '@angular/core';
 import { _HttpClient } from '@delon/theme';
-import {FormBuilder, FormGroup} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'cn-form-resolver',
@@ -206,7 +206,9 @@ export class FormResolverComponent implements OnInit, OnChanges {
     }
   }
   createGroup() {
-    const group = this.formBuilder.group({});
+    const group = this.formBuilder.group({
+      userName:[null, [Validators.required]]
+    });
     this.controls.forEach(control => group.addControl(control.name, this.createControl(control)));
     return group;
   }

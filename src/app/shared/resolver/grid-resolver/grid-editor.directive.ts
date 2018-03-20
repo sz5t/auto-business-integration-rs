@@ -8,8 +8,9 @@ import {
   NzDatePickerComponent, NzInputComponent, NzRadioComponent, NzRangePickerComponent, NzSelectComponent,
   NzTimePickerComponent
 } from "ng-zorro-antd";
+import {CnGridInputComponent} from "@shared/components/cn-grid-input/cn-grid-input.component";
 const components: {[type: string]: Type<any>} = {
-  input: NzInputComponent,
+  input: CnGridInputComponent,
   select: NzSelectComponent,
   datePicker: NzDatePickerComponent,
   timePicker: NzTimePickerComponent,

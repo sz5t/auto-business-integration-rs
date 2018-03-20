@@ -30,6 +30,7 @@ import { CnFormCheckboxComponent } from './components/cn-form-checkbox/cn-form-c
 import { CnFormCheckboxGroupComponent } from './components/cn-form-checkbox-group/cn-form-checkbox-group.component';
 import { CnFormRadioGroupComponent } from './components/cn-form-radio-group/cn-form-radio-group.component';
 import { GridEditorDirective } from './resolver/grid-resolver/grid-editor.directive';
+import { CnGridInputComponent } from './components/cn-grid-input/cn-grid-input.component';
 const THIRDMODULES = [
     CountdownModule,
     NzSchemaFormModule
@@ -76,7 +77,8 @@ const DIRECTIVES = [
         // your components
         ...COMPONENTS,
         ...DIRECTIVES,
-        GridEditorDirective
+        GridEditorDirective,
+        CnGridInputComponent
     ],
     exports: [
         CommonModule,
@@ -103,6 +105,7 @@ const DIRECTIVES = [
       CnFormCheckboxComponent,
       CnFormCheckboxGroupComponent,
       CnFormRadioGroupComponent,
+      CnGridInputComponent,
       NzInputComponent,
       NzSelectComponent,
       NzDatePickerComponent,

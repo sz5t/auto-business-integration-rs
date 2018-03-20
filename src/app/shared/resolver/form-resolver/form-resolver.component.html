@@ -1,0 +1,5 @@
+<form nz-form [formGroup]="form" (ngSubmit)="_submitForm($event)">
+  <ng-container cnFormResolverDirective
+                *ngFor="let field of formConfig" [formGroup]="form" [config]="field">
+  </ng-container>
+</form>

@@ -1,4 +1,4 @@
-<div class="content__title">
-    <h1>Page Name</h1>
+<div *ngIf="_layout.title" class="content__title">
+    <h1>{{_layout.title}}</h1>
 </div>
-<pro-header [title]="'Page Name'"></pro-header>
+<cn-layout-resolver [config]="_layout"></cn-layout-resolver>

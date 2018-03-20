@@ -25,7 +25,8 @@ const COMPONENT_NOROUNT = [
         RouterModule.forChild(routes)
     ],
     exports: [
-        RouterModule
+        RouterModule,
+        BaseManagerComponent
     ],
     declarations: [
         ...COMPONENT_NOROUNT

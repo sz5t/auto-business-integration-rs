@@ -1,5 +1,55 @@
-<div class="content__title">
-    <h1>基本信息</h1>
-</div>
-<!--<pro-header [title]="'Page Name'"></pro-header>-->
+<!--
+<ng-container *ngIf="_isArray">
+  <div nz-row [nzGutter]="8"  *ngFor="let cfg of config">
+   <div nz-col *ngFor="let c of cfg"
+        [nzSpan]="c.span"
+        [nzSm]="c.size.nzSm"
+        [nzXs]="c.size.nzXs"
+        [nzMd]="c.size.nzMd"
+        [nzLg]="c.size.nzLg"
+        [nzXl]="c.size.nzXl">
+     <base-manager [config]="c"></base-manager>
+   </div>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="!_isArray">
+  <role-manager [config]="config"></role-manager>
+</ng-container>-->
+<!--<ng-container *ngIf="_isRow">
+  <div nz-row [nzGutter]="8" ngFor="let row of config">
+    <div nz-col *ngFor="let c of row.cols"
+         [nzSpan]="c.span"
+         [nzSm]="c.size.nzSm"
+         [nzXs]="c.size.nzXs"
+         [nzMd]="c.size.nzMd"
+         [nzLg]="c.size.nzLg"
+         [nzXl]="c.size.nzXl">
+      <base-manager [config]="c" *ngIf="!c.row"></base-manager>
+      <div nz-row [nzGutter]="8" *ngIf="c.row">
+        <base-manager [config]="c"></base-manager>
+      </div>
+    </div>
+  </div>
+</ng-container>-->
+
+<!--<ng-container *ngIf="config.rows">
+  <div nz-row [nzGutter]="8" *ngFor="let row of config.rows">
+    <div nz-col *ngFor="let c of row.row.cols"
+         [nzSpan]="c.span"
+         [nzSm]="c.size.nzSm"
+         [nzXs]="c.size.nzXs"
+         [nzMd]="c.size.nzMd"
+         [nzLg]="c.size.nzLg"
+         [nzXl]="c.size.nzXl">
+      <base-manager [config]="c"></base-manager>
+    </div>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="!config.rows">
+  <role-manager [config]="config"></role-manager>
+</ng-container>-->
+
+
 

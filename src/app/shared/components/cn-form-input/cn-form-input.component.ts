@@ -2,11 +2,12 @@ import {Component, Input, OnInit} from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 
 @Component({
-  selector: 'role-manager',
-  templateUrl: './role-manager.component.html',
+  selector: 'cn-form-input',
+  templateUrl: './cn-form-input.component.html',
 })
-export class RoleManagerComponent implements OnInit {
+export class CnFormInputComponent implements OnInit {
     @Input() config;
+    @Input() formGroup;
     constructor(
         private http: _HttpClient
     ) { }

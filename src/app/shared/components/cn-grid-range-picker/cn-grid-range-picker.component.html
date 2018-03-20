@@ -1,4 +1,10 @@
-<div class="content__title">
-    <h1>Page Name</h1>
-</div>
-<pro-header [title]="'Page Name'"></pro-header>
+
+  <nz-rangepicker
+    name="{{config.name}}"
+    [nzSize]="config.size"
+    [nzFormat]="config.format"
+    [nzDisabled]="config.disabled"
+    [nzAllowClear]=true
+    [(ngModel)]="date"
+  >
+  </nz-rangepicker>

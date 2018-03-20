@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 
 @Component({
@@ -6,12 +6,12 @@ import { _HttpClient } from '@delon/theme';
   templateUrl: './cn-grid-checkbox.component.html',
 })
 export class CnGridCheckboxComponent implements OnInit {
+  @Input() config;
+  constructor(
+      private http: _HttpClient
+  ) { }
 
-    constructor(
-        private http: _HttpClient
-    ) { }
-
-    ngOnInit() {
-    }
+  ngOnInit() {
+  }
 
 }

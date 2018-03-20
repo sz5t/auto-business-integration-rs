@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 
 @Component({
@@ -6,12 +6,12 @@ import { _HttpClient } from '@delon/theme';
   templateUrl: './cn-grid-range-picker.component.html',
 })
 export class CnGridRangePickerComponent implements OnInit {
+  @Input() config;
+  constructor(
+      private http: _HttpClient
+  ) { }
 
-    constructor(
-        private http: _HttpClient
-    ) { }
-
-    ngOnInit() {
-    }
+  ngOnInit() {
+  }
 
 }

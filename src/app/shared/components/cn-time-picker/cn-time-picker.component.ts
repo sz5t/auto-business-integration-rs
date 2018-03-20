@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 
 @Component({
@@ -6,12 +6,13 @@ import { _HttpClient } from '@delon/theme';
   templateUrl: './cn-time-picker.component.html',
 })
 export class CnTimePickerComponent implements OnInit {
-    _time;
-    constructor(
-        private http: _HttpClient
-    ) { }
+  @Input() config;
+  _time;
+  constructor(
+      private http: _HttpClient
+  ) { }
 
-    ngOnInit() {
-    }
+  ngOnInit() {
+  }
 
 }

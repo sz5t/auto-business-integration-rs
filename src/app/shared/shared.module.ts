@@ -28,7 +28,6 @@ import { CnTimePickerComponent } from './components/cn-time-picker/cn-time-picke
 import { CnFormRangePickerComponent } from './components/cn-form-range-picker/cn-form-range-picker.component';
 import { CnFormCheckboxComponent } from './components/cn-form-checkbox/cn-form-checkbox.component';
 import { CnFormCheckboxGroupComponent } from './components/cn-form-checkbox-group/cn-form-checkbox-group.component';
-import { NzFormRadioGroupComponent } from './components/nz-form-radio-group/nz-form-radio-group.component';
 import { CnFormRadioGroupComponent } from './components/cn-form-radio-group/cn-form-radio-group.component';
 import { GridEditorDirective } from './resolver/grid-resolver/grid-editor.directive';
 const THIRDMODULES = [

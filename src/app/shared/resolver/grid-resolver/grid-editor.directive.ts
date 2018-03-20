@@ -28,7 +28,6 @@ export class GridEditorDirective implements OnInit, OnChanges{
   ngOnChanges() {
     if(this.component) {
       this.component.instance.config = this.config;
-      this.component.instance.formGroup = this.formGroup;
     }
   }
   ngOnInit() {
@@ -41,8 +40,5 @@ export class GridEditorDirective implements OnInit, OnChanges{
     const comp = this.resolver.resolveComponentFactory<any>(components[this.config.type]);
     this.component = this.container.createComponent(comp);
     this.component.instance.config = this.config;
-    if(this.config.type !== 'submit' || this.config.type !== 'button') {
-      this.component.instance.formGroup = this.formGroup;
-    }
   }
 }

@@ -1,6 +1,7 @@
 import {
   ComponentFactoryResolver, ComponentRef, Directive, Input, OnChanges, OnInit, Type,
-  ViewContainerRef
+  ViewContainerRef,
+  forwardRef
 } from '@angular/core';
 import {
   NzCheckboxComponent,
@@ -9,6 +10,7 @@ import {
   NzTimePickerComponent
 } from "ng-zorro-antd";
 import {CnGridInputComponent} from "@shared/components/cn-grid-input/cn-grid-input.component";
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 const components: {[type: string]: Type<any>} = {
   input: CnGridInputComponent,
   select: NzSelectComponent,
@@ -19,16 +21,45 @@ const components: {[type: string]: Type<any>} = {
   checkboxGroup: NzCheckboxGroupComponent,
   radioGroup: NzRadioComponent
 };
+export const EXE_COUNTER_VALUE_ACCESSOR: any = {
+  provide: NG_VALUE_ACCESSOR,
+  useExisting: forwardRef(() => GridEditorDirective),
+  multi: true
+};
 @Directive({
-  selector: '[CnGridEditorDirective]'
+  selector: '[CnGridEditorDirective]',
+  providers: [EXE_COUNTER_VALUE_ACCESSOR]
 })
-export class GridEditorDirective implements OnInit, OnChanges{
+export class GridEditorDirective implements OnInit, OnChanges,ControlValueAccessor{
+  propagateChange = (_: any) => {
+    console.log('变化');
+  };
+  writeValue(obj: any): void {
+    if(obj){
+      this.value= obj;
+      this.component.instance.setValue(this.value);
+    }
+    console.log('writeValue',obj);
+  }
+  registerOnChange(fn: any): void {
+  
+    this.propagateChange = fn;//每次控件view层的值发生改变，都要调用该方法通知外部
+    console.log('registerOnChange');
+  }
+  registerOnTouched(fn: any): void {
+    console.log('registerOnTouched');
+  }
+  setDisabledState?(isDisabled: boolean): void {
+    console.log('setDisabledState');
+  }
   @Input() config;
+  @Input()  value;
   component: ComponentRef<any>;
   constructor(private resolver: ComponentFactoryResolver, private container: ViewContainerRef) { }
   ngOnChanges() {
     if(this.component) {
       this.component.instance.config = this.config;
+      this.component.instance.value=this.value;
     }
   }
   ngOnInit() {
@@ -41,5 +72,8 @@ export class GridEditorDirective implements OnInit, OnChanges{
     const comp = this.resolver.resolveComponentFactory<any>(components[this.config.type]);
     this.component = this.container.createComponent(comp);
     this.component.instance.config = this.config;
+    this.component.instance.setValue(this.value);
   }
 }
+
+

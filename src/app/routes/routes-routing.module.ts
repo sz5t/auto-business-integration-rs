@@ -24,7 +24,8 @@ const routes: Routes = [
         children: [
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
             { path: 'dashboard', component: DashboardComponent, data: { title: '仪表盘' } },
-            { path: 'system', loadChildren: './system/system.module#SystemModule'}
+            { path: 'system', loadChildren: './system/system.module#SystemModule'},
+            { path: 'test', loadChildren: './cn-test/cn-test.module#CnTestModule'}
             // 业务子模块
             // { path: 'widgets', loadChildren: './widgets/widgets.module#WidgetsModule' }
         ]

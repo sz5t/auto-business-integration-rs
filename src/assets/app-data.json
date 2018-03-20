@@ -39,6 +39,11 @@
                             "text": "基本信息",
                             "link": "/system/base-manager",
                             "i18n": ""
+                        },
+                        {
+                            "text": "测试页面",
+                            "link": "/test/list",
+                            "i18n": ""
                         }
                     ]
                 },

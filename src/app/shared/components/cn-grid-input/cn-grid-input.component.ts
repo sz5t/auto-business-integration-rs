@@ -7,11 +7,15 @@ import { _HttpClient } from '@delon/theme';
 })
 export class CnGridInputComponent implements OnInit {
     @Input() config;
+     value;
     constructor(
         private http: _HttpClient
     ) { }
-
     ngOnInit() {
+    }
+
+    setValue(value){
+       this.value=value;
     }
 
 }

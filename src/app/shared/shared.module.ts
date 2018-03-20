@@ -31,6 +31,11 @@ import { CnFormCheckboxGroupComponent } from './components/cn-form-checkbox-grou
 import { CnFormRadioGroupComponent } from './components/cn-form-radio-group/cn-form-radio-group.component';
 import { GridEditorDirective } from './resolver/grid-resolver/grid-editor.directive';
 import { CnGridInputComponent } from './components/cn-grid-input/cn-grid-input.component';
+import { CnGridSelectComponent } from './components/cn-grid-select/cn-grid-select.component';
+import { CnGridDatePickerComponent } from './components/cn-grid-date-picker/cn-grid-date-picker.component';
+import { CnGridTimePickerComponent } from './components/cn-grid-time-picker/cn-grid-time-picker.component';
+import { CnGridRangePickerComponent } from './components/cn-grid-range-picker/cn-grid-range-picker.component';
+import { CnGridCheckboxComponent } from './components/cn-grid-checkbox/cn-grid-checkbox.component';
 const THIRDMODULES = [
     CountdownModule,
     NzSchemaFormModule
@@ -51,7 +56,13 @@ const COMPONENTS = [
   CnFormRangePickerComponent,
   CnFormCheckboxComponent,
   CnFormCheckboxGroupComponent,
-  CnFormRadioGroupComponent
+  CnFormRadioGroupComponent,
+  CnGridInputComponent,
+  CnGridSelectComponent,
+  CnGridDatePickerComponent,
+  CnGridTimePickerComponent,
+  CnGridRangePickerComponent,
+  CnGridCheckboxComponent
 
 ];
 const DIRECTIVES = [
@@ -77,9 +88,7 @@ const DIRECTIVES = [
     declarations: [
         // your components
         ...COMPONENTS,
-        ...DIRECTIVES,
-        GridEditorDirective,
-        CnGridInputComponent
+        ...DIRECTIVES
     ],
     exports: [
         CommonModule,

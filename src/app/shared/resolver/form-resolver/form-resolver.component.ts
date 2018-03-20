@@ -26,12 +26,12 @@ export class FormResolverComponent implements OnInit, OnChanges {
           'errorMessage': '不能为空'
         },
         {
-          'validator': 'minLength',
+          'validator': 'minlength',
           'length': 6,
           'errorMessage': '最小长度为6'
         }
       ],
-      'validation': [Validators.required]
+      'validation': [Validators.required,Validators.minLength(6)]
     },
     {
       'type': 'input',

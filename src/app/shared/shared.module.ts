@@ -55,7 +55,8 @@ const COMPONENTS = [
 
 ];
 const DIRECTIVES = [
-  FormResolverDirective
+  FormResolverDirective,
+  GridEditorDirective
 ];
 // endregion
 

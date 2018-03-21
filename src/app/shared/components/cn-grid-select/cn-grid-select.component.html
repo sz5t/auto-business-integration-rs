@@ -1,10 +1,13 @@
 <nz-select
+  [ngStyle]="{'width':config.width}"
   [nzSize]="config.size"
   [nzNotFoundContent]="config.notFoundContent"
-  [nzMode]="config.selectModel"
+  (ngModelChange)="userNameChange($event)" 
+  [(ngModel)]="_selectedMultipleOption"
   [nzShowSearch]='config.showSearch'
   [nzPlaceHolder]="config.placeholder"
   [nzDisabled]="config.disabled"
+  [nzAllowClear]="config.clear"
 >
   <nz-option *ngFor="let option of config.options"
              [nzLabel]="option.label"

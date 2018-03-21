@@ -1,0 +1,82 @@
+<div class="table-operations">
+    <button nz-button (click)="addRow()" class="editable-add-btn">新增</button>
+    <button nz-button (click)="updateRow()" class="editable-add-btn">修改</button>
+    <button nz-button (click)="deleteRow()" class="editable-add-btn">删除</button>
+    <button nz-button (click)="saveRow()" class="editable-add-btn">保存</button>
+    <button nz-button (click)="cancelRow()" class="editable-add-btn">取消</button>
+</div>
+<!-- [nzAjaxData]="list"   [nzLoading]="loading"-->
+<nz-table #nzTable [nzDataSource]="list" [nzShowSizeChanger]="true" [nzTotal]="total" [(nzPageIndex)]="pi" (nzPageIndexChange)="load()"
+    [(nzPageSize)]="ps" (nzPageSizeChange)="load()">
+    <thead nz-thead>
+        <tr>
+            <th nz-th [nzCheckbox]="true">
+                <label nz-checkbox [(ngModel)]="_allChecked" [nzIndeterminate]="_indeterminate" (ngModelChange)="_checkAll()">
+                </label>
+            </th>
+            <th nz-th nzShowSort nzSortKey="key">
+                <span>key</span>
+            </th>
+            <th nz-th nzShowSort nzSortKey="name">
+                <span>name</span>
+            </th>
+            <th nz-th nzShowSort nzSortKey="sex">
+                <span>sex</span>
+            </th>
+            <th nz-th nzShowSort nzSortKey="age">
+                <span>age</span>
+                <nz-table-sort [(nzValue)]="sortMap.age" (nzValueChange)="sort('age',$event)"></nz-table-sort>
+            </th>
+            <th nz-th>
+                <span>address</span>
+            </th>
+            <th nz-th>
+                <span>Actions</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody nz-tbody>
+        <tr nz-tbody-tr *ngFor="let data of nzTable.data" (click)="selectRow(data,editCache[data.key].data)" ng-style="data.style">
+            <td nz-td [nzCheckbox]="true">
+                <label nz-checkbox [(ngModel)]="data.checked" (ngModelChange)="refChecked()">
+                </label>
+            </td>
+            <td nz-td>{{data.key}}</td>
+            <td nz-td>
+                <ng-container *ngIf="!editCache[data.key].edit">
+                    {{data.name}}
+                </ng-container>
+                <ng-container *ngIf="editCache[data.key].edit" CnGridEditorDirective [(ngModel)]="editCache[data.key].data.name" [config]="tested"
+                    [value]="editCache[data.key].data.name" (updateValue)="userNameChange($event)">
+                    <!-- [(ngModel)]="editCache[data.key].data.name" -->
+
+                </ng-container>
+                <!-- {{editCache[data.key].data.name}} -->
+            </td>
+            <td nz-td>
+                <ng-container *ngIf="!editCache[data.key].edit">
+                    {{data.sex}}
+                </ng-container>
+                <ng-container *ngIf="editCache[data.key].edit" CnGridEditorDirective [(ngModel)]="editCache[data.key].data.sex" [config]="selected"
+                    [value]="editCache[data.key].data.sex" (updateValue)="userNameChange($event)">
+                </ng-container>
+            </td>
+
+            <td nz-td>
+                {{data.age}}
+            </td>
+            <td nz-td>
+                {{data.address}}
+            </td>
+            <td nz-td>
+                <a (click)="startEdit(data.key)">Edit</a>
+                <!-- <a (click)="showMsg('Edit')">Edit</a> -->
+                <span nz-table-divider></span>
+                <nz-popconfirm [nzTitle]="'Are you sure？'" [nzOkText]="'ok'" [nzCancelText]="'cancel'" (nzOnConfirm)="showMsg('has deleted')"
+                    (nzOnCancel)="showMsg('cancel delete')">
+                    <a nz-popconfirm>Delete</a>
+                </nz-popconfirm>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>

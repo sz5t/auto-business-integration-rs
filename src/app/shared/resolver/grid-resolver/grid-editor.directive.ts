@@ -13,9 +13,10 @@ import {
 } from "ng-zorro-antd";
 import {CnGridInputComponent} from "@shared/components/cn-grid-input/cn-grid-input.component";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { CnGridSelectComponent } from '@shared/components/cn-grid-select/cn-grid-select.component';
 const components: {[type: string]: Type<any>} = {
   input: CnGridInputComponent,
-  select: NzSelectComponent,
+  select: CnGridSelectComponent,
   datePicker: NzDatePickerComponent,
   timePicker: NzTimePickerComponent,
   rangePicker: NzRangePickerComponent,
@@ -41,7 +42,7 @@ export class GridEditorDirective implements OnInit, OnChanges,ControlValueAccess
   writeValue(obj: any): void {
     if(obj){
       this.value= obj;
-      this.component.instance.setValue(this.value);
+      this.component.instance.value=this.value;
     }
     console.log('writeValue',obj);
   }
@@ -78,7 +79,7 @@ export class GridEditorDirective implements OnInit, OnChanges,ControlValueAccess
     const comp = this.resolver.resolveComponentFactory<any>(components[this.config.type]);
     this.component = this.container.createComponent(comp);
     this.component.instance.config = this.config;
-    this.component.instance.setValue(this.value);
+    this.component.instance.value=this.value;
     this.component.instance.updateValue.subscribe(event => {
       this.setValue(event)
     });

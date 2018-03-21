@@ -1,4 +1,5 @@
 <nz-input
+[ngStyle]="{'width':config.width}"
 (ngModelChange)="userNameChange($event)" 
 [(ngModel)]="value"
   [nzId]="config.name"

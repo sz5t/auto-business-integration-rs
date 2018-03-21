@@ -36,6 +36,8 @@ import { CnGridDatePickerComponent } from './components/cn-grid-date-picker/cn-g
 import { CnGridTimePickerComponent } from './components/cn-grid-time-picker/cn-grid-time-picker.component';
 import { CnGridRangePickerComponent } from './components/cn-grid-range-picker/cn-grid-range-picker.component';
 import { CnGridCheckboxComponent } from './components/cn-grid-checkbox/cn-grid-checkbox.component';
+import { BsnDataTableComponent } from './business/bsn-data-table/bsn-data-table.component';
+import { CnContextMenuComponent } from './components/cn-context-menu/cn-context-menu.component';
 const THIRDMODULES = [
     CountdownModule,
     NzSchemaFormModule
@@ -62,7 +64,9 @@ const COMPONENTS = [
   CnGridDatePickerComponent,
   CnGridTimePickerComponent,
   CnGridRangePickerComponent,
-  CnGridCheckboxComponent
+  CnGridCheckboxComponent,
+  BsnDataTableComponent,
+  CnContextMenuComponent
 
 ];
 const DIRECTIVES = [
@@ -88,7 +92,8 @@ const DIRECTIVES = [
     declarations: [
         // your components
         ...COMPONENTS,
-        ...DIRECTIVES
+        ...DIRECTIVES,
+        BsnDataTableComponent
     ],
     exports: [
         CommonModule,
@@ -116,13 +121,15 @@ const DIRECTIVES = [
       CnFormCheckboxGroupComponent,
       CnFormRadioGroupComponent,
       CnGridInputComponent,
+      CnGridSelectComponent,
       NzInputComponent,
       NzSelectComponent,
       NzDatePickerComponent,
       NzTimePickerComponent,
       NzRangePickerComponent,
       NzRadioGroupComponent,
-      NzCheckboxGroupComponent
+      NzCheckboxGroupComponent,
+      BsnDataTableComponent
     ]
 })
 export class SharedModule { }

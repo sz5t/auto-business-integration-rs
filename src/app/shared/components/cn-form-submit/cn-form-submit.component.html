@@ -1,0 +1,6 @@
+<div nz-form-item nz-row [formGroup]="formGroup">
+  <div nz-col [nzOffset]="config.offsetSize" [nzSpan]="config.controlSize" nz-form-control>
+    <button nz-button [nzType]="'primary'" [nzSize]="config.size" [disabled]="!formGroup.valid">保存</button>
+    <button nz-button [nzSize]="config.default" (click)="resetForm($event)">取消</button>
+  </div>
+</div>

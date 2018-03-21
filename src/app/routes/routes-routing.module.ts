@@ -15,13 +15,11 @@ import { CallbackComponent } from './callback/callback.component';
 import { Exception403Component } from './exception/403.component';
 import { Exception404Component } from './exception/404.component';
 import { Exception500Component } from './exception/500.component';
-import {AuthGuard} from '@core/utility/auth-guard';
 
 const routes: Routes = [
     {
         path: '',
         component: LayoutDefaultComponent,
-        canActivate: [AuthGuard],
         children: [
             { path: '', redirectTo: 'dashboard', pathMatch: 'full'},
             { path: 'dashboard', component: DashboardComponent, data: {title: 'SinoForce' }},

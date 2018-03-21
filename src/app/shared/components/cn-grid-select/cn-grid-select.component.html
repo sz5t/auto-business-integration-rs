@@ -1,0 +1,14 @@
+<nz-select
+  [nzSize]="config.size"
+  [nzNotFoundContent]="config.notFoundContent"
+  [nzMode]="config.selectModel"
+  [nzShowSearch]='config.showSearch'
+  [nzPlaceHolder]="config.placeholder"
+  [nzDisabled]="config.disabled"
+>
+  <nz-option *ngFor="let option of config.options"
+             [nzLabel]="option.label"
+             [nzValue]="option"
+             [nzDisabled]="option.disabled"
+  ></nz-option>
+</nz-select>

@@ -1,0 +1,29 @@
+<div nz-form-item nz-row>
+  <div nz-form-label nz-col [nzSm]="config.labelSize" [nzXs]="24">
+    <label [attr.for]="config.name" nz-form-item-required>{{config.label}}</label>
+  </div>
+  <div [formGroup]="formGroup" nz-form-control nz-col [nzSm]="config.controlSize" [nzXs]="24" nzHasFeedback>
+    <nz-input
+      formControlName="{{config.name}}"
+      [nzId]="config.name"
+      [nzSize]="config.size"
+      [nzType]="config.inputType"
+      [nzPlaceHolder]="config.placeholder"
+      [nzDisabled]="config.disabled"
+      [nzReadonly]="config.readonly"
+    >
+      <ng-template *ngIf="config.addonBefore" #addonBefore>
+        <i class="{{config.addonBefore}}"></i>
+      </ng-template>
+      <ng-template *ngIf="config.addonAfter" #addonAfter>
+        <i class="{{config.addonAfter}}"></i>
+      </ng-template>
+      <ng-template *ngIf="config.perfix" #perfix>
+        <i class="{{config.perfix}}"></i>
+      </ng-template>
+      <ng-template *ngIf="config.suffix" #suffix>
+        <i class="{{config.suffix}}"></i>
+      </ng-template>
+    </nz-input>
+  </div>
+</div>

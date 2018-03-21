@@ -1,0 +1,66 @@
+<!--<div class="content__title">
+  <h1>布局设置</h1>
+</div>-->
+<pro-header [title]="'布局设置'"></pro-header>
+<div nz-row [nzGutter]="8">
+  <div nz-col [nzSpan]="8">
+    <nz-card>
+      <ng-template #title>模版选择</ng-template>
+      <ng-template #body>
+        <form nz-form>
+          <div nz-form-item nz-row>
+            <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+              <label [attr.for]="'功能模块'">功能模块</label>
+            </div>
+            <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+              <nz-cascader
+                [ngModelOptions]="{standalone: true}"
+                [class.class123]="true"
+                [nzOptions]="_funcOptions"
+                [(ngModel)]="_funcValue"
+                (ngModelChange)="_changeValue($event)"
+                (nzChange)="_changeValue($event)"
+                [nzPlaceHolder]="'请选择功能模块'">
+              </nz-cascader>
+            </div>
+          </div>
+          <div nz-form-item nz-row>
+            <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+              <label [attr.for]="'布局模版'">布局模版</label>
+            </div>
+            <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+              <nz-select [(ngModel)]="_layoutValue" [nzPlaceHolder]="'请选择布局类型'"  [ngModelOptions]="{standalone: true}">
+                <nz-option
+                  *ngFor="let option of _layoutOptions"
+                  [nzLabel]="option.label"
+                  [nzValue]="option.value">
+                </nz-option>
+              </nz-select>
+              {{_layoutValue | json}}
+            </div>
+          </div>
+          <div nz-form-item nz-row>
+            <div nz-form-control nz-col [nzSm]="20" [nzXs]="24">
+              <nz-tabset *ngIf="_formConfig" [nzTabPosition]="'left'" [nzType]="'line'">
+                <nz-tab *ngFor="let tab of _formConfig">
+                  <ng-template #nzTabHeading>
+                    <i [ngClass]="tab.icon"></i>
+                    {{tab.title}}
+                  </ng-template>
+                </nz-tab>
+              </nz-tabset>
+            </div>
+          </div>
+        </form>
+      </ng-template>
+    </nz-card>
+  </div>
+  <div nz-col [nzSpan]="16">
+    <nz-card>
+      <ng-template #title>模版预览</ng-template>
+      <ng-template #body>
+        <cn-layout-resolver *ngIf="_layoutValue" [config]="_layoutValue"></cn-layout-resolver>
+      </ng-template>
+    </nz-card>
+  </div>
+</div>

@@ -1,35 +1,26 @@
 import { Component, OnInit } from '@angular/core';
-import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
+import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { map } from 'rxjs/operators';
-//import { RandomUserService } from '../randomUser.service';
 @Component({
-    selector: 'app-list',
-    templateUrl: './list.component.html',
-    styles: [
-        `
-    .table-operations {
-      margin-bottom: 16px;
-    }
-    
-    .table-operations > button {
-      margin-right: 8px;
-    }
-    .selectedRow{
-        color:blue;
-    }
+  selector: 'bsn-data-table,[bsn-data-table]',
+  templateUrl: './bsn-data-table.component.html',
+  styles: [
     `
-    ]
+.table-operations {
+  margin-bottom: 16px;
+}
+
+.table-operations > button {
+  margin-right: 8px;
+}
+.selectedRow{
+    color:blue;
+}
+`
+]
 })
-export class ListComponent implements OnInit {
-
-    /*   constructor(
-          private http: _HttpClient
-      ) { }
-  
-      ngOnInit() {
-      } */
-
+export class BsnDataTableComponent implements OnInit {
 
     pi = 1;
     ps = 10;
@@ -42,43 +33,43 @@ export class ListComponent implements OnInit {
 
     events: any[] = [];
 
-    tested = {
+    tested={
         'type': 'input',
         'labelSize': '6',
         'controlSize': '10',
         'inputType': 'text',
         'name': 'userName',
-        'width': '80px',
+        'width':'80px',
     };
 
-    selected = {
+    selected= {
         'type': 'select',
         'labelSize': '6',
         'controlSize': '10',
         'inputType': 'submit',
         'name': 'sex',
         'label': '性别',
-        'notFoundContent': '',
+        'notFoundContent':'',
         'selectModel': false,
         'showSearch': true,
-        'placeholder': '-请选择-',
+        'placeholder':'-请选择-',
         'disabled': false,
         'size': 'default',
-        'clear': true,
-        'width': '60px',
+        'clear':true,
+        'width':'60px',
         'options': [
-            {
-                'label': '男',
-                'value': '1',
-                'disabled': false
-            },
-            {
-                'label': '女',
-                'value': '2',
-                'disabled': false
-            }
+          {
+            'label':'男',
+            'value': '1',
+            'disabled': false
+          },
+          {
+            'label':'女',
+            'value': '2',
+            'disabled': false
+          }
         ]
-    }
+      }
 
     load(pi?: number) {
         if (typeof pi !== 'undefined') {
@@ -127,14 +118,14 @@ export class ListComponent implements OnInit {
     ngOnInit() {
         this.load();
         //  this.http.get('/chart/visit').subscribe((res: any) => this.events = res);
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 3; i++) {
             this.list.push({
                 key: i.toString(),
                 name: `Edrward ${i}`,
                 age: 32,
-                sex: '2',
+                sex:'2',
                 address: `London Park no. ${i}`,
-                style: ''
+                style:''
             });
         }
         this.updateEditCache();
@@ -202,36 +193,36 @@ export class ListComponent implements OnInit {
     //     }
     //   }
 
-    copyData = [...this.list];
-    sortMap = {
-        name: null,
-        age: null,
+      copyData = [ ...this.list ];
+      sortMap = {
+        name   : null,
+        age    : null,
         address: null
-    };
-    sort(sortName, value) {
-        this.sortName = sortName;
-        this.sortValue = value;
-        Object.keys(this.sortMap).forEach(key => {
+      };
+        sort(sortName, value) {
+          this.sortName = sortName;
+          this.sortValue = value;
+          Object.keys(this.sortMap).forEach(key => {
             if (key !== sortName) {
-                this.sortMap[key] = null;
+              this.sortMap[ key ] = null;
             } else {
-                this.sortMap[key] = value;
+              this.sortMap[ key ] = value;
             }
-        });
-        this.search();
-    }
-    search() {
-
-        this.list = [...this.list.sort((a, b) => {
-            if (a[this.sortName] > b[this.sortName]) {
+          });
+          this.search();
+        }
+        search() {
+         
+            this.list = [ ...this.list.sort((a, b) => {
+              if (a[ this.sortName ] > b[ this.sortName ]) {
                 return (this.sortValue === 'ascend') ? 1 : -1;
-            } else if (a[this.sortName] < b[this.sortName]) {
+              } else if (a[ this.sortName ] < b[ this.sortName ]) {
                 return (this.sortValue === 'ascend') ? -1 : 1;
-            } else {
+              } else {
                 return 0;
-            }
-        })];
-    }
+              }
+            }) ];
+          }
 
     /**新增 */
     addRow(): void {
@@ -240,14 +231,14 @@ export class ListComponent implements OnInit {
             key: `${this.i}`,
             name: `Edward King ${this.i}`,
             age: '32',
-            sex: '',
+            sex:'',
             address: `London, Park Lane no. ${this.i}`,
-            checked: true,
-            style: ''
+            checked:true,
+            style:''
         }];
         this.updateEditCache();
         this.startEdit(this.i.toString());
-
+      
     }
     /**修改 */
     updateRow(): void {
@@ -272,7 +263,7 @@ export class ListComponent implements OnInit {
         this.modalService.confirm({
             title: '确认框',
             content: '确认要删除？',
-            onOk: () => {
+            onOk:()=> {
                 this.list.forEach(item => {
                     if (item.checked === true) {
                         this.deleteEdit(item.key);
@@ -282,7 +273,7 @@ export class ListComponent implements OnInit {
             onCancel() {
             }
         });
-
+       
     }
     /**保存 */
     saveRow(): void {
@@ -300,101 +291,26 @@ export class ListComponent implements OnInit {
             }
         });
 
-        console.log('取消后', this.list);
+        console.log('取消后',this.list);
     }
 
 
-    selectRow(data?, edit?) {
-        data.style = 'selectedRow';
+    selectRow(data?,edit?) {
+        data.style='selectedRow';
         // data.checked="true"; // 行勾选
         // data.selected="true";// 行选中
 
         // 单选(check=select)，如果是未勾选，第一次点击选中，再次点击取消选中
         // 多选（check=select），如果是未勾选，第一次点击选中，再次点击取消选中
         // 多勾选单选中行（check》select）勾选和行选中各自独立，互不影响
-        // console.log('行',data);
-        console.log('update', edit);
+       // console.log('行',data);
+        console.log('update',edit);
 
     }
 
-    userNameChange(name?) {
+    userNameChange(name?){
         console.log('子页面返回');
-        console.log('子页面', name);
-    }
-
-
-
-    tabledata = {
-        'viewId': '0001',
-        'component': 'form_view',
-        'keyId': 'id',
-        'nzIsPagination':false, // 是否分页
-        'nzShowTotal':false,// 是否显示总数据量
-        'nzPageSizeSelectorValues':[5,10, 20, 30, 40, 50],
-        'nzLoading':false, // 是否显示加载中
-        'nzBordered':false,// 是否显示边框
-        'formHeader': {
-            'header': [
-                {title: '主键', field: 'id', width: 80 },
-                {title: '姓名', field: 'name', width: 80,hidden: false },
-                {title: '性别', field: 'sex', width: 80,hidden: false },
-                {title: '年龄', field: 'age', width: 80,hidden: false },
-                {title: '地址', field: 'adress', width: 80,hidden: false }
-            ],
-            'button': [
-                { 'name':'addRow','class':'editable-add-btn','text':'新增' },
-                { 'name':'updateRow','class':'editable-add-btn','text':'修改' },
-                { 'name':'deleteRow','class':'editable-add-btn','text':'删除' },
-                { 'name':'saveRow','class':'editable-add-btn','text':'保存' },
-                { 'name':'cancelRow','class':'editable-add-btn','text':'取消' }
-            ]
-        },
-        'formContent': [
-            {
-                'type': 'input',
-                'inputType': 'text',
-                'name': 'id'
-            },
-            {
-                'type': 'input',
-                'inputType': 'text',
-                'name': 'execSqlStr'
-            },
-            {
-                'type': 'select',
-                'placeholder': '--请选择--',
-                'options': [
-                    {
-                        'text': '执行一次',
-                        'value': '1'
-                    },
-                    {
-                        'text': '执行两次',
-                        'value': '2'
-                    }
-                ],
-                'name': 'execSqlMethod',
-                'value': '',
-                'inputClass': 'input-medium'
-            },
-            {
-                'type': 'select',
-                'placeholder': '--请选择--',
-                'options': [
-                    {
-                        'text': '新增状态',
-                        'value': 'new'
-                    },
-                    {
-                        'text': '更新状态',
-                        'value': 'modify'
-                    }
-                ],
-                'name': 'execSqlStatus',
-                'value': '',
-                'inputClass': 'input-medium'
-            }
-        ]
+        console.log('子页面',name);
     }
 
 

@@ -1,25 +1,6 @@
-<div class="content__title">
-    <h1>
-        A Full Demo Tables
-    </h1>
-</div>
 <div nz-row [nzGutter]="16">
     <div nz-col [nzMd]="24">
         <nz-card>
-          <!--   <div class="mb-sm text-right">
-                <nz-dropdown>
-                    <button nz-button nz-dropdown [disabled]="!_allChecked && !_indeterminate">
-                        <span>Export</span>
-                        <i class="anticon anticon-down"></i>
-                    </button>
-                    <ul nz-menu>
-                        <li nz-menu-item>Excel</li>
-                        <li nz-menu-item>JSON</li>
-                        <li nz-menu-item>PNG</li>
-                    </ul>
-                </nz-dropdown>
-            </div> 
-        -->
             <div class="table-operations">
                 <button nz-button (click)="addRow()" class="editable-add-btn">新增</button>
                 <button nz-button (click)="updateRow()" class="editable-add-btn">修改</button>
@@ -41,6 +22,9 @@
                         </th>
                         <th nz-th  nzShowSort nzSortKey="name">
                             <span>name</span>
+                        </th>
+                        <th nz-th  nzShowSort nzSortKey="sex">
+                            <span>sex</span>
                         </th>
                         <th nz-th nzShowSort nzSortKey="age">
                             <span>age</span>
@@ -69,8 +53,16 @@
                                     <!-- [(ngModel)]="editCache[data.key].data.name" -->
                               
                             </ng-container>
-                            {{editCache[data.key].data.name}}
+                            <!-- {{editCache[data.key].data.name}} -->
                         </td>
+                        <td nz-td>
+                            <ng-container *ngIf="!editCache[data.key].edit">
+                                {{data.sex}}
+                            </ng-container>
+                            <ng-container *ngIf="editCache[data.key].edit" CnGridEditorDirective   [(ngModel)]="editCache[data.key].data.sex"  [config]="selected"   [value]="editCache[data.key].data.sex" (updateValue)="userNameChange($event)" >
+                            </ng-container>
+                        </td>
+
                         <td nz-td>              
                                 {{data.age}}
                         </td>
@@ -92,3 +84,4 @@
         </nz-card>
     </div>
 </div>
+<div bsn-data-table></div>

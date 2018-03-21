@@ -44,6 +44,39 @@
                     ]
                 },
                 {
+                  "text": "系统配置",
+                  "i18n": "",
+                  "link": "/settings",
+                  "icon": "icon-speedometer",
+                  "children": [
+                    {
+                      "text": "布局设置",
+                      "link": "/settings/layout-setting",
+                      "i18n": ""
+                    },
+                    {
+                      "text": "区域设置",
+                      "link": "/settings/block-setting",
+                      "i18n": ""
+                    },
+                    {
+                      "text": "组件编辑",
+                      "link": "/settings/component-setting",
+                      "i18n": ""
+                    },
+                    {
+                      "text": "操作设置",
+                      "link": "/settings/operation-setting",
+                      "i18n": ""
+                    },
+                    {
+                      "text": "业务设置",
+                      "link": "/settings/business-setting",
+                      "i18n": ""
+                    }
+                  ]
+                },
+                {
                     "text": "业务管理",
                     "link": "/system",
                     "icon": "icon-speedometer",

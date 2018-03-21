@@ -36,6 +36,7 @@ import { CnGridDatePickerComponent } from './components/cn-grid-date-picker/cn-g
 import { CnGridTimePickerComponent } from './components/cn-grid-time-picker/cn-grid-time-picker.component';
 import { CnGridRangePickerComponent } from './components/cn-grid-range-picker/cn-grid-range-picker.component';
 import { CnGridCheckboxComponent } from './components/cn-grid-checkbox/cn-grid-checkbox.component';
+import { CnContextMenuComponent } from './components/cn-context-menu/cn-context-menu.component';
 const THIRDMODULES = [
     CountdownModule,
     NzSchemaFormModule
@@ -62,7 +63,8 @@ const COMPONENTS = [
   CnGridDatePickerComponent,
   CnGridTimePickerComponent,
   CnGridRangePickerComponent,
-  CnGridCheckboxComponent
+  CnGridCheckboxComponent,
+  CnContextMenuComponent
 
 ];
 const DIRECTIVES = [

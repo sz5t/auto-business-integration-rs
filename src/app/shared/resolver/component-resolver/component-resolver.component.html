@@ -1,7 +1,8 @@
 <nz-card>
-  <ng-template #title>标题</ng-template>
+  <ng-template #title>{{config.title}}</ng-template>
   <ng-template #body>
-    <cn-form-resolver></cn-form-resolver>
+    <pre>{{config | json}}</pre>
+   <!-- <cn-form-resolver></cn-form-resolver>-->
   </ng-template>
 </nz-card>
 

@@ -1,6 +1,7 @@
 
 <ng-container *ngIf="config.rows">
   <div nz-row [nzGutter]="8" *ngFor="let row of config.rows">
+
     <div nz-col *ngFor="let c of row.row.cols"
          [nzSpan]="c.span"
          [nzSm]="c.size.nzSm"
@@ -22,6 +23,5 @@
     <cn-layout-resolver [config]="tab.viewCfg"></cn-layout-resolver>
   </nz-tab>
 </nz-tabset>
-
 <cn-component-resolver *ngIf="!config.rows" [config]="config"></cn-component-resolver>
 

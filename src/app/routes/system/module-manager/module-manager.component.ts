@@ -21,24 +21,10 @@ export class ModuleManagerComponent implements OnInit {
                   nzMd: 6,
                   nzLg: 6,
                   ngXl: 6
-                },
-                size1: {
-                  nzXs: 6,
-                  nzSm: 6,
-                  nzMd: 6,
-                  nzLg: 6,
-                  ngXl: 6
-                },
-                size2: {
-                  nzXs: 6,
-                  nzSm: 6,
-                  nzMd: 6,
-                  nzLg: 6,
-                  ngXl: 6
                 }
               },
               {
-                title: '区域1',
+                title: '区域2',
                 span:18,
                 size: {
                   nzXs: 18,

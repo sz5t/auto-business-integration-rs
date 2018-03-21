@@ -1,11 +1,5 @@
-<nz-popover [nzTitle]="'标题'" [nzTrigger]="'hover'">
-  <nz-card (mousedown)="createMenu($event)">
-    <ng-template #title>{{config.title}}</ng-template>
-    <ng-template #body>
-      <pre>{{config | json}}</pre>
-      <!-- <cn-form-resolver></cn-form-resolver>-->
-    </ng-template>
-  </nz-card>
+<nz-popover [nzTitle]="'标题'" [nzTrigger]="'click'">
+  <button nz-button nz-popover>组件列表</button>
   <ng-template #nzTemplate>
     <ul nz-menu [nzMode]="'vertical'" style="width: 240px;">
       <li nz-submenu>
@@ -52,5 +46,3 @@
     </ul>
   </ng-template>
 </nz-popover>
-
-

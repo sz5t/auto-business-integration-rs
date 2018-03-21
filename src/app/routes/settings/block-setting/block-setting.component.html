@@ -1,4 +1,47 @@
-<div class="content__title">
+<!--<div class="content__title">
     <h1>Page Name</h1>
+</div>-->
+<pro-header [title]="'区域设置'"></pro-header>
+<div nz-row [nzGutter]="8">
+  <div nz-col [nzSpan]="24">
+    <nz-card>
+      <ng-template #title>功能模块</ng-template>
+      <ng-template #body>
+        <form nz-form [nzLayout]="'inline'">
+          <div nz-form-item nz-row>
+            <div nz-form-label>
+              <label [attr.for]="'功能模块'">功能模块</label>
+            </div>
+            <div nz-form-control>
+              <nz-cascader
+                [ngModelOptions]="{standalone: true}"
+                [class.class123]="true"
+                [nzOptions]="_funcOptions"
+                [(ngModel)]="_funcValue"
+                (ngModelChange)="_changeValue($event)"
+                (nzChange)="_changeValue($event)"
+                [nzPlaceHolder]="'请选择功能模块'">
+              </nz-cascader>
+            </div>
+          </div>
+          <div nz-form-item nz-row>
+            <div nz-col nz-form-control>
+              <button nz-button [nzType]="'primary'" [nzSize]="'default'">保存</button>
+              <button nz-button [nzSize]="'default'" (click)="resetForm($event)">取消</button>
+            </div>
+          </div>
+        </form>
+      </ng-template>
+    </nz-card>
+  </div>
 </div>
-<pro-header [title]="'Page Name'"></pro-header>
+<div nz-row [nzGutter]="8">
+  <div nz-col [nzSpan]="24">
+    <nz-card>
+      <ng-template #title>设置组件</ng-template>
+      <ng-template #body>
+        <cn-layout-resolver *ngIf="_layoutValue" [config]="_layoutValue"></cn-layout-resolver>
+      </ng-template>
+    </nz-card>
+  </div>
+</div>

@@ -15,4 +15,10 @@ export class ComponentResolverComponent implements OnInit {
 
   }
 
+  createMenu($event){
+    if(3 === $event.switch){
+      // 右键创建弹出组件菜单
+    }
+  }
+
 }

@@ -14,6 +14,8 @@ import { Exception403Component } from './exception/403.component';
 import { Exception404Component } from './exception/404.component';
 import { Exception500Component } from './exception/500.component';
 import {SystemModule} from "./system/system.module";
+import {ACLGuard} from '@delon/acl';
+import {AuthGuard} from '@core/utility/auth-guard';
 
 @NgModule({
     imports: [ SharedModule, RouteRoutingModule],
@@ -28,6 +30,9 @@ import {SystemModule} from "./system/system.module";
         Exception403Component,
         Exception404Component,
         Exception500Component
+    ],
+    providers: [
+        AuthGuard
     ]
 })
 export class RoutesModule {}

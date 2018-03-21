@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { SettingsService } from '@delon/theme';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
+import {CacheService} from '@delon/cache';
 
 @Component({
     selector: 'header-user',
@@ -9,7 +10,7 @@ import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
     <nz-dropdown nzPlacement="bottomRight">
         <div class="item d-flex align-items-center px-sm" nz-dropdown>
             <nz-avatar [nzSrc]="settings.user.avatar" nzSize="small" class="mr-sm"></nz-avatar>
-            {{settings.user.name}}
+            {{settings.user['RealName']}}
         </div>
         <div nz-menu class="width-sm">
             <div nz-menu-item [nzDisable]="true"><i class="anticon anticon-user mr-sm"></i>个人中心</div>
@@ -23,6 +24,7 @@ import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 export class HeaderUserComponent implements OnInit {
     constructor(
         public settings: SettingsService,
+        private cacheService: CacheService,
         private router: Router,
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {}
 
@@ -31,17 +33,19 @@ export class HeaderUserComponent implements OnInit {
             this.settings.setUser(res);
         });
         // mock
-        const token = this.tokenService.get() || {
-            token: 'nothing',
-            name: 'Admin',
-            avatar: './assets/img/zorro.svg',
-            email: 'cipchk@qq.com'
-        };
-        this.tokenService.set(token);
+        // const token = this.tokenService.get() || {
+        //     token: 'nothing',
+        //     name: 'Admin',
+        //     avatar: './assets/img/zorro.svg',
+        //     email: '888cipchk@qq.com'
+        // };
+        // this.tokenService.set(token);
     }
 
     logout() {
         this.tokenService.clear();
+        this.cacheService.remove('User');
+        this.cacheService.remove('Menus');
         this.router.navigateByUrl(this.tokenService.login_url);
     }
 }

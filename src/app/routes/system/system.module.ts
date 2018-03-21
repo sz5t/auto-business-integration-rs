@@ -10,7 +10,7 @@ const routes: Routes = [
     {path: 'base-manager', component: BaseManagerComponent},
     {path: 'module-manager', component: ModuleManagerComponent},
     {path: 'role-manager', component: RoleManagerComponent},
-    {path: 'system-manager', component: UserManagerComponent}
+    {path: 'user-manager', component: UserManagerComponent}
 ];
 const COMPONENT_NOROUNT = [
     UserManagerComponent,

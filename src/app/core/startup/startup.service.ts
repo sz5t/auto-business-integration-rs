@@ -6,6 +6,7 @@ import { catchError } from 'rxjs/operators';
 import { MenuService, SettingsService, TitleService } from '@delon/theme';
 import { ACLService } from '@delon/acl';
 import { ITokenService, DA_SERVICE_TOKEN } from '@delon/auth';
+import {CacheService} from '@delon/cache';
 
 /**
  * 用于应用启动时
@@ -15,16 +16,19 @@ import { ITokenService, DA_SERVICE_TOKEN } from '@delon/auth';
 export class StartupService {
     constructor(
         private menuService: MenuService,
+        private cacheService: CacheService,
         private settingService: SettingsService,
         private aclService: ACLService,
         private titleService: TitleService,
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
         private httpClient: HttpClient,
-        private injector: Injector) { }
+        // private router: Router,
+        private injector: Injector) {
+    }
 
     private viaHttp(resolve: any, reject: any) {
         zip(
-            this.httpClient.get('assets/app-data.json')
+            this.httpClient.get('http://localhost:4200/assets/app-data.json')
         ).pipe(
             // 接收其他拦截器后产生的异常消息
             catchError(([appData]) => {
@@ -33,18 +37,23 @@ export class StartupService {
             })
         ).subscribe(([appData]) => {
 
+            const User: any = this.cacheService.getNone('User');
+            const Menus: any = this.cacheService.getNone('Menus');
             // application data
             const res: any = appData;
             // 应用信息：包括站点名、描述、年份
             this.settingService.setApp(res.app);
             // 用户信息：包括姓名、头像、邮箱地址
-            this.settingService.setUser(res.user);
+            this.settingService.setUser(User);
+            // this.settingService.setUser(res.user);
             // ACL：设置权限为全量
             this.aclService.setFull(true);
             // 初始化菜单
-            this.menuService.add(res.menu);
+            this.menuService.add(Menus);
+            // this.menuService.add(res.menu);
             // 设置页面标题的后缀
             this.titleService.suffix = res.app.name;
+
         },
         () => { },
         () => {
@@ -55,7 +64,7 @@ export class StartupService {
     private viaMock(resolve: any, reject: any) {
         // const tokenData = this.tokenService.get();
         // if (!tokenData.token) {
-        //     this.injector.get(Router).navigateByUrl('/passport/login');
+        //     this.injector.get(Router).navigateByUrl('/login');
         //     resolve({});
         //     return;
         // }
@@ -90,7 +99,7 @@ export class StartupService {
                         {
                             text: '快捷菜单',
                             icon: 'icon-rocket',
-                            shortcut_root: true
+                            // shortcut_root: true
                         }
                     ]
                 }
@@ -98,19 +107,15 @@ export class StartupService {
         );
 
         // 设置页面标题的后缀
-        this.titleService.suffix = app.name;
+        this.titleService.suffix = app.name ;
 
         resolve({});
     }
 
     load(): Promise<any> {
-        // only works with promises
-        // https://github.com/angular/angular/issues/15088
+
         return new Promise((resolve, reject) => {
-            // http
-            // this.viaHttp(resolve, reject);
-            // mock
-            this.viaHttp(resolve, reject);
+                this.viaHttp(resolve, reject);
         });
     }
 }

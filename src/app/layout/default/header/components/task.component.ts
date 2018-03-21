@@ -23,15 +23,7 @@ import { Component } from '@angular/core';
                         <p>Please tell me what happened in a few words, don't go into details.</p>
                     </div>
                 </div>
-                <div nz-row [nzType]="'flex'" [nzJustify]="'center'" [nzAlign]="'middle'" class="py-sm bg-grey-lighter-h point">
-                    <div nz-col [nzSpan]="4" class="text-center">
-                        <nz-avatar [nzSrc]="'./assets/img/2.png'" [nzSize]="'large'"></nz-avatar>
-                    </div>
-                    <div nz-col [nzSpan]="20">
-                        <strong>はなさき</strong>
-                        <p>ハルカソラトキヘダツヒカリ </p>
-                    </div>
-                </div>
+               
                 <div nz-row [nzType]="'flex'" [nzJustify]="'center'" [nzAlign]="'middle'" class="py-sm bg-grey-lighter-h point">
                     <div nz-col [nzSpan]="4" class="text-center">
                         <nz-avatar [nzSrc]="'./assets/img/3.png'" [nzSize]="'large'"></nz-avatar>

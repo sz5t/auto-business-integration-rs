@@ -5,7 +5,8 @@
 
 export const environment = {
     chore: false,
-    SERVER_URL: `./`,
+    SERVER_URL: `http://192.168.1.8:8016/eb43/Res/`,
+    // SERVER_URL: './',
     production: false,
     hmr: false,
     useHash: true

@@ -36,7 +36,7 @@ export class HeaderNotifyComponent implements OnInit {
 
     ngOnInit() {
         // mock data
-        this.count = this.settings.user.notifyCount || 12;
+        this.count = this.settings.user.notifyCount || 0;
     }
 
     private parseGroup(data: Observable<any[]>) {

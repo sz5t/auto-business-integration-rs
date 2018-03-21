@@ -5,7 +5,7 @@
             <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
             <div nz-form-item>
                 <div nz-form-control [nzValidateStatus]="userName">
-                    <nz-input formControlName="userName" [nzPlaceHolder]="'admin'" [nzSize]="'large'">
+                    <nz-input formControlName="userName" [nzPlaceHolder]="'登录账号'" [nzSize]="'large'">
                         <ng-template #prefix>
                             <i class="anticon anticon-user"></i>
                         </ng-template>
@@ -18,7 +18,7 @@
             </div>
             <div nz-form-item>
                 <div nz-form-control [nzValidateStatus]="password">
-                    <nz-input formControlName="password" [nzPlaceHolder]="'888888'" [nzType]="'password'" [nzSize]="'large'">
+                    <nz-input formControlName="password" [nzPlaceHolder]="'登录密码'" [nzType]="'password'" [nzSize]="'large'">
                         <ng-template #prefix>
                             <i class="anticon anticon-lock"></i>
                         </ng-template>
@@ -68,7 +68,7 @@
             </label>
         </div>
         <div nz-col [nzSpan]="12" class="text-right">
-            <a class="forgot" (click)="msg.error('请找欧阳锋')">忘记密码？</a>
+            <a class="forgot" (click)="msg.error('请联系：西安博道工业科技有限公司')">忘记密码？</a>
         </div>
     </div>
     <div nz-form-item>

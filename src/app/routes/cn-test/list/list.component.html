@@ -9,7 +9,7 @@
                 <button nz-button (click)="cancelRow()" class="editable-add-btn">取消</button>
             </div>
             <!-- [nzAjaxData]="list"   [nzLoading]="loading"-->
-            <nz-table #nzTable  [nzDataSource]="list" [nzShowSizeChanger]="true" [nzTotal]="total" [(nzPageIndex)]="pi" (nzPageIndexChange)="load()"
+            <nz-table #nzTable [nzDataSource]="list" [nzShowSizeChanger]="true" [nzTotal]="total" [(nzPageIndex)]="pi" (nzPageIndexChange)="load()"
                 [(nzPageSize)]="ps" (nzPageSizeChange)="load()">
                 <thead nz-thead>
                     <tr>
@@ -17,25 +17,13 @@
                             <label nz-checkbox [(ngModel)]="_allChecked" [nzIndeterminate]="_indeterminate" (ngModelChange)="_checkAll()">
                             </label>
                         </th>
-                        <th nz-th  nzShowSort nzSortKey="key">
-                            <span>key</span>
-                        </th>
-                        <th nz-th  nzShowSort nzSortKey="name">
-                            <span>name</span>
-                        </th>
-                        <th nz-th  nzShowSort nzSortKey="sex">
-                            <span>sex</span>
-                        </th>
-                        <th nz-th nzShowSort nzSortKey="age">
-                            <span>age</span>
-                            <nz-table-sort [(nzValue)]="sortMap.age" (nzValueChange)="sort('age',$event)"></nz-table-sort>
-                        </th>
-                        <th nz-th>
-                            <span>address</span>
-                        </th>
-                        <th nz-th>
-                            <span>Actions</span>
-                        </th>
+                        <ng-container *ngFor="let col of bs">
+                            <th nz-th nzShowSort *ngIf="!col.hidden">
+                                <span>{{col.title}}</span>
+                                <nz-table-sort [(nzValue)]="sortMap[col.field]" (nzValueChange)="sort(col.field,$event)"></nz-table-sort>
+                            </th>
+                        </ng-container>
+
                     </tr>
                 </thead>
                 <tbody nz-tbody>
@@ -44,40 +32,22 @@
                             <label nz-checkbox [(ngModel)]="data.checked" (ngModelChange)="refChecked()">
                             </label>
                         </td>
-                        <td nz-td>{{data.key}}</td>
-                        <td nz-td>
-                            <ng-container *ngIf="!editCache[data.key].edit">
-                                {{data.name}}
-                            </ng-container>
-                            <ng-container *ngIf="editCache[data.key].edit" CnGridEditorDirective   [(ngModel)]="editCache[data.key].data.name"  [config]="tested"   [value]="editCache[data.key].data.name" (updateValue)="userNameChange($event)" >
-                                    <!-- [(ngModel)]="editCache[data.key].data.name" -->
-                              
-                            </ng-container>
-                            <!-- {{editCache[data.key].data.name}} -->
-                        </td>
-                        <td nz-td>
-                            <ng-container *ngIf="!editCache[data.key].edit">
-                                {{data.sex}}
-                            </ng-container>
-                            <ng-container *ngIf="editCache[data.key].edit" CnGridEditorDirective   [(ngModel)]="editCache[data.key].data.sex"  [config]="selected"   [value]="editCache[data.key].data.sex" (updateValue)="userNameChange($event)" >
-                            </ng-container>
-                        </td>
+                        <ng-container *ngFor="let col of bs">
+                            <td nz-td *ngIf="!col.hidden">
+                                <ng-container *ngIf="col.editor">
+                                    <div *ngIf="!editCache[data.key].edit">
+                                        {{data[col.field]}}
+                                    </div>
+                                    <ng-container CnGridEditorDirective *ngIf="editCache[data.key].edit" [(ngModel)]="editCache[data.key].data[col.field]" [config]="col.editor.options"
+                                        [value]="editCache[data.key].data[col.field]" (updateValue)="userNameChange($event)">
+                                    </ng-container>
+                                </ng-container>
+                                <ng-container *ngIf="!col.editor">
+                                    {{data[col.field]}}
+                                </ng-container>
 
-                        <td nz-td>              
-                                {{data.age}}
-                        </td>
-                        <td nz-td>                          
-                                {{data.address}}
-                        </td>
-                        <td nz-td>
-                            <a (click)="startEdit(data.key)">Edit</a>
-                            <!-- <a (click)="showMsg('Edit')">Edit</a> -->
-                            <span nz-table-divider></span>
-                            <nz-popconfirm [nzTitle]="'Are you sure？'" [nzOkText]="'ok'" [nzCancelText]="'cancel'" (nzOnConfirm)="showMsg('has deleted')"
-                                (nzOnCancel)="showMsg('cancel delete')">
-                                <a nz-popconfirm>Delete</a>
-                            </nz-popconfirm>
-                        </td>
+                            </td>
+                        </ng-container>
                     </tr>
                 </tbody>
             </nz-table>

@@ -24,7 +24,8 @@ const routes: Routes = [
             { path: '', redirectTo: 'dashboard', pathMatch: 'full'},
             { path: 'dashboard', component: DashboardComponent, data: {title: 'SinoForce' }},
             { path: 'system', loadChildren: './system/system.module#SystemModule'},
-            { path: 'settings', loadChildren: './settings/settings.module#SettingsModule'}
+            { path: 'settings', loadChildren: './settings/settings.module#SettingsModule'},
+            { path: 'test', loadChildren: './cn-test/cn-test.module#CnTestModule'}
             // 业务子模块
             // { path: 'widgets', loadChildren: './widgets/widgets.module#WidgetsModule' }
         ]

@@ -73,7 +73,12 @@
                       "text": "业务设置",
                       "link": "/settings/business-setting",
                       "i18n": ""
-                    }
+                    },
+                    {
+                        "text": "测试页面",
+                        "link": "/test/list",
+                        "i18n": ""
+                      }
                   ]
                 },
                 {

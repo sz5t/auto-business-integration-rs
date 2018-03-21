@@ -13,8 +13,6 @@ import { CallbackComponent } from './callback/callback.component';
 import { Exception403Component } from './exception/403.component';
 import { Exception404Component } from './exception/404.component';
 import { Exception500Component } from './exception/500.component';
-import {SystemModule} from "./system/system.module";
-import {ACLGuard} from '@delon/acl';
 import {AuthGuard} from '@core/utility/auth-guard';
 
 @NgModule({

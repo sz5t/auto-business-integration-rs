@@ -101,88 +101,91 @@ export class UserLoginComponent implements OnDestroy {
                 this.onlineUser = new OnlineUser();
                 this.onlineUser.Identify = this.userName.value;
                 this.onlineUser.Password = Md5.hashStr(this.password.value).toString().toUpperCase();
-                this.httpClient.request<any>(
-                    'POST',
-                     'SinoForce.Data.OnlineUser',
-                    {
-                        body: this.onlineUser
-                    })
-                    .toPromise()
-                    .then(response => {
-                        this.onlineUser = {...response.Data};
-                        if (!this.onlineUser.Online) {
-                            this.error = this.onlineUser.Message;
-                            return null;
-                        }
-                        return response;
-                }).then( param => {
-                        if (param) {
-                            this.tokenService.set({
-                                token: param.Data
-                            });
-                            this.httpClient.request<any>(
-                                'GET',
-                                 'SinoForce.Data.AppUser/' + param.Data.UserId,
-                                {
-                                    headers: this.setHeaders()
-                                }).toPromise()
-                                .then((response) => {
-                                    this.appUser = {...response.Data};
-                                    this.settingsService.setUser(this.appUser);
-                                    this.cacheService.set('User', this.appUser);
-                                    return this.httpClient.request(
-                                        'GET',
-                                         'SinoForce.Data.SysCommonCode',
-                                        {
-                                            params: {
-                                                name : '{WEB应用运行平台}',
-                                                ApplyId : 'ApplyId'
-                                            },
-                                            headers: this.setHeaders()
-                                        }
-                                    ).toPromise();
-                                })
-                                .then( commonCode => {
-                                    return this.httpClient.request<any>(
-                                        'GET',
-                                         'SinoForce.AppProject.AppModuleConfig',
-                                        {
-                                            params: {
-                                                ProjId: this.onlineUser.ProjId,
-                                                ApplyId: commonCode['Data'][0].Id,
-                                                PlatCustomerId: commonCode['Data'][0].PlatCustomerId
-                                            },
-                                            headers: this.setHeaders()
-                                        }
-                                    ).toPromise();
-                                } )
-                                .then((menuList) => {
 
-                                    this.menuService.clear();
-                                    this.menuService.add(JSON.parse(menuList.Data[0].ConfigData));
-                                    this.cacheService.set('Menus', JSON.parse(menuList.Data[0].ConfigData));
-                                    return this.httpClient.request(
-                                        'GET',
-                                         'SinoForce.Data.AppPermission/Func.SinoForceWeb端',
-                                        {
-                                            headers: this.setHeaders()
-                                        }
-                                    ).toPromise();
-                                })
-                                .then((appPermission) => {
-                                    if (appPermission['Status'].toString() === '200') {
-                                        this.router.navigate(['/']);
-                                    }
-                                })
-                                .catch(errMsg => {
-                                    this.error = errMsg;
-                                });
-                        }
-                    }
+              this.router.navigate(['/']);
+                // this.httpClient.request<any>(
+                //     'POST',
+                //      'SinoForce.Data.OnlineUser',
+                //     {
+                //         body: this.onlineUser
+                //     })
+                //     .toPromise()
+                //     .then(response => {
+                //         this.onlineUser = {...response.Data};
+                //         if (!this.onlineUser.Online) {
+                //             this.error = this.onlineUser.Message;
+                //             return null;
+                //         }
+                //         return response;
+                // }).then( param => {
+                //         if (param) {
+                //
+                //             this.tokenService.set({
+                //                 token: param.Data
+                //             });
+                //             this.httpClient.request<any>(
+                //                 'GET',
+                //                  'SinoForce.Data.AppUser/' + param.Data.UserId,
+                //                 {
+                //                     headers: this.setHeaders()
+                //                 }).toPromise()
+                //                 .then((response) => {
+                //                     this.appUser = {...response.Data};
+                //                     this.settingsService.setUser(this.appUser);
+                //                     this.cacheService.set('User', this.appUser);
+                //                     return this.httpClient.request(
+                //                         'GET',
+                //                          'SinoForce.Data.SysCommonCode',
+                //                         {
+                //                             params: {
+                //                                 name : '{WEB应用运行平台}',
+                //                                 ApplyId : 'ApplyId'
+                //                             },
+                //                             headers: this.setHeaders()
+                //                         }
+                //                     ).toPromise();
+                //                 })
+                //                 .then( commonCode => {
+                //                     return this.httpClient.request<any>(
+                //                         'GET',
+                //                          'SinoForce.AppProject.AppModuleConfig',
+                //                         {
+                //                             params: {
+                //                                 ProjId: this.onlineUser.ProjId,
+                //                                 ApplyId: commonCode['Data'][0].Id,
+                //                                 PlatCustomerId: commonCode['Data'][0].PlatCustomerId
+                //                             },
+                //                             headers: this.setHeaders()
+                //                         }
+                //                     ).toPromise();
+                //                 } )
+                //                 .then((menuList) => {
+                //
+                //                     this.menuService.clear();
+                //                     this.menuService.add(JSON.parse(menuList.Data[0].ConfigData));
+                //                     this.cacheService.set('Menus', JSON.parse(menuList.Data[0].ConfigData));
+                //                     return this.httpClient.request(
+                //                         'GET',
+                //                          'SinoForce.Data.AppPermission/Func.SinoForceWeb端',
+                //                         {
+                //                             headers: this.setHeaders()
+                //                         }
+                //                     ).toPromise();
+                //                 })
+                //                 .then((appPermission) => {
+                //                     if (appPermission['Status'].toString() === '200') {
+                //                         this.router.navigate(['/']);
+                //                     }
+                //                 })
+                //                 .catch(errMsg => {
+                //                     this.error = errMsg;
+                //                 });
+                //         }
+                //     }
 
-                ).catch( errMsg => {
-                    this.error = errMsg;
-                });
+                // ).catch( errMsg => {
+                //     this.error = errMsg;
+                // });
            }
         }, 1000);
 

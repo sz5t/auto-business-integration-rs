@@ -19,6 +19,7 @@ registerLocaleData(localeZhHans);
 
 // JSON-Schema form
 import { JsonSchemaModule } from '@shared/json-schema/json-schema.module';
+import {ApiService} from '@core/utility/api-service';
 
 export function StartupServiceFactory(startupService: StartupService): Function {
     return () => startupService.load();
@@ -37,9 +38,10 @@ export function StartupServiceFactory(startupService: StartupService): Function 
         SharedModule,
         LayoutModule,
         JsonSchemaModule,
-        RoutesModule
+        RoutesModule,
+
     ],
-    providers: [
+    providers: [ApiService,
         { provide: LOCALE_ID, useValue: 'zh-Hans' },
         { provide: HTTP_INTERCEPTORS, useClass: SimpleInterceptor, multi: true},
         { provide: HTTP_INTERCEPTORS, useClass: DefaultInterceptor, multi: true},

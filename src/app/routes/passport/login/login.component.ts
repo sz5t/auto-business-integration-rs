@@ -5,10 +5,12 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd';
 import { SocialService, SocialOpenType, ITokenService, DA_SERVICE_TOKEN } from '@delon/auth';
 import { ReuseTabService } from '@delon/abc';
-import { environment } from '@env/environment';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Md5} from 'ts-md5/dist/md5';
 import {CacheService} from '@delon/cache';
+import {ApiService} from '@core/utility/api-service';
+import {environment} from '@env/environment';
+
 
 @Component({
     selector: 'passport-login',
@@ -17,13 +19,11 @@ import {CacheService} from '@delon/cache';
     providers: [ SocialService ]
 })
 export class UserLoginComponent implements OnDestroy {
-
     form: FormGroup;
     error = '';
     type = 0;
     loading = false;
     onlineUser: OnlineUser;
-
     appUser: AppUser;
     constructor(
         fb: FormBuilder,
@@ -34,13 +34,14 @@ export class UserLoginComponent implements OnDestroy {
         private settingsService: SettingsService,
         private socialService: SocialService,
         private menuService: MenuService,
+        private apiService: ApiService,
         @Optional() @Inject(ReuseTabService,
             ) private reuseTabService: ReuseTabService,
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
         this.form = fb.group({
             userName: [null, [Validators.required, Validators.minLength(1)]],
             password: [null, Validators.required],
-            mobile: [null, [Validators.required, Validators.pattern(/^1\d{10}$/)]],
+            mobile: [null, [Validators.required, Validators.minLength(1)]],
             captcha: [null, [Validators.required]],
             remember: [true]
         });
@@ -57,6 +58,10 @@ export class UserLoginComponent implements OnDestroy {
 
     switch(ret: any) {
         this.type = ret.index;
+        // if(ret.index === 0)
+        //   console.log('配置平台');
+        // else
+        //   console.log('运行平台');
     }
 
     // region: get captcha
@@ -73,15 +78,6 @@ export class UserLoginComponent implements OnDestroy {
         }, 1000);
     }
 
-    setHeaders() {
-        const userToken = this.tokenService.get().token;
-        return new HttpHeaders()
-            .set('Credential', userToken['Token'] ? userToken['Token'] : '')
-            .set('X-Requested-With', 'XMLHttpRequest')
-            .set('Cache-Control', 'no-cache');
-    }
-    // endregion
-
     submit() {
         this.error = '';
         if (this.type === 0) {
@@ -96,107 +92,86 @@ export class UserLoginComponent implements OnDestroy {
         // mock http
         this.loading = false;
         setTimeout(() => {
+          this.onlineUser = new OnlineUser();
             this.loading = false;
             if (this.type === 0) {
-                this.onlineUser = new OnlineUser();
-                this.onlineUser.Identify = this.userName.value;
-                this.onlineUser.Password = Md5.hashStr(this.password.value).toString().toUpperCase();
+              this.onlineUser.Identify = this.userName.value;
+              this.onlineUser.Password = Md5.hashStr(this.password.value).toString().toUpperCase();
+              environment.SERVER_URL = 'http://192.168.1.8:8016/f277/Res/';
+              environment.COMMONCODE = '{WEB前端标识}';
+           }else {
+              this.onlineUser.Identify = this.mobile.value;
+              this.onlineUser.Password = Md5.hashStr(this.captcha.value).toString().toUpperCase();
+              environment.SERVER_URL = 'http://192.168.1.8:8016/eb43/Res/';
+              environment.COMMONCODE = '{WEB应用运行平台}';
+            }
 
-              this.router.navigate(['/']);
-                // this.httpClient.request<any>(
-                //     'POST',
-                //      'SinoForce.Data.OnlineUser',
-                //     {
-                //         body: this.onlineUser
-                //     })
-                //     .toPromise()
-                //     .then(response => {
-                //         this.onlineUser = {...response.Data};
-                //         if (!this.onlineUser.Online) {
-                //             this.error = this.onlineUser.Message;
-                //             return null;
-                //         }
-                //         return response;
-                // }).then( param => {
-                //         if (param) {
-                //
-                //             this.tokenService.set({
-                //                 token: param.Data
-                //             });
-                //             this.httpClient.request<any>(
-                //                 'GET',
-                //                  'SinoForce.Data.AppUser/' + param.Data.UserId,
-                //                 {
-                //                     headers: this.setHeaders()
-                //                 }).toPromise()
-                //                 .then((response) => {
-                //                     this.appUser = {...response.Data};
-                //                     this.settingsService.setUser(this.appUser);
-                //                     this.cacheService.set('User', this.appUser);
-                //                     return this.httpClient.request(
-                //                         'GET',
-                //                          'SinoForce.Data.SysCommonCode',
-                //                         {
-                //                             params: {
-                //                                 name : '{WEB应用运行平台}',
-                //                                 ApplyId : 'ApplyId'
-                //                             },
-                //                             headers: this.setHeaders()
-                //                         }
-                //                     ).toPromise();
-                //                 })
-                //                 .then( commonCode => {
-                //                     return this.httpClient.request<any>(
-                //                         'GET',
-                //                          'SinoForce.AppProject.AppModuleConfig',
-                //                         {
-                //                             params: {
-                //                                 ProjId: this.onlineUser.ProjId,
-                //                                 ApplyId: commonCode['Data'][0].Id,
-                //                                 PlatCustomerId: commonCode['Data'][0].PlatCustomerId
-                //                             },
-                //                             headers: this.setHeaders()
-                //                         }
-                //                     ).toPromise();
-                //                 } )
-                //                 .then((menuList) => {
-                //
-                //                     this.menuService.clear();
-                //                     this.menuService.add(JSON.parse(menuList.Data[0].ConfigData));
-                //                     this.cacheService.set('Menus', JSON.parse(menuList.Data[0].ConfigData));
-                //                     return this.httpClient.request(
-                //                         'GET',
-                //                          'SinoForce.Data.AppPermission/Func.SinoForceWeb端',
-                //                         {
-                //                             headers: this.setHeaders()
-                //                         }
-                //                     ).toPromise();
-                //                 })
-                //                 .then((appPermission) => {
-                //                     if (appPermission['Status'].toString() === '200') {
-                //                         this.router.navigate(['/']);
-                //                     }
-                //                 })
-                //                 .catch(errMsg => {
-                //                     this.error = errMsg;
-                //                 });
-                //         }
-                //     }
+          // this.tokenService.clear();
 
-                // ).catch( errMsg => {
-                //     this.error = errMsg;
-                // });
-           }
+          this.apiService.post('SinoForce.Data.OnlineUser', this.onlineUser).toPromise()
+            .then(response => {
+              this.onlineUser = {...response.Data};
+              if (!this.onlineUser.Online) {
+                this.error = this.onlineUser.Message;
+                return null;
+              }
+              this.tokenService.set({
+                token: JSON.stringify({Token: response.Data.Token , RealName: response.Data.RealName, MailAddress: response.Data.MailAddress})
+              });
+              return response;
+            }).then( param => {
+              if (param) {
+                this.apiService.get('SinoForce.Data.AppUser/' + param.Data.UserId)
+                  .toPromise()
+                  .then((response) => {
+                    this.appUser = {...response.Data};
+                    this.settingsService.setUser(this.appUser);
+                    this.cacheService.set('User', this.appUser);
+                    return this.apiService.get('SinoForce.Data.SysCommonCode', {
+                      name : environment.COMMONCODE,
+                      ApplyId : 'ApplyId'
+                    }).toPromise();
+                  })
+                  .then( commonCode => {
+                    return this.apiService.get('SinoForce.AppProject.AppModuleConfig',{
+                      ProjId: this.onlineUser.ProjId,
+                      ApplyId: commonCode['Data'][0].Id,
+                      PlatCustomerId: commonCode['Data'][0].PlatCustomerId
+                    } ).toPromise();
+                  } )
+                  .then((menuList) => {
+
+                    if(environment.COMMONCODE === '{WEB应用运行平台}') {
+                      this.menuService.clear();
+                      this.menuService.add(JSON.parse(menuList.Data[0].ConfigData));
+                      this.cacheService.set('Menus', JSON.parse(menuList.Data[0].ConfigData));
+                    }
+                    return this.apiService.get('SinoForce.Data.AppPermission/Func.SinoForceWeb端').toPromise();
+                  })
+                  .then((appPermission) => {
+                    if (appPermission['Status'].toString() === '200') {
+                      this.router.navigate(['/']);
+                    }
+                  })
+                  .catch(errMsg => {
+                    this.error = errMsg;
+                  });
+              }
+            }
+
+          ).catch( errMsg => {
+            this.error = errMsg ;
+          });
         }, 1000);
 
 
         // 清空路由复用信息
-        if(this.reuseTabService){
+        if (this.reuseTabService){
             this.reuseTabService.clear();
         }
         // 保存当前用户信息
         this.tokenService.set({
-            token: '000'
+            token: 'unll'
         });
     }
 
@@ -261,10 +236,10 @@ export class OnlineUser{
     ProjList: any[];
     TryTimes: number;
     RemainTimes: number;
-    Token: string;
     UserId: string;
     ValidCode: string;
     ValidCodeId: string;
+    Token: string;
 
 }
 
@@ -287,6 +262,4 @@ export class AppUser implements  User {
     Remark: string;
     Status: string;
     UserType: string;
-    name = this.RealName;
-    email = this.MailAddress;
 }

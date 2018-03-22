@@ -1,7 +1,6 @@
 
 <ng-container *ngIf="config.rows">
   <div nz-row [nzGutter]="8" *ngFor="let row of config.rows">
-
     <div nz-col *ngFor="let c of row.row.cols"
          [nzSpan]="c.span"
          [nzSm]="c.size.nzSm"
@@ -14,14 +13,33 @@
   </div>
 </ng-container>
 
-<nz-tabset *ngIf="config.tabs" [nzType]="'line'">
-  <nz-tab *ngFor="let tab of config.tabs">
-    <ng-template #nzTabHeading>
-      <i [ngClass]="tab.icon"></i>
-      {{tab.title}}
+<nz-card *ngIf="config.tabs">
+  <ng-template #body>
+    <nz-tabset [nzType]="'line'">
+      <nz-tab *ngFor="let tab of config.tabs">
+        <ng-template #nzTabHeading>
+          <i [ngClass]="tab.icon"></i>
+          {{tab.title}}
+        </ng-template>
+        <ng-container *ngFor="let cfg of tab.viewCfg">
+          <cn-component-resolver  [config]="cfg"></cn-component-resolver>
+        </ng-container>
+        <!-- <cn-layout-resolver [config]="tab.viewCfg"></cn-layout-resolver>-->
+      </nz-tab>
+    </nz-tabset>
+  </ng-template>
+</nz-card>
+
+<nz-popover *ngIf="!config.rows && !config.tabs" [nzTitle]="'组件选择'" [nzPlacement]="'right'" [nzTrigger]="'hover'">
+  <ng-template #nzTemplate>
+    <cn-context-menu [menuConfig]="menuConfig" (selectedMenu)="getMenuData($event)"></cn-context-menu>
+  </ng-template>
+  <nz-card nz-popover>
+    <ng-template #title>{{config.title}}</ng-template>
+    <ng-template #body>
+      <cn-component-resolver  [config]="config"></cn-component-resolver>
     </ng-template>
-    <cn-layout-resolver [config]="tab.viewCfg"></cn-layout-resolver>
-  </nz-tab>
-</nz-tabset>
-<cn-component-resolver *ngIf="!config.rows" [config]="config"></cn-component-resolver>
+  </nz-card>
+</nz-popover>
+
 

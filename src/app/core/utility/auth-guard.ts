@@ -13,17 +13,17 @@ export class AuthGuard implements CanActivate
 
     }
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){
-        //todo:token 只是用来判断是否匿名登录，需要完善：根据不同的token来进行具体模块的权限控制
-        if(!this.tokenService.get().token){
-            this.router.navigate( [this.tokenService.login_url]);
-            return false;
-        }
-        else {
-            // console.log('当前要访问的路由是：',state.url);
-            // console.log('当前访问者的token是：',this.tokenService.get().token);
-            return true;
-        }
+        if (!this.tokenService.get().token){
+            // console.log(this.tokenService.get().token,state.url);
+              this.router.navigate( [this.tokenService.login_url]);
+              return false;
+          }
+          else{
+              const token: any = JSON.parse(this.tokenService.get().token)
+              //todo:token 只是用来判断是否匿名登录，需要完善：根据不同的token来进行具体模块的权限控制
+              // console.log(token.UserId,state.url);
+              return true;
+          }
 
     }
-
 }

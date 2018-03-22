@@ -7,6 +7,7 @@ import { MenuService, SettingsService, TitleService } from '@delon/theme';
 import { ACLService } from '@delon/acl';
 import { ITokenService, DA_SERVICE_TOKEN } from '@delon/auth';
 import {CacheService} from '@delon/cache';
+import {environment} from '@env/environment';
 
 /**
  * 用于应用启动时
@@ -36,7 +37,6 @@ export class StartupService {
                 return [appData];
             })
         ).subscribe(([appData]) => {
-
             const User: any = this.cacheService.getNone('User');
             const Menus: any = this.cacheService.getNone('Menus');
             // application data
@@ -44,13 +44,16 @@ export class StartupService {
             // 应用信息：包括站点名、描述、年份
             this.settingService.setApp(res.app);
             // 用户信息：包括姓名、头像、邮箱地址
-            // this.settingService.setUser(User);
-            this.settingService.setUser(res.user);
+            this.settingService.setUser(User);
+            // this.settingService.setUser(res.user);
             // ACL：设置权限为全量
             this.aclService.setFull(true);
             // 初始化菜单
-            // this.menuService.add(Menus);
+            if(environment.COMMONCODE !== '{WEB应用运行平台}')
             this.menuService.add(res.menu);
+            else
+             this.cacheService.set('Menus', res.menu);
+            // this.menuService.add(res.menu);
             // 设置页面标题的后缀
             this.titleService.suffix = res.app.name;
 

@@ -131,7 +131,8 @@ const DIRECTIVES = [
       NzRangePickerComponent,
       NzRadioGroupComponent,
       NzCheckboxGroupComponent,
-      BsnDataTableComponent
+      BsnDataTableComponent,
+      FormResolverComponent
     ]
 })
 export class SharedModule { }

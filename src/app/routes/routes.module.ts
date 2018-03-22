@@ -14,9 +14,11 @@ import { Exception403Component } from './exception/403.component';
 import { Exception404Component } from './exception/404.component';
 import { Exception500Component } from './exception/500.component';
 import {AuthGuard} from '@core/utility/auth-guard';
+import {AlainAuthModule, DA_STORE_TOKEN, MemoryStore} from '@delon/auth';
+import {ModuleWithProviders} from '@angular/compiler/src/core';
 
 @NgModule({
-    imports: [ SharedModule, RouteRoutingModule],
+    imports: [ SharedModule, RouteRoutingModule, AlainAuthModule.forRoot({ login_url: '/passport/login' })],
     declarations: [
         DashboardComponent,
         // passport pages
@@ -30,7 +32,15 @@ import {AuthGuard} from '@core/utility/auth-guard';
         Exception500Component
     ],
     providers: [
-        AuthGuard
+      AuthGuard
     ]
 })
-export class RoutesModule {}
+
+export class RoutesModule {
+  static forRoot(): ModuleWithProviders{
+    return {
+      ngModule: RoutesModule,
+      providers: [{ provide: DA_STORE_TOKEN, useClass: MemoryStore }]
+    };
+  }
+}

@@ -1,56 +1,13 @@
-<nz-popover [nzTitle]="'标题'" [nzTrigger]="'hover'">
-  <nz-card (mousedown)="createMenu($event)">
+<nz-popover [nzTitle]="'组件选择'" [nzPlacement]="'right'" [nzTrigger]="'hover'">
+  <ng-template #nzTemplate>
+   <cn-context-menu [menuConfig]="menuConfig" (selectedMenu)="getMenuData($event)"></cn-context-menu>
+  </ng-template>
+  <nz-card nz-popover>
     <ng-template #title>{{config.title}}</ng-template>
     <ng-template #body>
-      <pre>{{config | json}}</pre>
+      <div #dynamicComponent></div>
       <!-- <cn-form-resolver></cn-form-resolver>-->
     </ng-template>
   </nz-card>
-  <ng-template #nzTemplate>
-    <ul nz-menu [nzMode]="'vertical'" style="width: 240px;">
-      <li nz-submenu>
-        <span title><i class="anticon anticon-mail"></i> Navigation One</span>
-        <ul>
-          <li nz-menu-group>
-            <span title>Item 1</span>
-            <ul>
-              <li nz-menu-item>Option 1</li>
-              <li nz-menu-item>Option 2</li>
-            </ul>
-          </li>
-          <li nz-menu-group>
-            <span title>Item 2</span>
-            <ul>
-              <li nz-menu-item>Option 3</li>
-              <li nz-menu-item>Option 4</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li nz-submenu>
-        <span title><i class="anticon anticon-appstore"></i> Navigation Two</span>
-        <ul>
-          <li nz-menu-item>Option 5</li>
-          <li nz-menu-item>Option 6</li>
-          <li nz-submenu>
-            <span title>Submenu</span>
-            <ul>
-              <li nz-menu-item>Option 7</li>
-              <li nz-menu-item>Option 8</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li nz-submenu>
-        <span title><i class="anticon anticon-setting"></i> Navigation Three</span>
-        <ul>
-          <li nz-menu-item>Option 9</li>
-          <li nz-menu-item>Option 10</li>
-          <li nz-menu-item>Option 11</li>
-        </ul>
-      </li>
-    </ul>
-  </ng-template>
 </nz-popover>
-
 

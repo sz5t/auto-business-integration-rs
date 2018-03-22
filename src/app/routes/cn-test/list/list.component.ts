@@ -29,11 +29,107 @@ export class ListComponent implements OnInit {
   
       ngOnInit() {
       } */
+    // 用来分解grid标识
+    tableEditor = {
+        id: {
+            hidden: false
+        },
+        name: {
+            editor: {
+                type: 'input',
+                options: {
+                    'type': 'input',
+                    'labelSize': '6',
+                    'controlSize': '10',
+                    'inputType': 'text',
+                }
+            },
+            hidden: false
+        },
+        sex: {
+            hidden: false
+        },
+        age: {
+            hidden: false
+        },
+        adress: {
+            hidden: false
+        }
+    };
 
+    bs= [
+        { title: '主键', field: 'key', width: 80 ,hidden:true, editor: {
+            type: 'input',
+            options: {
+                'type': 'input',
+                'labelSize': '6',
+                'controlSize': '10',
+                'inputType': 'text',
+            }
+        }},
+        {
+            title: '姓名', field: 'name', width: 80,
+            editor: {
+                type: 'input',
+                options: {
+                    'type': 'input',
+                    'labelSize': '6',
+                    'controlSize': '10',
+                    'inputType': 'text',
+                }
+            }
+        },
+        {
+            title: '性别', field: 'sex', width: 80, hidden: false,
+            editor: {
+                type: 'select',
+                options: {
+                    'type': 'select',
+                    'labelSize': '6',
+                    'controlSize': '10',
+                    'inputType': 'submit',
+                    'name': 'sex',
+                    'label': '性别',
+                    'notFoundContent': '',
+                    'selectModel': false,
+                    'showSearch': true,
+                    'placeholder': '-请选择-',
+                    'disabled': false,
+                    'size': 'default',
+                    'clear': true,
+                    'width': '60px',
+                    'options': [
+                        {
+                            'label': '男',
+                            'value': '1',
+                            'disabled': false
+                        },
+                        {
+                            'label': '女',
+                            'value': '2',
+                            'disabled': false
+                        }
+                    ]
+                }
+            }
+        },
+        { title: '年龄', field: 'age', width: 80, hidden:false,
+        editor: {
+            type: 'input',
+            options: {
+                'type': 'input',
+                'labelSize': '6',
+                'controlSize': '10',
+                'inputType': 'text',
+            }
+        } },
+        { title: '地址', field: 'address', width: 80, hidden:false,
+       }
+    ];
 
     pi = 1;
     ps = 10;
-    total = 200; // mock total
+    total = 5; // mock total
     list = [];
     loading = false;
     args: any = {};
@@ -328,73 +424,72 @@ export class ListComponent implements OnInit {
         'viewId': '0001',
         'component': 'form_view',
         'keyId': 'id',
-        'nzIsPagination':false, // 是否分页
-        'nzShowTotal':false,// 是否显示总数据量
-        'nzPageSizeSelectorValues':[5,10, 20, 30, 40, 50],
-        'nzLoading':false, // 是否显示加载中
-        'nzBordered':false,// 是否显示边框
+        'nzIsPagination': false, // 是否分页
+        'nzShowTotal': false,// 是否显示总数据量
+        'pageSize': 5, //默认每页数据条数
+        'nzPageSizeSelectorValues': [5, 10, 20, 30, 40, 50],
+        'nzLoading': false, // 是否显示加载中
+        'nzBordered': false,// 是否显示边框
         'formHeader': {
             'header': [
-                {title: '主键', field: 'id', width: 80 },
-                {title: '姓名', field: 'name', width: 80,hidden: false },
-                {title: '性别', field: 'sex', width: 80,hidden: false },
-                {title: '年龄', field: 'age', width: 80,hidden: false },
-                {title: '地址', field: 'adress', width: 80,hidden: false }
+                { title: '主键', field: 'id', width: 80 },
+                {
+                    title: '姓名', field: 'name', width: 80,
+                    editor: {
+                        type: 'input',
+                        options: {
+                            'type': 'input',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'text',
+                        }
+                    }
+                },
+                {
+                    title: '性别', field: 'sex', width: 80, hidden: false,
+                    editor: {
+                        type: 'select',
+                        options: {
+                            'type': 'select',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'submit',
+                            'name': 'sex',
+                            'label': '性别',
+                            'notFoundContent': '',
+                            'selectModel': false,
+                            'showSearch': true,
+                            'placeholder': '-请选择-',
+                            'disabled': false,
+                            'size': 'default',
+                            'clear': true,
+                            'width': '60px',
+                            'options': [
+                                {
+                                    'label': '男',
+                                    'value': '1',
+                                    'disabled': false
+                                },
+                                {
+                                    'label': '女',
+                                    'value': '2',
+                                    'disabled': false
+                                }
+                            ]
+                        }
+                    }
+                },
+                { title: '年龄', field: 'age', width: 80, hidden: false },
+                { title: '地址', field: 'adress', width: 80, hidden: false }
             ],
             'button': [
-                { 'name':'addRow','class':'editable-add-btn','text':'新增' },
-                { 'name':'updateRow','class':'editable-add-btn','text':'修改' },
-                { 'name':'deleteRow','class':'editable-add-btn','text':'删除' },
-                { 'name':'saveRow','class':'editable-add-btn','text':'保存' },
-                { 'name':'cancelRow','class':'editable-add-btn','text':'取消' }
+                { 'name': 'addRow', 'class': 'editable-add-btn', 'text': '新增' },
+                { 'name': 'updateRow', 'class': 'editable-add-btn', 'text': '修改' },
+                { 'name': 'deleteRow', 'class': 'editable-add-btn', 'text': '删除' },
+                { 'name': 'saveRow', 'class': 'editable-add-btn', 'text': '保存' },
+                { 'name': 'cancelRow', 'class': 'editable-add-btn', 'text': '取消' }
             ]
-        },
-        'formContent': [
-            {
-                'type': 'input',
-                'inputType': 'text',
-                'name': 'id'
-            },
-            {
-                'type': 'input',
-                'inputType': 'text',
-                'name': 'execSqlStr'
-            },
-            {
-                'type': 'select',
-                'placeholder': '--请选择--',
-                'options': [
-                    {
-                        'text': '执行一次',
-                        'value': '1'
-                    },
-                    {
-                        'text': '执行两次',
-                        'value': '2'
-                    }
-                ],
-                'name': 'execSqlMethod',
-                'value': '',
-                'inputClass': 'input-medium'
-            },
-            {
-                'type': 'select',
-                'placeholder': '--请选择--',
-                'options': [
-                    {
-                        'text': '新增状态',
-                        'value': 'new'
-                    },
-                    {
-                        'text': '更新状态',
-                        'value': 'modify'
-                    }
-                ],
-                'name': 'execSqlStatus',
-                'value': '',
-                'inputClass': 'input-medium'
-            }
-        ]
+        }
     }
 
 

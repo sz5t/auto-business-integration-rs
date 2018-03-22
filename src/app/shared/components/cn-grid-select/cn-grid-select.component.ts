@@ -20,7 +20,7 @@ export class CnGridSelectComponent implements OnInit {
        if(this.value){
          let selected;
          this.config.options.forEach(element => {
-           if(element.value===this.value){
+           if(element.value===this.value.data){
             selected=element;
            }
          }); 
@@ -32,10 +32,12 @@ export class CnGridSelectComponent implements OnInit {
   userNameChange(name?){
     console.log('select值发生变化',name);
     if(name){
-      this.updateValue.emit(name.value);
+      this.value.data=name.value;
+      this.updateValue.emit(this.value);
     }
     else{
-      this.updateValue.emit(null);
+      this.value.data=null;
+      this.updateValue.emit(this.value);
     }
 
  }

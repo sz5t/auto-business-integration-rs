@@ -61,7 +61,7 @@ import {
   // NzAffixModule,
   // NzAnchorModule,
   NzAvatarModule,
-  NzUploadModule
+  NzUploadModule,
   // SERVICES
   NzNotificationService,
   NzMessageService, NzCardModule

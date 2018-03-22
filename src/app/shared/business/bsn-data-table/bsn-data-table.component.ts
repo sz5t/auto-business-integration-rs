@@ -28,53 +28,12 @@ export class BsnDataTableComponent implements OnInit {
 
     pi = 1;
     ps = 10;
-    total = 10; // mock total
-    list = [];
+    total = 5; // mock total
     loading = false;
     args: any = {};
     _indeterminate = false;
     _allChecked = false;
-
     events: any[] = [];
-
-    tested = {
-        'type': 'input',
-        'labelSize': '6',
-        'controlSize': '10',
-        'inputType': 'text',
-        'name': 'userName',
-        'width': '80px',
-    };
-
-    selected = {
-        'type': 'select',
-        'labelSize': '6',
-        'controlSize': '10',
-        'inputType': 'submit',
-        'name': 'sex',
-        'label': '性别',
-        'notFoundContent': '',
-        'selectModel': false,
-        'showSearch': true,
-        'placeholder': '-请选择-',
-        'disabled': false,
-        'size': 'default',
-        'clear': true,
-        'width': '60px',
-        'options': [
-            {
-                'label': '男',
-                'value': '1',
-                'disabled': false
-            },
-            {
-                'label': '女',
-                'value': '2',
-                'disabled': false
-            }
-        ]
-    }
-
     load(pi?: number) {
         if (typeof pi !== 'undefined') {
             this.pi = pi || 1;
@@ -95,10 +54,8 @@ export class BsnDataTableComponent implements OnInit {
             )
             .subscribe(data => {
                 this.loading = false;
-                this.list = data.results;
+                this.dataList = data.results;
             }); */
-
-        this.list = []; //liu
     }
 
     clear() {
@@ -107,48 +64,26 @@ export class BsnDataTableComponent implements OnInit {
     }
 
     _checkAll() {
-        this.list.forEach(item => item.checked = this._allChecked);
+        this.dataList.forEach(item => item.checked = this._allChecked);
         this.refChecked();
     }
     refChecked() {
-        const checkedCount = this.list.filter(w => w.checked).length;
-        this._allChecked = checkedCount === this.list.length;
+        const checkedCount = this.dataList.filter(w => w.checked).length;
+        this._allChecked = checkedCount === this.dataList.length;
         this._indeterminate = this._allChecked ? false : checkedCount > 0;
     }
     //private _randomUser: RandomUserService,
     constructor(private http: _HttpClient, private message: NzMessageService, private modalService: NzModalService) {
     }
-
     ngOnInit() {
-        //初始化表格参数
-        this.pi = 1;
-        this.ps = 10;
-        this.total = 10; // mock total
-        if (this.dataList) {
-            this.list = this.dataList;
-            this.total = this.list.length;
-        }
-
-        this.load();
+        //this.load();
         //  this.http.get('/chart/visit').subscribe((res: any) => this.events = res);
-        for (let i = 0; i < 3; i++) {
-            this.list.push({
-                key: i.toString(),
-                name: `Edrward ${i}`,
-                age: 32,
-                sex: '2',
-                address: `London Park no. ${i}`,
-                style: ''
-            });
-        }
         this.updateEditCache();
     }
 
     showMsg(msg: string) {
         this.message.info(msg);
     }
-
-
 
     /**
      * 行内编辑
@@ -165,19 +100,18 @@ export class BsnDataTableComponent implements OnInit {
     }
 
     saveEdit(key: string): void {
-        const index = this.list.findIndex(item => item.key === key);
-        this.list[index] = this.editCache[key].data;
+        const index = this.dataList.findIndex(item => item.key === key);
+        this.dataList[index] = this.editCache[key].data;
         this.editCache[key].edit = false;
     }
 
     deleteEdit(i: string): void {
-        const dataSet = this.list.filter(d => d.key !== i);
-        this.list = dataSet;
+        const dataSet = this.dataList.filter(d => d.key !== i);
+        this.dataList = dataSet;
     }
-
-
     updateEditCache(): void {
-        this.list.forEach(item => {
+       // const datadataList=JSON.parse(JSON.stringify(this.dataList));
+        this.dataList.forEach(item => {
             if (!this.editCache[item.key]) {
                 this.editCache[item.key] = {
                     edit: false,
@@ -189,29 +123,11 @@ export class BsnDataTableComponent implements OnInit {
     /**排序 */
     sortName = null;
     sortValue = null;
-    // sort(sort: { key: string, value: string }): void {
-    //     this.sortName = sort.key;
-    //     this.sortValue = sort.value;
-    //     this.search();
-    //   }
-    // search(): void {
-    //     /** filter data **/
-    //     const filterFunc = item => (this.searchAddress ? item.address.indexOf(this.searchAddress) !== -1 : true) && (this.listOfSearchName.length ? this.listOfSearchName.some(name => item.name.indexOf(name) !== -1) : true);
-    //     const data = this.data.filter(item => filterFunc(item));
-    //     /** sort data **/
-    //     if (this.sortName) {
-    //       this.list = this.list.sort((a, b) => (this.sortValue === 'ascend') ? (a[ this.sortName ] > b[ this.sortName ] ? 1 : -1) : (b[ this.sortName ] > a[ this.sortName ] ? 1 : -1));
-    //     } else {
-    //       this.list = this.list;
-    //     }
-    //   }
-
-    copyData = [...this.list];
-    sortMap = {
-        name: null,
-        age: null,
-        address: null
-    };
+   // copyData = [...this.dataList];
+    sortMap = { };
+    /**
+     * 排序 
+     */
     sort(sortName, value) {
         this.sortName = sortName;
         this.sortValue = value;
@@ -224,9 +140,12 @@ export class BsnDataTableComponent implements OnInit {
         });
         this.search();
     }
+    /**
+     * 查询
+     */
     search() {
 
-        this.list = [...this.list.sort((a, b) => {
+        this.dataList = [...this.dataList.sort((a, b) => {
             if (a[this.sortName] > b[this.sortName]) {
                 return (this.sortValue === 'ascend') ? 1 : -1;
             } else if (a[this.sortName] < b[this.sortName]) {
@@ -240,7 +159,7 @@ export class BsnDataTableComponent implements OnInit {
     /**新增 */
     addRow(): void {
         this.i++;
-        this.list = [...this.list, {
+        this.dataList = [...this.dataList, {
             key: `${this.i}`,
             name: `Edward King ${this.i}`,
             age: '32',
@@ -255,29 +174,19 @@ export class BsnDataTableComponent implements OnInit {
     }
     /**修改 */
     updateRow(): void {
-        this.list.forEach(item => {
+        this.dataList.forEach(item => {
             if (item.checked === true) {
                 this.startEdit(item.key);
             }
         });
-
     }
     /**删除 */
     deleteRow(): void {
-        /*        this.modalService.confirm({
-                   nzTitle: 'Are you sure delete this task?',
-                   nzContent: '<b style="color: red;">Some descriptions</b>',
-                   nzOkText: 'Yes',
-                   nzOkType: 'danger',
-                   nzOnOk: () => console.log('OK'),
-                   nzCancelText: 'No',
-                   nzOnCancel: () => console.log('Cancel')
-                 }); */
         this.modalService.confirm({
             title: '确认框',
             content: '确认要删除？',
             onOk: () => {
-                this.list.forEach(item => {
+                this.dataList.forEach(item => {
                     if (item.checked === true) {
                         this.deleteEdit(item.key);
                     }
@@ -286,11 +195,10 @@ export class BsnDataTableComponent implements OnInit {
             onCancel() {
             }
         });
-
     }
     /**保存 */
     saveRow(): void {
-        this.list.forEach(item => {
+        this.dataList.forEach(item => {
             if (item.checked === true) {
                 this.saveEdit(item.key);
             }
@@ -298,32 +206,67 @@ export class BsnDataTableComponent implements OnInit {
     }
     /**取消 */
     cancelRow(): void {
-        this.list.forEach(item => {
+        this.dataList.forEach(item => {
             if (item.checked === true) {
                 this.cancelEdit(item.key);
             }
         });
-
-        console.log('取消后', this.list);
     }
-
-
+    /**
+     * 选中行
+     * @param data 
+     * @param edit 
+     */
     selectRow(data?, edit?) {
-        data.style = 'selectedRow';
-        // data.checked="true"; // 行勾选
-        // data.selected="true";// 行选中
-
+         this.dataList.forEach(item => {
+            item.selected=false;
+        });
+        data.selected=true;// 行选中
         // 单选(check=select)，如果是未勾选，第一次点击选中，再次点击取消选中
         // 多选（check=select），如果是未勾选，第一次点击选中，再次点击取消选中
         // 多勾选单选中行（check》select）勾选和行选中各自独立，互不影响
-        // console.log('行',data);
-        console.log('update', edit);
-
     }
 
-    userNameChange(name?) {
-        console.log('子页面返回');
-        console.log('子页面', name);
+    userNameChange(data?) {
+        console.log('子页面', data);
+        const index = this.dataList.findIndex(item => item.key === data.key);
+        this.editCache[data.key].data[data.name]=data.data;
+    }
+
+    /**
+     * 动态执行方法
+     * @param name 
+     */
+    execFun(name?) {
+        switch (name) {
+            case 'refresh':
+                this.refresh()
+                break;
+            case 'addRow':
+                this.addRow()
+                break;
+            case 'updateRow':
+                this.updateRow()
+                break;
+            case 'deleteRow':
+                this.deleteRow()
+                break;
+            case 'saveRow':
+                this.saveRow()
+                break;
+            case 'cancelRow':
+                this.cancelRow()
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 刷新
+     */
+    refresh() {
+
     }
 
 

@@ -8,10 +8,14 @@ export class CnGridInputComponent implements OnInit {
     @Input() config;
     @Output() updateValue =new EventEmitter();
     @Input()  value;
+
+    _value;
     constructor(
         private http: _HttpClient
     ) { }
     ngOnInit() {
+        if(this.value)
+        this._value=this.value.data;
     }
 
     setValue(value){
@@ -24,7 +28,8 @@ export class CnGridInputComponent implements OnInit {
 
     userNameChange(name?){
         console.log('input值发生变化',name);
-        this.updateValue.emit(name);
+        this.value.data=name;
+        this.updateValue.emit(this.value);
         console.log('input值发生变化后触发',name);
     }
 }

@@ -33,31 +33,7 @@ export const EXE_COUNTER_VALUE_ACCESSOR: any = {
   selector: '[CnGridEditorDirective]',
   providers: [EXE_COUNTER_VALUE_ACCESSOR]
 })
-export class GridEditorDirective implements OnInit, OnChanges,ControlValueAccessor{
-  propagateChange = (_: any) => {
-    console.log('变化');
-  };
-  onChange = (_: any) => {};
-  onTouched = () => {};
-  writeValue(obj: any): void {
-    if(obj){
-      this.value= obj;
-      this.component.instance.value=this.value;
-    }
-    console.log('writeValue',obj);
-  }
-  registerOnChange(fn: any): void {
-  
-    this.propagateChange = fn;//每次控件view层的值发生改变，都要调用该方法通知外部
-    console.log('registerOnChange');
-  }
-  registerOnTouched(fn: any): void {
-    console.log('registerOnTouched');
-    this.onTouched = fn;
-  }
-  setDisabledState?(isDisabled: boolean): void {
-    console.log('setDisabledState');
-  }
+export class GridEditorDirective implements OnInit, OnChanges{
   @Input() config;
   @Input()  value;
   @Output() updateValue =new EventEmitter();
@@ -85,11 +61,6 @@ export class GridEditorDirective implements OnInit, OnChanges,ControlValueAccess
     });
    
   }
-
-  getValue(){
-    return  this.value;
-  }
-
   //组件将值写回
   setValue(data?){
    console.log('resolverupdateValue触发',data);

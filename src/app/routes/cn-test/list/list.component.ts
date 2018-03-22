@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
 import { map } from 'rxjs/operators';
+
 //import { RandomUserService } from '../randomUser.service';
 @Component({
     selector: 'app-list',
@@ -23,63 +24,15 @@ import { map } from 'rxjs/operators';
 })
 export class ListComponent implements OnInit {
 
-    /*   constructor(
-          private http: _HttpClient
-      ) { }
-  
-      ngOnInit() {
-      } */
-
-
     pi = 1;
     ps = 10;
-    total = 200; // mock total
+    total = 5; // mock total
     list = [];
     loading = false;
     args: any = {};
     _indeterminate = false;
     _allChecked = false;
-
     events: any[] = [];
-
-    tested = {
-        'type': 'input',
-        'labelSize': '6',
-        'controlSize': '10',
-        'inputType': 'text',
-        'name': 'userName',
-        'width': '80px',
-    };
-
-    selected = {
-        'type': 'select',
-        'labelSize': '6',
-        'controlSize': '10',
-        'inputType': 'submit',
-        'name': 'sex',
-        'label': '性别',
-        'notFoundContent': '',
-        'selectModel': false,
-        'showSearch': true,
-        'placeholder': '-请选择-',
-        'disabled': false,
-        'size': 'default',
-        'clear': true,
-        'width': '60px',
-        'options': [
-            {
-                'label': '男',
-                'value': '1',
-                'disabled': false
-            },
-            {
-                'label': '女',
-                'value': '2',
-                'disabled': false
-            }
-        ]
-    }
-
     load(pi?: number) {
         if (typeof pi !== 'undefined') {
             this.pi = pi || 1;
@@ -123,7 +76,6 @@ export class ListComponent implements OnInit {
     //private _randomUser: RandomUserService,
     constructor(private http: _HttpClient, private message: NzMessageService, private modalService: NzModalService) {
     }
-
     ngOnInit() {
         this.load();
         //  this.http.get('/chart/visit').subscribe((res: any) => this.events = res);
@@ -133,6 +85,7 @@ export class ListComponent implements OnInit {
                 name: `Edrward ${i}`,
                 age: 32,
                 sex: '2',
+                sexname:'女',
                 address: `London Park no. ${i}`,
                 style: ''
             });
@@ -143,8 +96,6 @@ export class ListComponent implements OnInit {
     showMsg(msg: string) {
         this.message.info(msg);
     }
-
-
 
     /**
      * 行内编辑
@@ -170,9 +121,8 @@ export class ListComponent implements OnInit {
         const dataSet = this.list.filter(d => d.key !== i);
         this.list = dataSet;
     }
-
-
     updateEditCache(): void {
+       // const datalist=JSON.parse(JSON.stringify(this.list));
         this.list.forEach(item => {
             if (!this.editCache[item.key]) {
                 this.editCache[item.key] = {
@@ -203,11 +153,10 @@ export class ListComponent implements OnInit {
     //   }
 
     copyData = [...this.list];
-    sortMap = {
-        name: null,
-        age: null,
-        address: null
-    };
+    sortMap = { };
+    /**
+     * 排序 
+     */
     sort(sortName, value) {
         this.sortName = sortName;
         this.sortValue = value;
@@ -220,6 +169,9 @@ export class ListComponent implements OnInit {
         });
         this.search();
     }
+    /**
+     * 查询
+     */
     search() {
 
         this.list = [...this.list.sort((a, b) => {
@@ -256,19 +208,9 @@ export class ListComponent implements OnInit {
                 this.startEdit(item.key);
             }
         });
-
     }
     /**删除 */
     deleteRow(): void {
-        /*        this.modalService.confirm({
-                   nzTitle: 'Are you sure delete this task?',
-                   nzContent: '<b style="color: red;">Some descriptions</b>',
-                   nzOkText: 'Yes',
-                   nzOkType: 'danger',
-                   nzOnOk: () => console.log('OK'),
-                   nzCancelText: 'No',
-                   nzOnCancel: () => console.log('Cancel')
-                 }); */
         this.modalService.confirm({
             title: '确认框',
             content: '确认要删除？',
@@ -299,16 +241,22 @@ export class ListComponent implements OnInit {
                 this.cancelEdit(item.key);
             }
         });
-
-        console.log('取消后', this.list);
     }
 
-
+    /**
+     * 选中行
+     * @param data 
+     * @param edit 
+     */
     selectRow(data?, edit?) {
-        data.style = 'selectedRow';
+      
         // data.checked="true"; // 行勾选
-        // data.selected="true";// 行选中
+        
 
+         this.list.forEach(item => {
+            item.selected=false;
+        });
+        data.selected=true;// 行选中
         // 单选(check=select)，如果是未勾选，第一次点击选中，再次点击取消选中
         // 多选（check=select），如果是未勾选，第一次点击选中，再次点击取消选中
         // 多勾选单选中行（check》select）勾选和行选中各自独立，互不影响
@@ -317,85 +265,199 @@ export class ListComponent implements OnInit {
 
     }
 
-    userNameChange(name?) {
-        console.log('子页面返回');
-        console.log('子页面', name);
+    userNameChange(data?) {
+        console.log('子页面', data);
+        const index = this.list.findIndex(item => item.key === data.key);
+        this.editCache[data.key].data[data.name]=data.data;
     }
 
 
-
-    tabledata = {
+    /**
+     * datatable 的配置树
+     */
+    config = {
         'viewId': '0001',
         'component': 'form_view',
-        'keyId': 'id',
-        'nzIsPagination':false, // 是否分页
-        'nzShowTotal':false,// 是否显示总数据量
-        'nzPageSizeSelectorValues':[5,10, 20, 30, 40, 50],
-        'nzLoading':false, // 是否显示加载中
-        'nzBordered':false,// 是否显示边框
-        'formHeader': {
-            'header': [
-                {title: '主键', field: 'id', width: 80 },
-                {title: '姓名', field: 'name', width: 80,hidden: false },
-                {title: '性别', field: 'sex', width: 80,hidden: false },
-                {title: '年龄', field: 'age', width: 80,hidden: false },
-                {title: '地址', field: 'adress', width: 80,hidden: false }
-            ],
-            'button': [
-                { 'name':'addRow','class':'editable-add-btn','text':'新增' },
-                { 'name':'updateRow','class':'editable-add-btn','text':'修改' },
-                { 'name':'deleteRow','class':'editable-add-btn','text':'删除' },
-                { 'name':'saveRow','class':'editable-add-btn','text':'保存' },
-                { 'name':'cancelRow','class':'editable-add-btn','text':'取消' }
-            ]
-        },
-        'formContent': [
+        'keyId': 'key',
+        'nzIsPagination': false, // 是否分页
+        'nzShowTotal': true,// 是否显示总数据量
+        'pageSize': 5, //默认每页数据条数
+        'nzPageSizeSelectorValues': [5, 10, 20, 30, 40, 50],
+        'nzLoading': false, // 是否显示加载中
+        'nzBordered': false,// 是否显示边框
+        'columns': [
             {
-                'type': 'input',
-                'inputType': 'text',
-                'name': 'id'
-            },
-            {
-                'type': 'input',
-                'inputType': 'text',
-                'name': 'execSqlStr'
-            },
-            {
-                'type': 'select',
-                'placeholder': '--请选择--',
-                'options': [
-                    {
-                        'text': '执行一次',
-                        'value': '1'
-                    },
-                    {
-                        'text': '执行两次',
-                        'value': '2'
+                title: '主键', field: 'key', width: 80, hidden: true, editor: {
+                    type: 'input',
+                    field:'key',
+                    options: {
+                        'type': 'input',
+                        'labelSize': '6',
+                        'controlSize': '10',
+                        'inputType': 'text',
                     }
-                ],
-                'name': 'execSqlMethod',
-                'value': '',
-                'inputClass': 'input-medium'
+                }
             },
             {
-                'type': 'select',
-                'placeholder': '--请选择--',
-                'options': [
-                    {
-                        'text': '新增状态',
-                        'value': 'new'
-                    },
-                    {
-                        'text': '更新状态',
-                        'value': 'modify'
+                title: '姓名', field: 'name', width: 80,
+                editor: {
+                    type: 'input',
+                    field:'name',
+                    options: {
+                        'type': 'input',
+                        'labelSize': '6',
+                        'controlSize': '10',
+                        'inputType': 'text',
                     }
-                ],
-                'name': 'execSqlStatus',
-                'value': '',
-                'inputClass': 'input-medium'
+                }
+            },
+            {
+                title: '性别', field: 'sexname', width: 80, hidden: false,
+                editor: {
+                    type: 'select',
+                    field:'sex',
+                    options: {
+                        'type': 'select',
+                        'labelSize': '6',
+                        'controlSize': '10',
+                        'inputType': 'submit',
+                        'name': 'sex',
+                        'label': '性别',
+                        'notFoundContent': '',
+                        'selectModel': false,
+                        'showSearch': true,
+                        'placeholder': '-请选择-',
+                        'disabled': false,
+                        'size': 'default',
+                        'clear': true,
+                        'width': '60px',
+                        'options': [
+                            {
+                                'label': '男',
+                                'value': '1',
+                                'disabled': false
+                            },
+                            {
+                                'label': '女',
+                                'value': '2',
+                                'disabled': false
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                title: '年龄', field: 'age', width: 80, hidden: false,
+                editor: {
+                    type: 'input',
+                    field:'age',
+                    options: {
+                        'type': 'input',
+                        'labelSize': '6',
+                        'controlSize': '10',
+                        'inputType': 'text',
+                    }
+                }
+            },
+            {
+                title: '地址', field: 'address', width: 80, hidden: false,
             }
+        ],
+        'toolbar': [
+            { 'name': 'refresh', 'class': 'editable-add-btn', 'text': '刷新' },
+            { 'name': 'addRow', 'class': 'editable-add-btn', 'text': '新增' },
+            { 'name': 'updateRow', 'class': 'editable-add-btn', 'text': '修改' },
+            { 'name': 'deleteRow', 'class': 'editable-add-btn', 'text': '删除' },
+            { 'name': 'saveRow', 'class': 'editable-add-btn', 'text': '保存' },
+            { 'name': 'cancelRow', 'class': 'editable-add-btn', 'text': '取消' }
         ]
+
+    }
+    dataList=[
+        {
+            key: `key0`,
+            name: `元春`,
+            age: '32',
+            sexname:'女',
+            sex: '1',
+            address: `皇宫`,
+        },
+        {
+            key: `key1`,
+            name: `惜春`,
+            age: '32',
+            sexname:'女',
+            sex: '1',
+            address: `贾府`,
+        },
+        {
+            key: `key2`,
+            name: `探春`,
+            age: '32',
+            sexname:'女',
+            sex: '1',
+            address: `贾府`,
+        }
+    ];
+
+    /**
+     * 动态执行方法
+     * @param name 
+     */
+    execFun(name?) {
+        switch (name) {
+            case 'refresh':
+                this.refresh()
+                break;
+            case 'addRow':
+                this.addRow()
+                break;
+            case 'updateRow':
+                this.updateRow()
+                break;
+            case 'deleteRow':
+                this.deleteRow()
+                break;
+            case 'saveRow':
+                this.saveRow()
+                break;
+            case 'cancelRow':
+                this.cancelRow()
+                break;
+            default:
+                break;
+        }
     }
 
+    /**
+     * 刷新
+     */
+    refresh() {
+
+    }
+
+    nodes = [
+        {
+          name: 'root1'
+        },
+        {
+          name: 'root2'
+        },
+        {
+          name: 'root3'
+        },
+        {
+          name: 'async root4',
+          hasChildren: true
+        }
+      ];
+    
+      options = {
+        allowDrag: true
+      };
+    
+      onEvent(ev: any) {
+        console.log('onEvent', ev);
+      }
 
 }

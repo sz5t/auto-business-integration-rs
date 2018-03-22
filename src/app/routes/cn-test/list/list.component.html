@@ -56,5 +56,8 @@
 </div>
 <div bsn-data-table [config]="config" [dataList]="dataList"></div>
 <div>
-    <nz-tree [nzNodes]="nodes" [nzOptions]="options" (nzEvent)="onEvent($event)"></nz-tree>
+    <nz-tree [nzNodes]="nodes" [nzOptions]="options"  (nzActivate)="onActivate($event)"
+    [nzAllowChildLinkage]="treeconfig.nzAllowChildLinkage" [nzAllowParentLinkage]="treeconfig.nzAllowParentLinkage" [nzCheckable]="treeconfig.nzCheckable"
+    [nzShowLine]="treeconfig.nzShowLine">
+    ></nz-tree>
 </div>

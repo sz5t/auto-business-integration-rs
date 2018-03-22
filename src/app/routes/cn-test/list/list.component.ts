@@ -85,7 +85,7 @@ export class ListComponent implements OnInit {
                 name: `Edrward ${i}`,
                 age: 32,
                 sex: '2',
-                sexname:'女',
+                sexname: '女',
                 address: `London Park no. ${i}`,
                 style: ''
             });
@@ -122,7 +122,7 @@ export class ListComponent implements OnInit {
         this.list = dataSet;
     }
     updateEditCache(): void {
-       // const datalist=JSON.parse(JSON.stringify(this.list));
+        // const datalist=JSON.parse(JSON.stringify(this.list));
         this.list.forEach(item => {
             if (!this.editCache[item.key]) {
                 this.editCache[item.key] = {
@@ -153,7 +153,7 @@ export class ListComponent implements OnInit {
     //   }
 
     copyData = [...this.list];
-    sortMap = { };
+    sortMap = {};
     /**
      * 排序 
      */
@@ -249,14 +249,14 @@ export class ListComponent implements OnInit {
      * @param edit 
      */
     selectRow(data?, edit?) {
-      
-        // data.checked="true"; // 行勾选
-        
 
-         this.list.forEach(item => {
-            item.selected=false;
+        // data.checked="true"; // 行勾选
+
+
+        this.list.forEach(item => {
+            item.selected = false;
         });
-        data.selected=true;// 行选中
+        data.selected = true;// 行选中
         // 单选(check=select)，如果是未勾选，第一次点击选中，再次点击取消选中
         // 多选（check=select），如果是未勾选，第一次点击选中，再次点击取消选中
         // 多勾选单选中行（check》select）勾选和行选中各自独立，互不影响
@@ -268,7 +268,7 @@ export class ListComponent implements OnInit {
     userNameChange(data?) {
         console.log('子页面', data);
         const index = this.list.findIndex(item => item.key === data.key);
-        this.editCache[data.key].data[data.name]=data.data;
+        this.editCache[data.key].data[data.name] = data.data;
     }
 
 
@@ -289,7 +289,7 @@ export class ListComponent implements OnInit {
             {
                 title: '主键', field: 'key', width: 80, hidden: true, editor: {
                     type: 'input',
-                    field:'key',
+                    field: 'key',
                     options: {
                         'type': 'input',
                         'labelSize': '6',
@@ -302,7 +302,7 @@ export class ListComponent implements OnInit {
                 title: '姓名', field: 'name', width: 80,
                 editor: {
                     type: 'input',
-                    field:'name',
+                    field: 'name',
                     options: {
                         'type': 'input',
                         'labelSize': '6',
@@ -315,7 +315,7 @@ export class ListComponent implements OnInit {
                 title: '性别', field: 'sexname', width: 80, hidden: false,
                 editor: {
                     type: 'select',
-                    field:'sex',
+                    field: 'sex',
                     options: {
                         'type': 'select',
                         'labelSize': '6',
@@ -350,7 +350,7 @@ export class ListComponent implements OnInit {
                 title: '年龄', field: 'age', width: 80, hidden: false,
                 editor: {
                     type: 'input',
-                    field:'age',
+                    field: 'age',
                     options: {
                         'type': 'input',
                         'labelSize': '6',
@@ -373,12 +373,12 @@ export class ListComponent implements OnInit {
         ]
 
     }
-    dataList=[
+    dataList = [
         {
             key: `key0`,
             name: `元春`,
             age: '32',
-            sexname:'女',
+            sexname: '女',
             sex: '1',
             address: `皇宫`,
         },
@@ -386,7 +386,7 @@ export class ListComponent implements OnInit {
             key: `key1`,
             name: `惜春`,
             age: '32',
-            sexname:'女',
+            sexname: '女',
             sex: '1',
             address: `贾府`,
         },
@@ -394,7 +394,7 @@ export class ListComponent implements OnInit {
             key: `key2`,
             name: `探春`,
             age: '32',
-            sexname:'女',
+            sexname: '女',
             sex: '1',
             address: `贾府`,
         }
@@ -437,27 +437,57 @@ export class ListComponent implements OnInit {
     }
 
     nodes = [
-        {
-          name: 'root1'
-        },
-        {
-          name: 'root2'
-        },
-        {
-          name: 'root3'
-        },
-        {
-          name: 'async root4',
-          hasChildren: true
-        }
-      ];
-    
-      options = {
-        allowDrag: true
-      };
-    
-      onEvent(ev: any) {
-        console.log('onEvent', ev);
-      }
 
+        {
+            id: '1',
+            name: 'root3',
+            data:'ahhahah'
+        },
+        {
+            id: '2',
+            name: 'async root4',
+            hasChildren: true,
+            children: [
+                {
+                    name: '子节点1'
+                },
+                {
+                    name: '子节点2'
+                }
+            ]
+        },
+        {
+            id: '3',
+            name: 'root1'
+        },
+        {
+            id: '4',
+            name: 'root2'
+        }
+    ];
+
+    options = {
+        allowDrag: true
+    };
+
+    onEvent(ev: any) {
+        console.log('onEvent,点击树节点', ev);
+    }
+    onActivate(ev: any) {
+        console.log('激活树节点', ev);
+    }
+
+    // nzAutoExpandParent 是否自动展开父节点，当数字时展开最大节点 false
+    // nzAllowChildLinkage 是否开启父节点的checkbox状态的会影响子节点状态 true
+    // nzAllowParentLinkage 是否开启子节点的checkbox状态的会影响父节点状态 true
+    // nzCheckable  在节点之前添加一个复选框
+    // nzShowLine 显示连接线
+
+    treeconfig = {
+        nzAutoExpandParent: true, //是否自动展开父节点，当数字时展开最大节点 false
+        nzAllowChildLinkage: true,// 是否开启父节点的checkbox状态的会影响子节点状态 true
+        nzAllowParentLinkage: true,// 是否开启子节点的checkbox状态的会影响父节点状态 true
+        nzCheckable: true, //  在节点之前添加一个复选框 false
+        nzShowLine: true, // 显示连接线 false
+    };
 }

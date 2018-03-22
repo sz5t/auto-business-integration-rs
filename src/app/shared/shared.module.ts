@@ -38,6 +38,7 @@ import { CnGridRangePickerComponent } from './components/cn-grid-range-picker/cn
 import { CnGridCheckboxComponent } from './components/cn-grid-checkbox/cn-grid-checkbox.component';
 import { BsnDataTableComponent } from './business/bsn-data-table/bsn-data-table.component';
 import { CnContextMenuComponent } from './components/cn-context-menu/cn-context-menu.component';
+import { BsnTreeComponent } from './business/bsn-tree/bsn-tree.component';
 const THIRDMODULES = [
     CountdownModule,
     NzSchemaFormModule
@@ -93,7 +94,8 @@ const DIRECTIVES = [
         // your components
         ...COMPONENTS,
         ...DIRECTIVES,
-        BsnDataTableComponent
+        BsnDataTableComponent,
+        BsnTreeComponent
     ],
     exports: [
         CommonModule,

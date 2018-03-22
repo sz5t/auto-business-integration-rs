@@ -20,7 +20,6 @@ export class CnContextMenuComponent implements OnInit {
     }
 
     getSelectedData(value) {
-      console.log(value);
       this.selectedMenu.emit(value)
     }
 

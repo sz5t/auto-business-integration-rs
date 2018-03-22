@@ -1,12 +1,12 @@
 <form nz-form [formGroup]="form" (ngSubmit)="_submitForm($event)">
   <!-- 垂直表单布局-->
   <ng-container cnFormResolverDirective
-                *ngFor="let field of formConfig" [formGroup]="form" [config]="field">
+                *ngFor="let field of config" [formGroup]="form" [config]="field">
   </ng-container>
   <!-- 水平表单布局-->
-  <div *ngIf="formConfig.horizontial" nz-row [nzGutter]="8">
-    <div nz-col [nzSpan]="8" *ngFor="let field of formConfig">
+  <!--<div *ngIf="config.horizontial" nz-row [nzGutter]="8">
+    <div nz-col [nzSpan]="8" *ngFor="let field of config">
       <ng-container cnFormResolverDirective [formGroup]="form" [config]="field"></ng-container>
     </div>
-  </div>
+  </div>-->
 </form>

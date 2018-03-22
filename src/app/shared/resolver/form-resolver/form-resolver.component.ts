@@ -8,7 +8,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 })
 export class FormResolverComponent implements OnInit, OnChanges {
 
-  formConfig = [
+  config = [
     {
       'type': 'input',
       'labelSize': '6',
@@ -169,7 +169,8 @@ export class FormResolverComponent implements OnInit, OnChanges {
   ) { }
 
   get controls() {
-    return this.formConfig.filter(({type}) => {
+    console.log(this.config);
+    return this.config.filter(({type}) => {
       return type !== 'button' && type !== 'submit';
     });
   }
@@ -201,7 +202,7 @@ export class FormResolverComponent implements OnInit, OnChanges {
       configControls
         .filter(control => !controls.includes(control))
         .forEach(name => {
-          const config = this.formConfig.find(control => control.name === name);
+          const config = this.config.find(control => control.name === name);
           this.form.addControl(name, this.createControl(config));
         });
     }

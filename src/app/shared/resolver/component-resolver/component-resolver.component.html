@@ -1,13 +1,1 @@
-<nz-popover [nzTitle]="'组件选择'" [nzPlacement]="'right'" [nzTrigger]="'hover'">
-  <ng-template #nzTemplate>
-   <cn-context-menu [menuConfig]="menuConfig" (selectedMenu)="getMenuData($event)"></cn-context-menu>
-  </ng-template>
-  <nz-card nz-popover>
-    <ng-template #title>{{config.title}}</ng-template>
-    <ng-template #body>
-      <div #dynamicComponent></div>
-      <!-- <cn-form-resolver></cn-form-resolver>-->
-    </ng-template>
-  </nz-card>
-</nz-popover>
-
+<ng-container #dynamicComponent></ng-container>

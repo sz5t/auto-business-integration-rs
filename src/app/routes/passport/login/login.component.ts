@@ -131,10 +131,12 @@ export class UserLoginComponent implements OnDestroy {
                     this.cacheService.set('User', this.appUser);
                     return this.apiService.get(APIResource.SysCommonCode, {
                       name : environment.COMMONCODE,
+                      ProjId: this.onlineUser.ProjId,
                       ApplyId : 'ApplyId'
                     }).toPromise();
                   })
                   .then( commonCode => {
+                    this.cacheService.set('ApplyId', commonCode['Data'][0].Id)
                     return this.apiService.get(APIResource.AppModuleConfig,{
                       ProjId: this.onlineUser.ProjId,
                       ApplyId: commonCode['Data'][0].Id,
@@ -175,6 +177,8 @@ export class UserLoginComponent implements OnDestroy {
         if (this.reuseTabService){
             this.reuseTabService.clear();
         }
+
+        console.log(1111)
         // 保存当前用户信息
         this.tokenService.set({
             token: 'unll'

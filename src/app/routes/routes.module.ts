@@ -37,10 +37,10 @@ import {ModuleWithProviders} from '@angular/compiler/src/core';
 })
 
 export class RoutesModule {
-  static forRoot(): ModuleWithProviders{
-    return {
-      ngModule: RoutesModule,
-      providers: [{ provide: DA_STORE_TOKEN, useClass: MemoryStore }]
-    };
-  }
+  // static forRoot(): ModuleWithProviders{
+  //   return {
+  //     ngModule: RoutesModule,
+  //     providers: [{ provide: DA_STORE_TOKEN, useClass: MemoryStore }]
+  //   };
+  // }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import {ApiService} from '@core/utility/api-service';
 import {APIResource} from '@core/utility/api-resource';
+import {environment} from '@env/environment';
 
 @Component({
   selector: 'app-user-manager',

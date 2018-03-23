@@ -50,10 +50,14 @@ export class StartupService {
             // ACL：设置权限为全量
             this.aclService.setFull(true);
             // 初始化菜单
-            if(environment.COMMONCODE !== APIResource.LoginCommonCode)
-            this.menuService.add(res.menu);
-            else
-             this.cacheService.set('Menus', res.menu);
+            if(environment.COMMONCODE !== APIResource.LoginCommonCode) {
+              this.menuService.add(res.menu);
+              environment.SERVER_URL = APIResource.LoginUrl;
+            }
+            else {
+              environment.SERVER_URL = APIResource.SettingUrl;
+              this.cacheService.set('Menus', res.menu);
+            }
             // this.menuService.add(res.menu);
             // 设置页面标题的后缀
             this.titleService.suffix = res.app.name;

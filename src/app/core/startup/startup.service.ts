@@ -40,6 +40,7 @@ export class StartupService {
         ).subscribe(([appData]) => {
             const User: any = this.cacheService.getNone('User');
             const Menus: any = this.cacheService.getNone('Menus');
+
             // application data
             const res: any = appData;
             // 应用信息：包括站点名、描述、年份
@@ -49,16 +50,22 @@ export class StartupService {
             // this.settingService.setUser(res.user);
             // ACL：设置权限为全量
             this.aclService.setFull(true);
+
+
+
             // 初始化菜单
-            if(environment.COMMONCODE !== APIResource.LoginCommonCode) {
-              this.menuService.add(res.menu);
+            if(!this.cacheService.getNone('IsSettings')) {
+              // console.log(111,'解析')
+              this.menuService.add(Menus);
               environment.SERVER_URL = APIResource.LoginUrl;
             }
             else {
-              environment.SERVER_URL = APIResource.SettingUrl;
+              // console.log(111,'配置')
               this.cacheService.set('Menus', res.menu);
+              environment.SERVER_URL = APIResource.SettingUrl;
+              this.menuService.add(res.menu);
             }
-            // this.menuService.add(res.menu);
+
             // 设置页面标题的后缀
             this.titleService.suffix = res.app.name;
 

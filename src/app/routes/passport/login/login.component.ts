@@ -100,12 +100,15 @@ export class UserLoginComponent implements OnDestroy {
               this.onlineUser.Password = Md5.hashStr(this.password.value).toString().toUpperCase();
               environment.SERVER_URL = APIResource.SettingUrl;
               environment.COMMONCODE = APIResource.SettingCommonCode;
+              this.cacheService.set('IsSettings',true);
            }else {
               this.onlineUser.Identify = this.mobile.value;
               this.onlineUser.Password = Md5.hashStr(this.captcha.value).toString().toUpperCase();
               environment.SERVER_URL = APIResource.LoginUrl;
               environment.COMMONCODE = APIResource.LoginCommonCode;
+              this.cacheService.set('IsSettings',false);
             }
+
 
           // this.tokenService.clear();
 
@@ -131,7 +134,7 @@ export class UserLoginComponent implements OnDestroy {
                     this.cacheService.set('User', this.appUser);
                     return this.apiService.get(APIResource.SysCommonCode, {
                       name : environment.COMMONCODE,
-                      ProjId: this.onlineUser.ProjId,
+                      // ProjId: this.onlineUser.ProjId,
                       ApplyId : 'ApplyId'
                     }).toPromise();
                   })
@@ -152,7 +155,6 @@ export class UserLoginComponent implements OnDestroy {
                         this.menuService.add(JSON.parse(menu.ConfigData));
                         this.cacheService.set('Menus', JSON.parse(menu.ConfigData));
                       }} )
-
                     }
                     return this.apiService.get(APIResource.AppPermission + '/Func.SinoForceWeb端').toPromise();
                   })
@@ -178,7 +180,6 @@ export class UserLoginComponent implements OnDestroy {
             this.reuseTabService.clear();
         }
 
-        console.log(1111)
         // 保存当前用户信息
         this.tokenService.set({
             token: 'unll'

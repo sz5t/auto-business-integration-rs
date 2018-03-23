@@ -148,14 +148,14 @@ export class UserLoginComponent implements OnDestroy {
                   } )
                   .then((menuList) => {
 
-                    if(environment.COMMONCODE === APIResource.LoginCommonCode) {
-                      //todo:将拿到的数据进行解析加载
-                      menuList.Data.forEach( menu =>{
-                        if(menu.ConfigData != ''){
-                        this.menuService.add(JSON.parse(menu.ConfigData));
-                        this.cacheService.set('Menus', JSON.parse(menu.ConfigData));
-                      }} )
-                    }
+                    // if(environment.COMMONCODE === APIResource.LoginCommonCode) {
+                    //   //todo:将拿到的数据进行解析加载
+                    //   menuList.Data.forEach( menu =>{
+                    //     if(menu.ConfigData != ''){
+                    //     this.menuService.add(JSON.parse(menu.ConfigData));
+                    //     this.cacheService.set('Menus', JSON.parse(menu.ConfigData));
+                    //   }} )
+                    // }
                     return this.apiService.get(APIResource.AppPermission + '/Func.SinoForceWeb端').toPromise();
                   })
                   .then((appPermission) => {

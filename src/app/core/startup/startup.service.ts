@@ -51,19 +51,18 @@ export class StartupService {
             // ACL：设置权限为全量
             this.aclService.setFull(true);
 
-
-
+            this.menuService.add(res.menu);
             // 初始化菜单
             if(!this.cacheService.getNone('IsSettings')) {
               // console.log(111,'解析')
-              this.menuService.add(Menus);
+              // this.menuService.add(Menus);
               environment.SERVER_URL = APIResource.LoginUrl;
             }
             else {
               // console.log(111,'配置')
-              this.cacheService.set('Menus', res.menu);
+              // this.cacheService.set('Menus', res.menu);
               environment.SERVER_URL = APIResource.SettingUrl;
-              this.menuService.add(res.menu);
+              // this.menuService.add(res.menu);
             }
 
             // 设置页面标题的后缀

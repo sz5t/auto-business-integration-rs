@@ -5,7 +5,7 @@
 
 export const environment = {
     chore: false,
-    SERVER_URL: ``,
+    SERVER_URL: `http://192.168.1.8:8016/f277/Res/`,
     COMMONCODE: ``,
     production: false,
     hmr: false,

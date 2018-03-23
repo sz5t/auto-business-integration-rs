@@ -1,11 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import {_HttpClient} from '@delon/theme';
 import {FormBuilder, FormGroup} from "@angular/forms";
+import {HttpHeaders} from "@angular/common/http";
+import {environment} from "@env/environment";
 @Component({
   selector: 'layout-setting',
   templateUrl: './layout-setting.component.html',
 })
 export class LayoutSettingComponent implements OnInit {
+  // 加载模块数据
   _funcOptions =  [
     {
       value: 'm_1',
@@ -35,6 +38,7 @@ export class LayoutSettingComponent implements OnInit {
       ]
     }
   ];
+  // 定义布局模版
   _layoutOptions =  [
     {
       value: {
@@ -930,6 +934,19 @@ export class LayoutSettingComponent implements OnInit {
   }
 
   ngOnInit() {
+    const url = environment.SERVER_URL + 'SinoForce.AppProject.AppModuleConfig';
+    const params = {
+      ProjId: '002905c7bf57c54c9e5e65ec0e5fafe8',
+      ApplyId: '3935eb43532d435398d5189d5ece0f5d',
+      PlatCustomerId: 'f2771e4c90db29439e3c986d9859dc74',
+      _select: 'Id,Name,ParentId'
+    };
+    const header = new HttpHeaders();
+    this.http.get<any>(url,params,{headers: header.append('Credential','5bcb946f31c54db8be3b1f19284d475b')}).subscribe(
+      response => {
+        console.log(response);
+      }
+    );
     this._formGroup = this.formBuilder.group({});
   }
 

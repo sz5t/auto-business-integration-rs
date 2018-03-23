@@ -10,6 +10,7 @@ import {Md5} from 'ts-md5/dist/md5';
 import {CacheService} from '@delon/cache';
 import {ApiService} from '@core/utility/api-service';
 import {environment} from '@env/environment';
+import {APIResource} from '@core/utility/api-resource';
 
 
 @Component({
@@ -97,43 +98,44 @@ export class UserLoginComponent implements OnDestroy {
             if (this.type === 0) {
               this.onlineUser.Identify = this.userName.value;
               this.onlineUser.Password = Md5.hashStr(this.password.value).toString().toUpperCase();
-              environment.SERVER_URL = 'http://192.168.1.8:8016/f277/Res/';
-              environment.COMMONCODE = '{WEB前端标识}';
+              environment.SERVER_URL = APIResource.SettingUrl;
+              environment.COMMONCODE = APIResource.SettingCommonCode;
            }else {
               this.onlineUser.Identify = this.mobile.value;
               this.onlineUser.Password = Md5.hashStr(this.captcha.value).toString().toUpperCase();
-              environment.SERVER_URL = 'http://192.168.1.8:8016/eb43/Res/';
-              environment.COMMONCODE = '{WEB应用运行平台}';
+              environment.SERVER_URL = APIResource.LoginUrl;
+              environment.COMMONCODE = APIResource.LoginCommonCode;
             }
 
           // this.tokenService.clear();
 
-          this.apiService.post('SinoForce.Data.OnlineUser', this.onlineUser).toPromise()
+          this.apiService.post(APIResource.OnlineUser, this.onlineUser).toPromise()
             .then(response => {
               this.onlineUser = {...response.Data};
               if (!this.onlineUser.Online) {
                 this.error = this.onlineUser.Message;
                 return null;
               }
+              this.cacheService.set('OnlineUser', this.onlineUser);
               this.tokenService.set({
                 token: JSON.stringify({Token: response.Data.Token , RealName: response.Data.RealName, MailAddress: response.Data.MailAddress})
               });
               return response;
             }).then( param => {
               if (param) {
-                this.apiService.get('SinoForce.Data.AppUser/' + param.Data.UserId)
+                this.apiService.get(APIResource.AppUser + '/' + param.Data.UserId)
                   .toPromise()
                   .then((response) => {
                     this.appUser = {...response.Data};
                     this.settingsService.setUser(this.appUser);
                     this.cacheService.set('User', this.appUser);
-                    return this.apiService.get('SinoForce.Data.SysCommonCode', {
+                    return this.apiService.get(APIResource.SysCommonCode, {
                       name : environment.COMMONCODE,
                       ApplyId : 'ApplyId'
                     }).toPromise();
                   })
                   .then( commonCode => {
-                    return this.apiService.get('SinoForce.AppProject.AppModuleConfig',{
+                    return this.apiService.get(APIResource.AppModuleConfig,{
                       ProjId: this.onlineUser.ProjId,
                       ApplyId: commonCode['Data'][0].Id,
                       PlatCustomerId: commonCode['Data'][0].PlatCustomerId
@@ -141,12 +143,16 @@ export class UserLoginComponent implements OnDestroy {
                   } )
                   .then((menuList) => {
 
-                    if(environment.COMMONCODE === '{WEB应用运行平台}') {
-                      this.menuService.clear();
-                      this.menuService.add(JSON.parse(menuList.Data[0].ConfigData));
-                      this.cacheService.set('Menus', JSON.parse(menuList.Data[0].ConfigData));
+                    if(environment.COMMONCODE === APIResource.LoginCommonCode) {
+                      //todo:将拿到的数据进行解析加载
+                      menuList.Data.forEach( menu =>{
+                        if(menu.ConfigData != ''){
+                        this.menuService.add(JSON.parse(menu.ConfigData));
+                        this.cacheService.set('Menus', JSON.parse(menu.ConfigData));
+                      }} )
+
                     }
-                    return this.apiService.get('SinoForce.Data.AppPermission/Func.SinoForceWeb端').toPromise();
+                    return this.apiService.get(APIResource.AppPermission + '/Func.SinoForceWeb端').toPromise();
                   })
                   .then((appPermission) => {
                     if (appPermission['Status'].toString() === '200') {

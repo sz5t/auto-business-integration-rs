@@ -163,4 +163,33 @@ export class APIResource {
    * @type {string}
    */
   public static AppModuleConfig = 'SinoForce.AppProject.AppModuleConfig';
+
+
+  /**
+   * 配置平台标识代码
+   * @type {string}
+   */
+  public static SettingCommonCode = '{WEB前端标识}';
+
+  /**
+   * 配置平台URL
+   * @type {string}
+   */
+
+  public static SettingUrl = 'http://192.168.1.8:8016/f277/Res/';
+
+  /**
+   * 解析平台标识代码
+   * @type {string}
+   */
+  public static LoginCommonCode = '{WEB应用运行平台}';
+
+  /**
+   * 解析平台URL
+   * @type {string}
+   */
+  public static LoginUrl = 'http://192.168.1.8:8016/eb43/Res/';
+
+
+  public static localUrl =  'http://localhost:4200/assets/app-data.json';
 }

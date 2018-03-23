@@ -8,6 +8,7 @@ import { ACLService } from '@delon/acl';
 import { ITokenService, DA_SERVICE_TOKEN } from '@delon/auth';
 import {CacheService} from '@delon/cache';
 import {environment} from '@env/environment';
+import {APIResource} from '@core/utility/api-resource';
 
 /**
  * 用于应用启动时
@@ -29,7 +30,7 @@ export class StartupService {
 
     private viaHttp(resolve: any, reject: any) {
         zip(
-            this.httpClient.get('http://localhost:4200/assets/app-data.json')
+            this.httpClient.get(APIResource.localUrl)
         ).pipe(
             // 接收其他拦截器后产生的异常消息
             catchError(([appData]) => {
@@ -49,7 +50,7 @@ export class StartupService {
             // ACL：设置权限为全量
             this.aclService.setFull(true);
             // 初始化菜单
-            if(environment.COMMONCODE !== '{WEB应用运行平台}')
+            if(environment.COMMONCODE !== APIResource.LoginCommonCode)
             this.menuService.add(res.menu);
             else
              this.cacheService.set('Menus', res.menu);

@@ -29,6 +29,7 @@
         </nz-tab>
         <nz-tab>
             <ng-template #nzTabHeading>解析平台登录</ng-template>
+           <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
             <div nz-form-item>
                 <div nz-form-control [nzValidateStatus]="mobile">
                     <nz-input formControlName="mobile" [nzPlaceHolder]="'登录账号'" [nzSize]="'large'">

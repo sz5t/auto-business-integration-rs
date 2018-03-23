@@ -934,7 +934,7 @@ export class LayoutSettingComponent implements OnInit {
   }
 
   ngOnInit() {
-    const url = environment.SERVER_URL + 'SinoForce.AppProject.AppModuleConfig';
+    /*const url = environment.SERVER_URL + 'SinoForce.AppProject.AppModuleConfig';
     const params = {
       ProjId: '002905c7bf57c54c9e5e65ec0e5fafe8',
       ApplyId: '3935eb43532d435398d5189d5ece0f5d',
@@ -946,7 +946,7 @@ export class LayoutSettingComponent implements OnInit {
       response => {
         console.log(response);
       }
-    );
+    );*/
     this._formGroup = this.formBuilder.group({});
   }
 

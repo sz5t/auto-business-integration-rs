@@ -10,11 +10,9 @@ export class AuthGuard implements CanActivate
     constructor(
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
         private router: Router){
-
     }
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){
         if (!this.tokenService.get().token){
-            // console.log(this.tokenService.get().token,state.url);
               this.router.navigate( [this.tokenService.login_url]);
               return false;
           }

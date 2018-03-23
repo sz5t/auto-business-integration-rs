@@ -44,8 +44,7 @@ export class HeaderUserComponent implements OnInit {
 
     logout() {
         this.tokenService.clear();
-        this.cacheService.remove('User');
-        this.cacheService.remove('Menus');
+        this.cacheService.clear();
         this.router.navigateByUrl(this.tokenService.login_url);
     }
 }

@@ -38,11 +38,19 @@ export class StartupService {
                 return [appData];
             })
         ).subscribe(([appData]) => {
-            const User: any = this.cacheService.getNone('User');
-            const Menus: any = this.cacheService.getNone('Menus');
 
             // application data
             const res: any = appData;
+
+            if(!this.cacheService.getNone('IsSettings')) {
+              this.cacheService.clear();
+              this.tokenService.clear();
+              this.cacheService.set('Menus', res.menu);
+            }
+
+            const User: any = this.cacheService.getNone('User');
+            const Menus: any = this.cacheService.getNone('Menus');
+
             // 应用信息：包括站点名、描述、年份
             this.settingService.setApp(res.app);
             // 用户信息：包括姓名、头像、邮箱地址
@@ -51,19 +59,15 @@ export class StartupService {
             // ACL：设置权限为全量
             this.aclService.setFull(true);
 
-            this.menuService.add(res.menu);
+
             // 初始化菜单
-            if(!this.cacheService.getNone('IsSettings')) {
-              // console.log(111,'解析')
-              // this.menuService.add(Menus);
+            if(this.cacheService.getNone('IsSettings') === 'LOGING') {
               environment.SERVER_URL = APIResource.LoginUrl;
             }
-            else {
-              // console.log(111,'配置')
-              // this.cacheService.set('Menus', res.menu);
+            else if(this.cacheService.getNone('IsSettings') === 'SETTING'){
               environment.SERVER_URL = APIResource.SettingUrl;
-              // this.menuService.add(res.menu);
             }
+            this.menuService.add(Menus);
 
             // 设置页面标题的后缀
             this.titleService.suffix = res.app.name;

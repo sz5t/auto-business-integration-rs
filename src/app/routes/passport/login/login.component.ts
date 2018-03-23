@@ -100,13 +100,13 @@ export class UserLoginComponent implements OnDestroy {
               this.onlineUser.Password = Md5.hashStr(this.password.value).toString().toUpperCase();
               environment.SERVER_URL = APIResource.SettingUrl;
               environment.COMMONCODE = APIResource.SettingCommonCode;
-              this.cacheService.set('IsSettings',true);
+              this.cacheService.set('IsSettings','SETTING');
            }else {
               this.onlineUser.Identify = this.mobile.value;
               this.onlineUser.Password = Md5.hashStr(this.captcha.value).toString().toUpperCase();
               environment.SERVER_URL = APIResource.LoginUrl;
               environment.COMMONCODE = APIResource.LoginCommonCode;
-              this.cacheService.set('IsSettings',false);
+              this.cacheService.set('IsSettings','LOGING');
             }
 
 
@@ -148,14 +148,21 @@ export class UserLoginComponent implements OnDestroy {
                   } )
                   .then((menuList) => {
 
-                    // if(environment.COMMONCODE === APIResource.LoginCommonCode) {
-                    //   //todo:将拿到的数据进行解析加载
-                    //   menuList.Data.forEach( menu =>{
-                    //     if(menu.ConfigData != ''){
-                    //     this.menuService.add(JSON.parse(menu.ConfigData));
-                    //     this.cacheService.set('Menus', JSON.parse(menu.ConfigData));
-                    //   }} )
-                    // }
+                    if(environment.COMMONCODE === APIResource.LoginCommonCode) {
+                      //todo:将拿到的数据进行解析加载
+                      menuList.Data.forEach( menu =>{
+                        if(menu.ConfigData != ''){
+                        this.menuService.add(JSON.parse(menu.ConfigData));
+                        this.cacheService.set('Menus', JSON.parse(menu.ConfigData));
+                      }} )
+                    }else
+                    {
+                      this.httpClient.get<any>(APIResource.localUrl).toPromise().then( apprem => {
+                        this.cacheService.set('Menus', apprem.menu);
+                        this.menuService.add(apprem.menu);
+                      } )
+                    }
+
                     return this.apiService.get(APIResource.AppPermission + '/Func.SinoForceWeb端').toPromise();
                   })
                   .then((appPermission) => {

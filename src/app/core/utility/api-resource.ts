@@ -191,5 +191,9 @@ export class APIResource {
   public static LoginUrl = 'http://192.168.1.8:8016/eb43/Res/';
 
 
+  /**
+   * 本地URL
+   * @type {string}
+   */
   public static localUrl =  'http://localhost:4200/assets/app-data.json';
 }

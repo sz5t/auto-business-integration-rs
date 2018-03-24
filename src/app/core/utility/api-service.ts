@@ -1,10 +1,11 @@
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders,HttpParams} from '@angular/common/http';
 import {Inject} from '@angular/core';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
-import {HttpParams} from '@angular/common/http/src/params';
+
 
 export  class ApiService
 {
+
   constructor(
     @Inject(DA_SERVICE_TOKEN)
     private tokenService: ITokenService,
@@ -71,22 +72,22 @@ export  class ApiService
   //endregion
 
   //region  操作项目配置的相关api
+
   postProj(resource  , body?, params?) {
-    params = this.setParamsProj(params);
-    return this.httpClient.request<any>(
-      'POST',
-      resource,
-      {
-        body: body,
-        params: params,
-        headers: this.setHeaders()
-      } );
-  }
+  let param: HttpParams = this.setParamsProj(params)
+  return this.httpClient.request<any>(
+    'POST',
+    resource,
+    {
+      body: body,
+      params: param,
+      headers: this.setHeaders()
+    } );
+}
 
 
-  getProj(resource, params?: HttpParams) {
-
-      params = this.setParamsProj(params);
+  getProj(resource, params?) {
+     params  = this.setParamsProj(params);
         return this.httpClient.request<any>(
       'GET',
       resource,
@@ -121,17 +122,23 @@ export  class ApiService
       });
   }
 
+
   /**
-   * 添加默认参数
-   * @param {HttpParams} param
+   * 添加访问业务系统是必须的参数信息
+   * @param param
    * @returns {HttpParams}
    */
-  setParamsProj(param: HttpParams): HttpParams
-  {
-    return param.set('ProjId', '002905c7bf57c54c9e5e65ec0e5fafe8') //项目ID
+  setParamsProj(param?): HttpParams {
+    var httpParam = new HttpParams()
+      .set('ProjId', '002905c7bf57c54c9e5e65ec0e5fafe8') //项目ID
       .set('ApplyId', '3935eb43532d435398d5189d5ece0f5d') //ApplyId
       .set('PlatCustomerId', 'f2771e4c90db29439e3c986d9859dc74');// PlatCutomerId
+    for(let p in param) {
+      httpParam = httpParam.set(p, param[p]);
+    }
+    return httpParam;
   }
+
   //endregion
 
 }

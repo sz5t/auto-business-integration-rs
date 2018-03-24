@@ -1,6 +1,7 @@
 import { Component, OnInit,Input } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
+import { CommonUtility } from '@core/utility/Common-utility';
 
 @Component({
     selector: 'bsn-data-table,[bsn-data-table]',
@@ -24,7 +25,7 @@ export class BsnDataTableComponent implements OnInit {
 
     @Input() config; //dataTables 的配置参数
     @Input() dataList=[]; // 表格数据集合
-
+   
 
     pi = 1;
     ps = 10;
@@ -34,6 +35,7 @@ export class BsnDataTableComponent implements OnInit {
     _indeterminate = false;
     _allChecked = false;
     events: any[] = [];
+    rowContent={}; //行填充
     load(pi?: number) {
         if (typeof pi !== 'undefined') {
             this.pi = pi || 1;
@@ -78,6 +80,7 @@ export class BsnDataTableComponent implements OnInit {
     ngOnInit() {
         //this.load();
         //  this.http.get('/chart/visit').subscribe((res: any) => this.events = res);
+        this.getContent(); //调用方法获取到行内填充数据格式
         this.updateEditCache();
     }
 
@@ -156,20 +159,29 @@ export class BsnDataTableComponent implements OnInit {
         })];
     }
 
+    /**
+     * 获取行内编辑是行填充数据
+     */
+    getContent(){
+        this.rowContent["key"]=null;
+        this.config.columns.forEach(element => {
+            const colsname=element.field.toString();
+            this.rowContent[colsname]="";
+        });
+    }
+
     /**新增 */
     addRow(): void {
-        this.i++;
-        this.dataList = [...this.dataList, {
-            key: `${this.i}`,
-            name: `Edward King ${this.i}`,
-            age: '32',
-            sex: '',
-            address: `London, Park Lane no. ${this.i}`,
-            checked: true,
-            style: ''
-        }];
+        const rowContentNew=JSON.parse(JSON.stringify(this.rowContent));
+        const fieldIdentity = CommonUtility.uuID(6);
+        rowContentNew["key"]=fieldIdentity;
+        rowContentNew["checked"]=true;
+        this.dataList = [...this.dataList, rowContentNew];
+        //this.dataList.push(this.rowContent);
+        console.log('key',   fieldIdentity);
+        console.log('数据集',   this.dataList);
         this.updateEditCache();
-        this.startEdit(this.i.toString());
+        this.startEdit(fieldIdentity.toString());
 
     }
     /**修改 */

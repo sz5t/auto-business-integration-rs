@@ -1,41 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
+import { ApiService } from '@core/utility/api-service';
+import { APIResource } from '@core/utility/api-resource';
 
 @Component({
     selector: 'app-component-setting',
     templateUrl: './component-setting.component.html',
 })
 export class ComponentSettingComponent implements OnInit {
-    _funcOptions = [
-        {
-            value: 'm_1',
-            label: '模块 1',
-            children: [
-                {
-                    value: 'f_1',
-                    label: '功能 1',
-                    isLeaf: true
-                },
-                {
-                    value: 'f_2',
-                    label: '功能 2',
-                    isLeaf: true
-                }
-            ],
-        },
-        {
-            value: 'm_2',
-            label: '模块 2',
-            children: [
-                {
-                    value: 'f2_1',
-                    label: '功能 1',
-                    isLeaf: true
-                }
-            ]
-        }
-    ];
+    _funcOptions = [];
     _funcValue;
+    _layoutValue;
+    _selectedModuleText;
+     // 布局列表数据
+     _layoutList = [];
     _editorConfig = {
         title: '标题 1',
         rows: [
@@ -82,7 +60,7 @@ export class ComponentSettingComponent implements OnInit {
                                                             'nzPageSizeSelectorValues': [5, 10, 20, 30, 40, 50],
                                                             'nzLoading': false, // 是否显示加载中
                                                             'nzBordered': false,// 是否显示边框
-                                                            'columns': [  
+                                                            'columns': [
                                                                 {
                                                                     title: '主键', field: 'key', width: 80, hidden: true, editor: {
                                                                         type: 'input',
@@ -143,14 +121,16 @@ export class ComponentSettingComponent implements OnInit {
                                                                             'width': '60px',
                                                                             'options': [
                                                                                 {
-                                                                                    'label': '男',
-                                                                                    'value': '1',
-                                                                                    'disabled': false
+                                                                                    'label': '字符',
+                                                                                    'value': '字符'
                                                                                 },
                                                                                 {
-                                                                                    'label': '女',
-                                                                                    'value': '2',
-                                                                                    'disabled': false
+                                                                                    'label': '数值',
+                                                                                    'value': '数值'
+                                                                                },
+                                                                                {
+                                                                                    'label': '时间',
+                                                                                    'value': '时间'
                                                                                 }
                                                                             ]
                                                                         }
@@ -166,8 +146,6 @@ export class ComponentSettingComponent implements OnInit {
                                                                             'labelSize': '6',
                                                                             'controlSize': '10',
                                                                             'inputType': 'submit',
-                                                                            'name': 'sex',
-                                                                            'label': '性别',
                                                                             'notFoundContent': '',
                                                                             'selectModel': false,
                                                                             'showSearch': true,
@@ -178,14 +156,16 @@ export class ComponentSettingComponent implements OnInit {
                                                                             'width': '60px',
                                                                             'options': [
                                                                                 {
-                                                                                    'label': '男',
-                                                                                    'value': '1',
-                                                                                    'disabled': false
+                                                                                    'label': '居中',
+                                                                                    'value': '居中'
                                                                                 },
                                                                                 {
-                                                                                    'label': '女',
-                                                                                    'value': '2',
-                                                                                    'disabled': false
+                                                                                    'label': '左对齐',
+                                                                                    'value': '左对齐'
+                                                                                },
+                                                                                {
+                                                                                    'label': '右对齐',
+                                                                                    'value': '右对齐'
                                                                                 }
                                                                             ]
                                                                         }
@@ -201,8 +181,6 @@ export class ComponentSettingComponent implements OnInit {
                                                                             'labelSize': '6',
                                                                             'controlSize': '10',
                                                                             'inputType': 'submit',
-                                                                            'name': 'sex',
-                                                                            'label': '性别',
                                                                             'notFoundContent': '',
                                                                             'selectModel': false,
                                                                             'showSearch': true,
@@ -213,12 +191,12 @@ export class ComponentSettingComponent implements OnInit {
                                                                             'width': '60px',
                                                                             'options': [
                                                                                 {
-                                                                                    'label': '男',
+                                                                                    'label': '显示',
                                                                                     'value': '1',
                                                                                     'disabled': false
                                                                                 },
                                                                                 {
-                                                                                    'label': '女',
+                                                                                    'label': '隐藏',
                                                                                     'value': '2',
                                                                                     'disabled': false
                                                                                 }
@@ -226,7 +204,7 @@ export class ComponentSettingComponent implements OnInit {
                                                                         }
                                                                     }
                                                                 },
-                                                                
+
                                                                 {
                                                                     title: '排序', field: 'order', width: 80, hidden: false,
                                                                     editor: {
@@ -239,8 +217,11 @@ export class ComponentSettingComponent implements OnInit {
                                                                             'inputType': 'text',
                                                                         }
                                                                     }
-                                                                }
-                                                               
+                                                                },
+                                                                { title: '数据类型', field: 'dataType', width: 80, hidden: true, },
+                                                                { title: '展示样式', field: 'displayStyle', width: 80, hidden: true, },
+                                                                { title: '是否显示', field: 'isShow', width: 80, hidden: true, },
+
                                                             ],
                                                             'toolbar': [
                                                                 { 'name': 'refresh', 'class': 'editable-add-btn', 'text': '刷新' },
@@ -283,10 +264,10 @@ export class ComponentSettingComponent implements OnInit {
                                                                     }
                                                                 },
                                                                 {
-                                                                    title: '姓名', field: 'name', width: 80,
+                                                                    title: '参数名', field: 'parameterName', width: 80,
                                                                     editor: {
                                                                         type: 'input',
-                                                                        field: 'name',
+                                                                        field: 'parameterName',
                                                                         options: {
                                                                             'type': 'input',
                                                                             'labelSize': '6',
@@ -296,17 +277,94 @@ export class ComponentSettingComponent implements OnInit {
                                                                     }
                                                                 },
                                                                 {
-                                                                    title: '性别', field: 'sexname', width: 80, hidden: false,
+                                                                    title: '参数替换字符串', field: 'parametersReplace', width: 80,
+                                                                    editor: {
+                                                                        type: 'input',
+                                                                        field: 'parametersReplace',
+                                                                        options: {
+                                                                            'type': 'input',
+                                                                            'labelSize': '6',
+                                                                            'controlSize': '10',
+                                                                            'inputType': 'text',
+                                                                        }
+                                                                    }
+                                                                },
+                                                                {
+                                                                    title: '取值方式', field: 'methodOfValue', width: 80, hidden: false,
                                                                     editor: {
                                                                         type: 'select',
-                                                                        field: 'sex',
+                                                                        field: 'methodOfValue',
                                                                         options: {
                                                                             'type': 'select',
                                                                             'labelSize': '6',
                                                                             'controlSize': '10',
                                                                             'inputType': 'submit',
-                                                                            'name': 'sex',
-                                                                            'label': '性别',
+                                                                            'notFoundContent': '',
+                                                                            'selectModel': false,
+                                                                            'showSearch': true,
+                                                                            'placeholder': '-请选择-',
+                                                                            'disabled': false,
+                                                                            'size': 'default',
+                                                                            'clear': true,
+                                                                            'width': '90px',
+                                                                            'options': [
+                                                                                {
+                                                                                    'label': '系统生成序号',
+                                                                                    'value': '系统生成序号'
+                                                                                },
+                                                                                {
+                                                                                    'label': '页面字段取当前值',
+                                                                                    'value': '页面字段取当前值'
+                                                                                },
+                                                                                {
+                                                                                    'label': '页面字段取原值',
+                                                                                    'value': '页面字段取原值'
+                                                                                },
+                                                                                {
+                                                                                    'label': '从系统参数取值',
+                                                                                    'value': '从系统参数取值'
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    }
+                                                                },
+                                                                {
+                                                                    title: '为空取值', field: 'emptyValue', width: 80, hidden: false,
+                                                                    editor: {
+                                                                        type: 'select',
+                                                                        field: 'emptyValue',
+                                                                        options: {
+                                                                            'type': 'select',
+                                                                            'labelSize': '6',
+                                                                            'controlSize': '10',
+                                                                            'inputType': 'submit',
+                                                                            'notFoundContent': '',
+                                                                            'selectModel': false,
+                                                                            'showSearch': true,
+                                                                            'placeholder': '-请选择-',
+                                                                            'disabled': false,
+                                                                            'size': 'default',
+                                                                            'clear': true,
+                                                                            'width': '90px',
+                                                                            'options': [
+                                                                                {
+                                                                                    'label': '取数据库空值',
+                                                                                    'value': '取数据库空值'
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    }
+                                                                },
+                                                                {
+                                                                    title: '参数类型', field: 'parameterType', width: 80, hidden: false,
+                                                                    editor: {
+                                                                        type: 'select',
+                                                                        field: 'parameterType',
+                                                                        options: {
+                                                                            'type': 'select',
+                                                                            'labelSize': '6',
+                                                                            'controlSize': '10',
+                                                                            'inputType': 'submit',
                                                                             'notFoundContent': '',
                                                                             'selectModel': false,
                                                                             'showSearch': true,
@@ -317,24 +375,65 @@ export class ComponentSettingComponent implements OnInit {
                                                                             'width': '60px',
                                                                             'options': [
                                                                                 {
-                                                                                    'label': '男',
-                                                                                    'value': '1',
-                                                                                    'disabled': false
+                                                                                    'label': '字符',
+                                                                                    'value': '字符'
                                                                                 },
                                                                                 {
-                                                                                    'label': '女',
-                                                                                    'value': '2',
-                                                                                    'disabled': false
+                                                                                    'label': '日期',
+                                                                                    'value': '日期'
+                                                                                },
+                                                                                {
+                                                                                    'label': '数值',
+                                                                                    'value': '数值'
+                                                                                },
+                                                                                {
+                                                                                    'label': '布尔',
+                                                                                    'value': '布尔'
                                                                                 }
                                                                             ]
                                                                         }
                                                                     }
                                                                 },
                                                                 {
-                                                                    title: '年龄', field: 'age', width: 80, hidden: false,
+                                                                    title: '系统参数', field: 'systemParameter', width: 80, hidden: false,
+                                                                    editor: {
+                                                                        type: 'select',
+                                                                        field: 'systemParameter',
+                                                                        options: {
+                                                                            'type': 'select',
+                                                                            'labelSize': '6',
+                                                                            'controlSize': '10',
+                                                                            'inputType': 'submit',
+                                                                            'notFoundContent': '',
+                                                                            'selectModel': false,
+                                                                            'showSearch': true,
+                                                                            'placeholder': '-请选择-',
+                                                                            'disabled': false,
+                                                                            'size': 'default',
+                                                                            'clear': true,
+                                                                            'width': '90px',
+                                                                            'options': [
+                                                                                {
+                                                                                    'label': '用户id',
+                                                                                    'value': '用户id'
+                                                                                },
+                                                                                {
+                                                                                    'label': '部门id',
+                                                                                    'value': '部门id'
+                                                                                },
+                                                                                {
+                                                                                    'label': '角色',
+                                                                                    'value': '角色'
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    }
+                                                                },
+                                                                {
+                                                                    title: '取值或赋值字段名', field: 'valueField', width: 80, hidden: false,
                                                                     editor: {
                                                                         type: 'input',
-                                                                        field: 'age',
+                                                                        field: 'valueField',
                                                                         options: {
                                                                             'type': 'input',
                                                                             'labelSize': '6',
@@ -342,16 +441,47 @@ export class ComponentSettingComponent implements OnInit {
                                                                             'inputType': 'text',
                                                                         }
                                                                     }
-                                                                },
-                                                                {
-                                                                    title: '地址', field: 'address', width: 80, hidden: false,
                                                                 }
+                                                            ],
+                                                            'toolbar': [
+                                                                { 'name': 'refresh', 'class': 'editable-add-btn', 'text': '刷新' },
+                                                                { 'name': 'addRow', 'class': 'editable-add-btn', 'text': '新增' },
+                                                                { 'name': 'updateRow', 'class': 'editable-add-btn', 'text': '修改' },
+                                                                { 'name': 'deleteRow', 'class': 'editable-add-btn', 'text': '删除' },
+                                                                { 'name': 'saveRow', 'class': 'editable-add-btn', 'text': '保存' },
+                                                                { 'name': 'cancelRow', 'class': 'editable-add-btn', 'text': '取消' }
                                                             ]
                                                         },
                                                         'dataList': []
                                                     }]
                                                 }
                                             ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    title: '属性设置',
+                                    icon: '',
+                                    active: false,
+                                    viewCfg:[
+                                        {
+                                            'viewId': 'attribute',
+                                            'component': 'form_view',
+                                            'config': [
+                                                {
+                                                    'type': 'input',
+                                                    'labelSize': '6',
+                                                    'controlSize': '10',
+                                                    'inputType': 'text',
+                                                    'name': 'userName',
+                                                    'label': '用户姓名',
+                                                    'placeholder': '例如：Company.cn.app',
+                                                    'disabled': false,
+                                                    'readonly': false,
+                                                    'size': 'default',
+                                                  }
+                                            ],
+                                            'dataList': []
                                         }
                                     ]
                                 }
@@ -363,39 +493,114 @@ export class ComponentSettingComponent implements OnInit {
         ]
     };
     constructor(
-        private http: _HttpClient
+        private http: _HttpClient,
+        private apiService: ApiService
     ) { }
 
-    ngOnInit() {
+    async ngOnInit() {
+        const params = { _select: 'Id,Name,ParentId' };
+        const moduleData = await this.getModuleData(params);
+        // 初始化模块列表，将数据加载到及联下拉列表当中
+        this._funcOptions = this.arrayToTree(moduleData.Data, '');
     }
+ // 获取布局设置列表
+ getLayoutConfigData (params) {
+    return this.apiService.getProj(APIResource.AppConfigPack,params).toPromise();
+  }
 
+  // 获取模块信息
+  async getModuleData(params) {
+    return this.apiService.getProj(APIResource.AppModuleConfig, params).toPromise();
+  }
+
+  // 选择布局名称
+  _changeLayoutName($event) {
+    // 创建布局
+   // this._layoutConfig = $event.metadata;
+  }
+
+  // 改变模块选项
+  _changeModuleValue($event?) {
+    this._layoutList = [];
+    // 选择功能模块，首先加载服务端配置列表
+    //const params = new HttpParams().set('TagA', this._funcValue.join(','));
+    if(this._funcValue.length >0) {
+      const params = {
+        TagA:this._funcValue.join(','),
+        _select: 'Id,Name,Metadata'
+      };
+      this.getLayoutConfigData(params).then(serverLayoutData => {
+        if(serverLayoutData.Status === 200 && serverLayoutData.Data.length > 0){
+          serverLayoutData.Data.forEach((data,index) => {
+            const metadata = JSON.parse(data.Metadata);
+            this._layoutList.push({label:data.Name,value:{id:data.Id,metadata:metadata}});
+          });
+        } else {
+          this._layoutList = [];
+        }
+
+      });
+    }
+  }
+  _onSelectionChange(selectedOptions: any[]) {
+    this._selectedModuleText = `【${selectedOptions.map(o => o.label).join(' / ')}】`;
+  }
+
+    arrayToTree(data, parentid) {
+        const result = [];
+        let temp;
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].ParentId == parentid) {
+                const obj = { "label": data[i].Name, "value": data[i].Id };
+                temp = this.arrayToTree(data, data[i].Id);
+                if (temp.length > 0) {
+                    obj['children'] = temp;
+                } else {
+                    obj["isLeaf"] = true;
+                }
+                result.push(obj);
+            }
+        }
+        return result;
+    }
     nodes = [
 
         {
             id: '1',
-            name: 'root3',
-            data: 'ahhahah'
-        },
-        {
-            id: '2',
-            name: 'async root4',
+            name: '组件设置根节点',
+            type: 'root',
+            data: 'ahhahah',
             hasChildren: true,
             children: [
                 {
-                    name: '子节点1'
+                    id: '1.2',
+                    name: '布局区域1',
+                    type: 'layout',
+                    hasChildren: true,
+                    children: [
+                        {
+                            id: '1.21',
+                            name: '数据表格',
+                            value: 'bsn-datatable',
+                            type: 'component',
+                        }
+                    ]
                 },
                 {
-                    name: '子节点2'
+                    id: '1.3',
+                    name: '布局区域2',
+                    type: 'layout',
+                    hasChildren: true,
+                    children: [
+                        {
+                            id: '1.31',
+                            name: '树',
+                            value: 'bsn-tree',
+                            type: 'component',
+                        }
+                    ]
                 }
             ]
-        },
-        {
-            id: '3',
-            name: 'root1'
-        },
-        {
-            id: '4',
-            name: 'root2'
         }
     ];
 
@@ -411,9 +616,431 @@ export class ComponentSettingComponent implements OnInit {
     点击树节点 */
     onActivate(ev: any) {
         console.log('激活树节点', ev);
+        console.log('树节点类型', ev.node.data.type);
+
+        if (ev.node.data.type === 'component') {
+            if (ev.node.data.value === 'bsn-datatable') {
+                this._editorConfig.rows[0].row.cols[0].tabs[0].viewCfg[1]["tabs"][0].viewCfg
+                =this.componentdic["bsn-datatable"].viewCfg;
+                this._editorConfig.rows[0].row.cols[0].tabs[1].viewCfg[0]["config"]
+                 =this.componentdic["bsn-datatable"].attributeConfig;
+
+                 this._editorConfig=JSON.parse(JSON.stringify(this._editorConfig));
+              
+            }
+            if (ev.node.data.value === 'bsn-tree') {
+                this._editorConfig.rows[0].row.cols[0].tabs[0].viewCfg[1]["tabs"][0].viewCfg
+                =this.componentdic["bsn-tree"].viewCfg;
+                this._editorConfig.rows[0].row.cols[0].tabs[1].viewCfg[0]["config"]
+                =this.componentdic["bsn-tree"].attributeConfig;
+                this._editorConfig=JSON.parse(JSON.stringify(this._editorConfig));
+            }
+
+        }
+
     }
 
     _changeValue($event) {
         console.log('功能模块选择', $event);
+    }
+
+
+
+    componentdic = {
+        'bsn-datatable': {
+            viewCfg: [
+                {
+                    'viewId': 'operation_sqlColumns1',
+                    'component': 'bsnDataTable',
+                    'config': {
+                        'keyId': 'key',
+                        'nzIsPagination': false, // 是否分页
+                        'nzShowTotal': true,// 是否显示总数据量
+                        'pageSize': 5, //默认每页数据条数
+                        'nzPageSizeSelectorValues': [5, 10, 20, 30, 40, 50],
+                        'nzLoading': false, // 是否显示加载中
+                        'nzBordered': false,// 是否显示边框
+                        'columns': [
+                            {
+                                title: '主键', field: 'key', width: 80, hidden: true, editor: {
+                                    type: 'input',
+                                    field: 'key',
+                                    options: {
+                                        'type': 'input',
+                                        'labelSize': '6',
+                                        'controlSize': '10',
+                                        'inputType': 'text',
+                                    }
+                                }
+                            },
+                            {
+                                title: '字段名称', field: 'fieldName', width: 80,
+                                editor: {
+                                    type: 'input',
+                                    field: 'fieldName',
+                                    options: {
+                                        'type': 'input',
+                                        'labelSize': '6',
+                                        'controlSize': '10',
+                                        'inputType': 'text',
+                                    }
+                                }
+                            },
+                            {
+                                title: '标题', field: 'title', width: 80,
+                                editor: {
+                                    type: 'input',
+                                    field: 'title',
+                                    options: {
+                                        'type': 'input',
+                                        'labelSize': '6',
+                                        'controlSize': '10',
+                                        'inputType': 'text',
+                                    }
+                                }
+                            },
+                            {
+                                title: '数据类型', field: 'dataTypeName', width: 80, hidden: false,
+                                editor: {
+                                    type: 'select',
+                                    field: 'dataType',
+                                    options: {
+                                        'type': 'select',
+                                        'labelSize': '6',
+                                        'controlSize': '10',
+                                        'inputType': 'submit',
+                                        'name': 'sex',
+                                        'label': '性别',
+                                        'notFoundContent': '',
+                                        'selectModel': false,
+                                        'showSearch': true,
+                                        'placeholder': '-请选择-',
+                                        'disabled': false,
+                                        'size': 'default',
+                                        'clear': true,
+                                        'width': '60px',
+                                        'options': [
+                                            {
+                                                'label': '字符',
+                                                'value': '字符'
+                                            },
+                                            {
+                                                'label': '数值',
+                                                'value': '数值'
+                                            },
+                                            {
+                                                'label': '时间',
+                                                'value': '时间'
+                                            }
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                title: '展示样式', field: 'displayStyleName', width: 80, hidden: false,
+                                editor: {
+                                    type: 'select',
+                                    field: 'displayStyle',
+                                    options: {
+                                        'type': 'select',
+                                        'labelSize': '6',
+                                        'controlSize': '10',
+                                        'inputType': 'submit',
+                                        'notFoundContent': '',
+                                        'selectModel': false,
+                                        'showSearch': true,
+                                        'placeholder': '-请选择-',
+                                        'disabled': false,
+                                        'size': 'default',
+                                        'clear': true,
+                                        'width': '60px',
+                                        'options': [
+                                            {
+                                                'label': '居中',
+                                                'value': '居中'
+                                            },
+                                            {
+                                                'label': '左对齐',
+                                                'value': '左对齐'
+                                            },
+                                            {
+                                                'label': '右对齐',
+                                                'value': '右对齐'
+                                            }
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                title: '是否显示', field: 'isShowName', width: 80, hidden: false,
+                                editor: {
+                                    type: 'select',
+                                    field: 'isShow',
+                                    options: {
+                                        'type': 'select',
+                                        'labelSize': '6',
+                                        'controlSize': '10',
+                                        'inputType': 'submit',
+                                        'notFoundContent': '',
+                                        'selectModel': false,
+                                        'showSearch': true,
+                                        'placeholder': '-请选择-',
+                                        'disabled': false,
+                                        'size': 'default',
+                                        'clear': true,
+                                        'width': '60px',
+                                        'options': [
+                                            {
+                                                'label': '显示',
+                                                'value': '1',
+                                                'disabled': false
+                                            },
+                                            {
+                                                'label': '隐藏',
+                                                'value': '2',
+                                                'disabled': false
+                                            }
+                                        ]
+                                    }
+                                }
+                            },
+
+                            {
+                                title: '排序', field: 'order', width: 80, hidden: false,
+                                editor: {
+                                    type: 'input',
+                                    field: 'order',
+                                    options: {
+                                        'type': 'input',
+                                        'labelSize': '6',
+                                        'controlSize': '10',
+                                        'inputType': 'text',
+                                    }
+                                }
+                            },
+                            { title: '数据类型', field: 'dataType', width: 80, hidden: true, },
+                            { title: '展示样式', field: 'displayStyle', width: 80, hidden: true, },
+                            { title: '是否显示', field: 'isShow', width: 80, hidden: true, },
+
+                        ],
+                        'toolbar': [
+                            { 'name': 'refresh', 'class': 'editable-add-btn', 'text': '刷新' },
+                            { 'name': 'addRow', 'class': 'editable-add-btn', 'text': '新增' },
+                            { 'name': 'updateRow', 'class': 'editable-add-btn', 'text': '修改' },
+                            { 'name': 'deleteRow', 'class': 'editable-add-btn', 'text': '删除' },
+                            { 'name': 'saveRow', 'class': 'editable-add-btn', 'text': '保存' },
+                            { 'name': 'cancelRow', 'class': 'editable-add-btn', 'text': '取消' }
+                        ]
+                    },
+                    'dataList': []
+                }
+            ],
+            attributeConfig: [
+                {
+                  'type': 'input',
+                  'labelSize': '6',
+                  'controlSize': '10',
+                  'inputType': 'text',
+                  'name': 'userName',
+                  'label': '数据网格名称',
+                  'placeholder': '例如：Company.cn.app',
+                  'disabled': false,
+                  'readonly': false,
+                  'size': 'default',
+                  'validations': [
+                    {
+                      'validator': 'required',
+                      'errorMessage': '不能为空'
+                    },
+                    {
+                      'validator': 'minlength',
+                      'length': 6,
+                      'errorMessage': '最小长度为6'
+                    }
+                  ],
+                },
+                {
+                  'type': 'select',
+                  'labelSize': '6',
+                  'controlSize': '10',
+                  'inputType': 'submit',
+                  'name': 'sex',
+                  'label': '是否分页',
+                  'notFoundContent':'',
+                  'selectModel': false,
+                  'showSearch': true,
+                  'placeholder':'--请选择--',
+                  'disabled': false,
+                  'size': 'default',
+                  'options': [
+                    {
+                      'label':'是',
+                      'value': '1',
+                      'disabled': false
+                    },
+                    {
+                      'label':'否',
+                      'value': '2',
+                      'disabled': false
+                    }
+                  ]
+                },
+              ]
+        },
+        'bsn-tree': {
+            viewCfg: [
+                {
+                    'viewId': 'operation_sqlColumns1',
+                    'component': 'bsnDataTable',
+                    'config': {
+                        'keyId': 'key',
+                        'nzIsPagination': false, // 是否分页
+                        'nzShowTotal': true,// 是否显示总数据量
+                        'pageSize': 5, //默认每页数据条数
+                        'nzPageSizeSelectorValues': [5, 10, 20, 30, 40, 50],
+                        'nzLoading': false, // 是否显示加载中
+                        'nzBordered': false,// 是否显示边框
+                        'columns': [
+                            {
+                                title: '主键', field: 'key', width: 80, hidden: true, editor: {
+                                    type: 'input',
+                                    field: 'key',
+                                    options: {
+                                        'type': 'input',
+                                        'labelSize': '6',
+                                        'controlSize': '10',
+                                        'inputType': 'text',
+                                    }
+                                }
+                            },
+                            {
+                                title: '字段名称', field: 'fieldName', width: 80,
+                                editor: {
+                                    type: 'input',
+                                    field: 'fieldName',
+                                    options: {
+                                        'type': 'input',
+                                        'labelSize': '6',
+                                        'controlSize': '10',
+                                        'inputType': 'text',
+                                    }
+                                }
+                            },
+                            {
+                                title: '标题', field: 'title', width: 80,
+                                editor: {
+                                    type: 'input',
+                                    field: 'title',
+                                    options: {
+                                        'type': 'input',
+                                        'labelSize': '6',
+                                        'controlSize': '10',
+                                        'inputType': 'text',
+                                    }
+                                }
+                            },
+                            {
+                                title: '数据类型', field: 'dataTypeName', width: 80, hidden: false,
+                                editor: {
+                                    type: 'select',
+                                    field: 'dataType',
+                                    options: {
+                                        'type': 'select',
+                                        'labelSize': '6',
+                                        'controlSize': '10',
+                                        'inputType': 'submit',
+                                        'notFoundContent': '',
+                                        'selectModel': false,
+                                        'showSearch': true,
+                                        'placeholder': '-请选择-',
+                                        'disabled': false,
+                                        'size': 'default',
+                                        'clear': true,
+                                        'width': '60px',
+                                        'options': [
+                                            {
+                                                'label': '字符',
+                                                'value': '字符'
+                                            },
+                                            {
+                                                'label': '数值',
+                                                'value': '数值'
+                                            },
+                                            {
+                                                'label': '时间',
+                                                'value': '时间'
+                                            }
+                                        ]
+                                    }
+                                }
+                            },
+                            { title: '数据类型', field: 'dataType', width: 80, hidden: true, },
+                           
+
+                        ],
+                        'toolbar': [
+                            { 'name': 'refresh', 'class': 'editable-add-btn', 'text': '刷新' },
+                            { 'name': 'addRow', 'class': 'editable-add-btn', 'text': '新增' },
+                            { 'name': 'updateRow', 'class': 'editable-add-btn', 'text': '修改' },
+                            { 'name': 'deleteRow', 'class': 'editable-add-btn', 'text': '删除' },
+                            { 'name': 'saveRow', 'class': 'editable-add-btn', 'text': '保存' },
+                            { 'name': 'cancelRow', 'class': 'editable-add-btn', 'text': '取消' }
+                        ]
+                    },
+                    'dataList': []
+                }
+            ],
+            attributeConfig: [
+                {
+                  'type': 'input',
+                  'labelSize': '6',
+                  'controlSize': '10',
+                  'inputType': 'text',
+                  'name': 'userName',
+                  'label': '树组件名称',
+                  'placeholder': '例如：Company.cn.app',
+                  'disabled': false,
+                  'readonly': false,
+                  'size': 'default',
+                  'validations': [
+                    {
+                      'validator': 'required',
+                      'errorMessage': '不能为空'
+                    },
+                    {
+                      'validator': 'minlength',
+                      'length': 6,
+                      'errorMessage': '最小长度为6'
+                    }
+                  ],
+                },
+                {
+                  'type': 'select',
+                  'labelSize': '6',
+                  'controlSize': '10',
+                  'inputType': 'submit',
+                  'name': 'sex',
+                  'label': '是否异步树',
+                  'notFoundContent':'',
+                  'selectModel': false,
+                  'showSearch': true,
+                  'placeholder':'--请选择--',
+                  'disabled': false,
+                  'size': 'default',
+                  'options': [
+                    {
+                      'label':'是',
+                      'value': '1',
+                      'disabled': false
+                    },
+                    {
+                      'label':'否',
+                      'value': '2',
+                      'disabled': false
+                    }
+                  ]
+                },
+              ]
+        }
     }
 }

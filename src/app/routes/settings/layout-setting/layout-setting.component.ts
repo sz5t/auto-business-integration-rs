@@ -920,24 +920,46 @@ export class LayoutSettingComponent implements OnInit {
       label: 'T3 型结构'
     }
   ];
+  // 被选中功能对象
   _funcValue;
+  // 被选中布局对象
   _layoutValue;
+  // 配置名称
   _configName;
+  // 布局编辑表单对象
   _formGroup: FormGroup;
+  // 布局编辑表单配置对象
   _editorConfig;
-  _appUser: AppUser;
-  _onlineUser: OnlineUser;
-  _applyId;
+  // 布局列表配置对象
 
-  constructor(private apiService: ApiService,
-              private formBuilder: FormBuilder,
-              private cacheService: CacheService,
-              private message: NzMessageService
-) {
-    this._onlineUser = this.cacheService.getNone<OnlineUser>('OnlineUser');
-    this._appUser = this.cacheService.getNone<AppUser>('User');
-    this._applyId = this.cacheService.getNone('ApplyId');
-  }
+  _selectedModuleText;
+  _tableHeader = {
+    'keyId': 'key',
+    'nzIsPagination': false, // 是否分页
+    'nzShowTotal': true,// 是否显示总数据量
+    'pageSize': 5, //默认每页数据条数
+    'nzPageSizeSelectorValues': [5, 10, 20, 30, 40, 50],
+    'nzLoading': false, // 是否显示加载中
+    'nzBordered': false,// 是否显示边框
+    'columns': [
+      { title: '主键', field: 'key', width: 'auto', hidden: true },
+      { title: 'ID', field: 'Id', width: 'auto', hidden: true },
+      { title: '布局名称', field: 'Name', width: 'auto' },
+      { title: '模版名称', field: 'TagB', width: 'auto', hidden: false },
+      { title: '是否启用', field: 'ShareScope', width: 'auto', hidden: false },
+      { title: '创建时间', field: 'CreateTime', width: 'auto', hidden: false}
+    ],
+    'toolbar': [
+      { 'name': 'status', 'class': 'editable-add-btn', 'text': '启用/禁用' },
+      { 'name': 'delete', 'class': 'editable-add-btn', 'text': '删除' },
+    ]
+  };
+  // 布局列表数据
+  _tableDataSource = [];
+  constructor(
+    private apiService: ApiService,
+    private formBuilder: FormBuilder,
+    private message: NzMessageService) {}
 
   async ngOnInit() {
     this._formGroup = this.formBuilder.group({});
@@ -954,18 +976,23 @@ export class LayoutSettingComponent implements OnInit {
   }
 
   // 获取布局设置列表
-  async getLayoutConfigData (params) {
+  getLayoutConfigData (params) {
     return this.apiService.getProj(APIResource.AppConfigPack,params).toPromise();
   }
 
   // 改变模块选项
-  async _changeModuleValue($event) {
+  _changeModuleValue($event?) {
     // 选择功能模块，首先加载服务端配置列表
     //const params = new HttpParams().set('TagA', this._funcValue.join(','));
-    const params = { TagA:this._funcValue.join(',') };
-    const serverLayoutData = await this.getLayoutConfigData(params);
-    if(serverLayoutData.status === 200 && serverLayoutData.Data.length > 0){
-      // todo 将数据加载入列表当中
+    if(this._funcValue.length >0) {
+      const params = { TagA:this._funcValue.join(',')};
+      this.getLayoutConfigData(params).then(serverLayoutData => {
+        if(serverLayoutData.Status === 200 && serverLayoutData.Data.length > 0){
+          this._tableDataSource = serverLayoutData.Data;
+        } else {
+          this._tableDataSource = [];
+        }
+      });
     }
   }
 
@@ -977,6 +1004,9 @@ export class LayoutSettingComponent implements OnInit {
     this._formGroup = this.createGroup();
   }
 
+  _onSelectionChange(selectedOptions: any[]) {
+    this._selectedModuleText = `【${selectedOptions.map(o => o.label).join(' / ')}】`;
+  }
   resetForm($event: MouseEvent) {
     $event.preventDefault();
     this._formGroup.reset();
@@ -1009,6 +1039,7 @@ export class LayoutSettingComponent implements OnInit {
       this.message.remove(loadingMessage);
       if(response && response.Status === 200) {
         this.message.create('success', '执行成功');
+        this._changeModuleValue();
       }else {
         this.message.create('warning', `出现异常：${response.Message}`);
       }

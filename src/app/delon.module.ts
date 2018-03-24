@@ -14,6 +14,7 @@ const MOCKMODULE = !environment.production || environment.chore === true ?
 
 // region: zorro modules
 import { NzTreeModule } from 'ng-tree-antd';
+import { TreeModule } from 'angular-tree-component';
 import {
   // LoggerModule,
   // NzLocaleModule,
@@ -114,7 +115,9 @@ export const ZORROMODULES = [
     // NzAnchorModule,
     NzAvatarModule,
     NzUploadModule,
-    NzTreeModule
+    NzTreeModule,
+    TreeModule
+
 ];
 // endregion
 

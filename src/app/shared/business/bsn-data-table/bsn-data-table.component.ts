@@ -23,7 +23,7 @@ import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 export class BsnDataTableComponent implements OnInit {
 
     @Input() config; //dataTables 的配置参数
-    @Input() dataList; // 表格数据集合
+    @Input() dataList=[]; // 表格数据集合
 
 
     pi = 1;

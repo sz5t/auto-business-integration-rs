@@ -5,7 +5,9 @@ import {
 import { _HttpClient } from '@delon/theme';
 import {BsnDataTableComponent} from "@shared/business/bsn-data-table/bsn-data-table.component";
 import {FormResolverComponent} from "@shared/resolver/form-resolver/form-resolver.component";
+import { CnCodeEditComponent } from '@shared/components/cn-code-edit/cn-code-edit.component';
 const component: { [type: string]: Type<any> } = {
+  code_edit: CnCodeEditComponent,
   bsnDataTable: BsnDataTableComponent,
   form_view: FormResolverComponent
 };

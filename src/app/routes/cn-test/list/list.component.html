@@ -1,3 +1,24 @@
+
+<cn-code-edit></cn-code-edit>
+
+<nz-card>
+<div>
+   
+</div>
+<nz-popover [nzTitle]="'标题'" [(nzVisible)]="visible" [nzTrigger]="'click'" [nzPlacement]="'rightTop'">
+    <!-- <button nz-button nz-popover [nzType]="'primary'">点击</button> -->
+    <nz-tree nz-popover [nzNodes]="nodes" [nzOptions]="options"  (nzActivate)="onActivate($event)"
+    [nzAllowChildLinkage]="treeconfig.nzAllowChildLinkage" [nzAllowParentLinkage]="treeconfig.nzAllowParentLinkage" [nzCheckable]="treeconfig.nzCheckable"
+    [nzShowLine]="treeconfig.nzShowLine"
+    >
+    ></nz-tree>
+    <ng-template #nzTemplate>
+      <a>点击关闭</a>
+      <p>内容</p>
+      <p>内容</p>
+    </ng-template>
+  </nz-popover>
+</nz-card>
 <div nz-row [nzGutter]="16">
     <div nz-col [nzMd]="24">
         <nz-card>
@@ -55,9 +76,6 @@
     </div>
 </div>
 <div bsn-data-table [config]="config" [dataList]="dataList"></div>
-<div>
-    <nz-tree [nzNodes]="nodes" [nzOptions]="options"  (nzActivate)="onActivate($event)"
-    [nzAllowChildLinkage]="treeconfig.nzAllowChildLinkage" [nzAllowParentLinkage]="treeconfig.nzAllowParentLinkage" [nzCheckable]="treeconfig.nzCheckable"
-    [nzShowLine]="treeconfig.nzShowLine">
-    ></nz-tree>
-</div>
+
+
+

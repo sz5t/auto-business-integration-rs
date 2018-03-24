@@ -39,6 +39,7 @@ import { CnGridCheckboxComponent } from './components/cn-grid-checkbox/cn-grid-c
 import { BsnDataTableComponent } from './business/bsn-data-table/bsn-data-table.component';
 import { CnContextMenuComponent } from './components/cn-context-menu/cn-context-menu.component';
 import { BsnTreeComponent } from './business/bsn-tree/bsn-tree.component';
+import { CnCodeEditComponent } from './components/cn-code-edit/cn-code-edit.component';
 const THIRDMODULES = [
     CountdownModule,
     NzSchemaFormModule
@@ -67,7 +68,8 @@ const COMPONENTS = [
   CnGridRangePickerComponent,
   CnGridCheckboxComponent,
   BsnDataTableComponent,
-  CnContextMenuComponent
+  CnContextMenuComponent,
+  CnCodeEditComponent
 
 ];
 const DIRECTIVES = [
@@ -95,7 +97,8 @@ const DIRECTIVES = [
         ...COMPONENTS,
         ...DIRECTIVES,
         BsnDataTableComponent,
-        BsnTreeComponent
+        BsnTreeComponent,
+        CnCodeEditComponent
     ],
     exports: [
         CommonModule,
@@ -132,7 +135,8 @@ const DIRECTIVES = [
       NzRadioGroupComponent,
       NzCheckboxGroupComponent,
       BsnDataTableComponent,
-      FormResolverComponent
+      FormResolverComponent,
+      CnCodeEditComponent
     ]
 })
 export class SharedModule { }

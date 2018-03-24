@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
 import { map } from 'rxjs/operators';
+import { TreeNode, TreeModel, TREE_ACTIONS, KEYS, IActionMapping, ITreeOptions } from 'angular-tree-component';
 
 //import { RandomUserService } from '../randomUser.service';
 @Component({
@@ -33,6 +34,7 @@ export class ListComponent implements OnInit {
     _indeterminate = false;
     _allChecked = false;
     events: any[] = [];
+
     load(pi?: number) {
         if (typeof pi !== 'undefined') {
             this.pi = pi || 1;
@@ -436,12 +438,12 @@ export class ListComponent implements OnInit {
 
     }
 
-    nodes = [
+    nodes1 = [
 
         {
             id: '1',
             name: 'root3',
-            data:'ahhahah'
+            data: 'ahhahah'
         },
         {
             id: '2',
@@ -466,15 +468,92 @@ export class ListComponent implements OnInit {
         }
     ];
 
-    options = {
+    options1 = {
         allowDrag: true
     };
 
+    nodes = [
+        {
+            name: 'root1',
+            children: [
+                {
+                    name: 'child1'
+                }, {
+                    name: 'child2'
+                }
+            ]
+        },
+        {
+            name: 'root2',
+            children: [
+                {
+                    name: 'child2.1'
+                }, {
+                    name: 'child2.2',
+                    children: [
+                        {
+                            id: 1001,
+                            name: 'subsub'
+                        }
+                    ]
+                }
+            ]
+        }
+    ];
+
+    options: ITreeOptions = {
+        actionMapping: {
+            mouse: {
+                contextMenu: (tree, node, $event) => {
+                    $event.preventDefault();
+                    //alert(`context menu for ${node.data.name}`);
+                    this.showMsg(node.data.name);
+                    this.visible = true;
+                },
+                dblClick: (tree, node, $event) => {
+                    if (node.hasChildren) {
+                        TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
+                    }
+                },
+                click: (tree, node, $event) => {
+                    $event.shiftKey
+                        ? TREE_ACTIONS.TOGGLE_ACTIVE_MULTI(tree, node, $event)
+                        : TREE_ACTIONS.TOGGLE_ACTIVE(tree, node, $event);
+                }
+            },
+            keys: {
+                [KEYS.ENTER]: (tree, node, $event) => alert(`This is ${node.data.name}`)
+            }
+        }
+    };
+    /*     actionMapping: IActionMapping = {
+            mouse: {
+                contextMenu: (tree, node, $event) => {
+                    $event.preventDefault();
+                    alert(`context menu for ${node.data.name}`);
+                },
+                dblClick: (tree, node, $event) => {
+                    if (node.hasChildren) {
+                        TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
+                    }
+                },
+                click: (tree, node, $event) => {
+                    $event.shiftKey
+                        ? TREE_ACTIONS.TOGGLE_ACTIVE_MULTI(tree, node, $event)
+                        : TREE_ACTIONS.TOGGLE_ACTIVE(tree, node, $event);
+                }
+            },
+            keys: {
+                [KEYS.ENTER]: (tree, node, $event) => alert(`This is ${node.data.name}`)
+            }
+        }; */
     onEvent(ev: any) {
         console.log('onEvent,点击树节点', ev);
     }
     onActivate(ev: any) {
         console.log('激活树节点', ev);
+        this.visible = false;
+        console.log(this.fn(this.nodestree,0));
     }
 
     // nzAutoExpandParent 是否自动展开父节点，当数字时展开最大节点 false
@@ -487,7 +566,40 @@ export class ListComponent implements OnInit {
         nzAutoExpandParent: true, //是否自动展开父节点，当数字时展开最大节点 false
         nzAllowChildLinkage: true,// 是否开启父节点的checkbox状态的会影响子节点状态 true
         nzAllowParentLinkage: true,// 是否开启子节点的checkbox状态的会影响父节点状态 true
-        nzCheckable: true, //  在节点之前添加一个复选框 false
-        nzShowLine: true, // 显示连接线 false
+        nzCheckable: false, //  在节点之前添加一个复选框 false
+        nzShowLine: false, // 显示连接线 false
     };
+
+    nzContextMenu(ev: any) {
+        console.log('yj');
+
+    }
+
+
+    //气泡
+    visible = false;
+
+     nodestree = [
+        {"id":2,"title":"第一级1","parentid":0},
+        {"id":3,"title":"第二级1","parentid":2},
+        {"id":4,"title":"第二级2","parentid":2},
+        {"id":5,"title":"第三级1","parentid":4},
+        {"id":6,"title":"第三级2","parentid":3}
+        ];
+    fn(data, parentid) {
+        const result = [];
+        let temp;
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].parentid == parentid) {
+                const obj = { "text": data[i].name, "id": data[i].id };
+                temp = this.fn(data, data[i].id);
+                if (temp.length > 0) {
+                    obj['children'] = temp;
+                }
+                result.push(obj);
+            }
+        }
+        return result;
+    }
+
 }

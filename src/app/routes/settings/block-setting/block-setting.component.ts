@@ -1,270 +1,92 @@
 import { Component, OnInit } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
+import {ApiService} from "@core/utility/api-service";
+import {APIResource} from "@core/utility/api-resource";
 
 @Component({
   selector: 'app-block-setting',
   templateUrl: './block-setting.component.html',
 })
 export class BlockSettingComponent implements OnInit {
-  _funcOptions =  [
-    {
-      value: 'm_1',
-      label: '模块 1',
-      children: [
-        {
-          value: 'f_1',
-          label: '功能 1',
-          isLeaf: true
-        },
-        {
-          value: 'f_2',
-          label: '功能 2',
-          isLeaf: true
-        }
-      ],
-    },
-    {
-      value: 'm_2',
-      label: '模块 2',
-      children: [
-        {
-          value: 'f2_1',
-          label: '功能 1',
-          isLeaf: true
-        }
-      ]
-    }
-  ];
+  // 加载模块数据
+  _funcOptions:any[] = [];
   _funcValue;
-  _layoutValue = {
-    title: '标题 1',
-    rows:[
-      {
-        row: {
-          cols:[
-            {
-              title: '区域1',
-              span:6,
-              size: {
-                nzXs: 6,
-                nzSm: 6,
-                nzMd: 6,
-                nzLg: 6,
-                ngXl: 6
-              }
-            },
-            {
-              title: '区域2',
-              span:18,
-              size: {
-                nzXs: 18,
-                nzSm: 18,
-                nzMd: 18,
-                nzLg: 18,
-                ngXl: 18
-              },
-              rows: [
-                {
-                  row: {
-                    cols:[
-                      {
-                        title: '区域1',
-                        span:24,
-                        size: {
-                          nzXs: 24,
-                          nzSm: 24,
-                          nzMd: 24,
-                          nzLg: 24,
-                          ngXl: 24
-                        }
-                      },
-                      {
-                        title: '区域1',
-                        span:24,
-                        size: {
-                          nzXs: 24,
-                          nzSm: 24,
-                          nzMd: 24,
-                          nzLg: 24,
-                          ngXl: 24
-                        }
-                      }
-                    ]
-                  }
-                },
-                {
-                  row: {
-                    cols:[
-                      {
-                        title: '区域1',
-                        span:24,
-                        size: {
-                          nzXs: 24,
-                          nzSm: 24,
-                          nzMd: 24,
-                          nzLg: 24,
-                          ngXl: 24
-                        }
-                      },
-                      {
-                        title: '区域1',
-                        span:24,
-                        size: {
-                          nzXs: 24,
-                          nzSm: 24,
-                          nzMd: 24,
-                          nzLg: 24,
-                          ngXl: 24
-                        }
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-          ]
-        }
-      },
-      {
-        row: {
-          cols:[
-            {
-              title: '区域1',
-              span:12,
-              size: {
-                nzXs: 12,
-                nzSm: 12,
-                nzMd: 12,
-                nzLg: 12,
-                ngXl: 12
-              },
-              tabs:[
-                {
-                  title:'tab 1',
-                  icon: '',
-                  active: true,
-                  viewCfg: {}
-                },
-                {
-                  title: 'tab 2',
-                  icon: '',
-                  active: false,
-                  viewCfg: {}
-                }
-              ]
-            },
-            {
-              title: '区域1',
-              span:12,
-              size: {
-                nzXs: 12,
-                nzSm: 12,
-                nzMd: 12,
-                nzLg: 12,
-                ngXl: 12
-              },
-              component: 'bsnDataTable'
-            }
-          ]
-        }
-      },
-    ],
-    layoutEditor: [
-      {
-        name: 'area1',
-        title: '区域 1',
-        data: [
-          {
-            'type': 'input',
-            'labelSize': '12',
-            'controlSize': '12',
-            'inputType': 'text',
-            'name': 'area1_title',
-            'label': '标题',
-            'placeholder': '',
-            'disabled': false,
-            'readonly': false,
-            'size': 'default',
-          },
-          {
-            'type': 'input',
-            'labelSize': '12',
-            'controlSize': '12',
-            'inputType': 'text',
-            'name': 'area1_icon',
-            'label': '图标',
-            'placeholder': 'icon-plus',
-            'disabled': false,
-            'readonly': false,
-            'size': 'default',
-          },
-          {
-            'type': 'input',
-            'labelSize': '12',
-            'controlSize': '12',
-            'inputType': 'text',
-            'name': 'area1_color',
-            'label': '颜色',
-            'placeholder': '',
-            'disabled': false,
-            'readonly': false,
-            'size': 'default',
-          },
-        ]
-      },
-      {
-        name: 'area2',
-        title: '区域 2',
-        data: [
-          {
-            'type': 'input',
-            'labelSize': '12',
-            'controlSize': '12',
-            'inputType': 'text',
-            'name': 'area2_title',
-            'label': '标题',
-            'placeholder': '',
-            'disabled': false,
-            'readonly': false,
-            'size': 'default',
-          },
-          {
-            'type': 'input',
-            'labelSize': '12',
-            'controlSize': '12',
-            'inputType': 'text',
-            'name': 'area2_icon',
-            'label': '图标',
-            'placeholder': 'icon-plus',
-            'disabled': false,
-            'readonly': false,
-            'size': 'default',
-          },
-          {
-            'type': 'input',
-            'labelSize': '12',
-            'controlSize': '12',
-            'inputType': 'text',
-            'name': 'area2_color',
-            'label': '颜色',
-            'placeholder': '',
-            'disabled': false,
-            'readonly': false,
-            'size': 'default',
-          },
-        ]
-      }
-    ]
-  };
-
+  _layoutNameValue;
+  _layoutConfig;
+  // 布局列表数据
+  _layoutList = [];
+  _selectedModuleText;
   constructor(
-      private http: _HttpClient
+    private apiService: ApiService,
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    const params = { _select: 'Id,Name,ParentId' };
+    const moduleData = await this.getModuleData(params);
+    // 初始化模块列表，将数据加载到及联下拉列表当中
+    this._funcOptions = this.arrayToTree(moduleData.Data, '');
   }
 
-  _changeValue() {
+  // 改变模块选项
+  _changeModuleValue($event?) {
+    this._layoutList = [];
+    // 选择功能模块，首先加载服务端配置列表
+    //const params = new HttpParams().set('TagA', this._funcValue.join(','));
+    if(this._funcValue.length >0) {
+      const params = {
+        TagA:this._funcValue.join(','),
+        _select: 'Id,Name,Metadata'
+      };
+      this.getLayoutConfigData(params).then(serverLayoutData => {
+        if(serverLayoutData.Status === 200 && serverLayoutData.Data.length > 0){
+          serverLayoutData.Data.forEach((data,index) => {
+            const metadata = JSON.parse(data.Metadata);
+            this._layoutList.push({label:data.Name,value:{id:data.Id,metadata:metadata}});
+          });
+        } else {
+          this._layoutList = [];
+        }
 
+      });
+    }
   }
+
+  // 获取布局设置列表
+  getLayoutConfigData (params) {
+    return this.apiService.getProj(APIResource.AppConfigPack,params).toPromise();
+  }
+
+  // 获取模块信息
+  async getModuleData(params) {
+    return this.apiService.getProj(APIResource.AppModuleConfig, params).toPromise();
+  }
+
+  // 选择布局名称
+  _changeLayoutName($event) {
+    // 创建布局
+    this._layoutConfig = $event.metadata;
+  }
+
+  _onSelectionChange(selectedOptions: any[]) {
+    this._selectedModuleText = `【${selectedOptions.map(o => o.label).join(' / ')}】`;
+  }
+
+  arrayToTree(data, parentid) {
+    const result = [];
+    let temp;
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].ParentId == parentid) {
+        const obj = { "label": data[i].Name, "value": data[i].Id };
+        temp = this.arrayToTree(data, data[i].Id);
+        if (temp.length > 0) {
+          obj['children'] = temp;
+        } else {
+          obj["isLeaf"] = true;
+        }
+        result.push(obj);
+      }
+    }
+    return result;
+  }
+
 }

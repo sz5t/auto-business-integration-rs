@@ -1007,6 +1007,7 @@ export class LayoutSettingComponent implements OnInit {
   _onSelectionChange(selectedOptions: any[]) {
     this._selectedModuleText = `【${selectedOptions.map(o => o.label).join(' / ')}】`;
   }
+
   resetForm($event: MouseEvent) {
     $event.preventDefault();
     this._formGroup.reset();

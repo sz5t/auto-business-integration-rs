@@ -18,10 +18,30 @@
                 [class.class123]="true"
                 [nzOptions]="_funcOptions"
                 [(ngModel)]="_funcValue"
-                (ngModelChange)="_changeValue($event)"
-                (nzChange)="_changeValue($event)"
-                [nzPlaceHolder]="'请选择功能模块'">
+                (nzChange)="_changeModuleValue($event)"
+                (nzSelectionChange)="_onSelectionChange($event)"
+                [nzPlaceHolder]="'请选择功能模块'"
+                (nzLoad)="_loadLayoutData($event)"
+                [nzExpandTrigger]="'hover'">
               </nz-cascader>
+            </div>
+          </div>
+          <div nz-form-item nz-row>
+            <div nz-col nz-form-control>
+              <div nz-form-label>
+                <label [attr.for]="'布局'">模块布局列表</label>
+              </div>
+              <nz-select style="width:120px;"
+                [(ngModel)]="_layoutNameValue"
+                (ngModelChange)="_changeLayoutName($event)"
+                [nzPlaceHolder]="'选择布局名称'"
+                [ngModelOptions]="{standalone: true}">
+                <nz-option
+                  *ngFor="let option of _layoutList"
+                  [nzLabel]="option.label"
+                  [nzValue]="option.value">
+                </nz-option>
+              </nz-select>
             </div>
           </div>
           <div nz-form-item nz-row>
@@ -40,7 +60,7 @@
     <nz-card>
       <ng-template #title>设置组件</ng-template>
       <ng-template #body>
-        <cn-layout-resolver *ngIf="_layoutValue" [config]="_layoutValue"></cn-layout-resolver>
+        <cn-layout-resolver *ngIf="_layoutConfig" [config]="_layoutConfig"></cn-layout-resolver>
       </ng-template>
     </nz-card>
   </div>

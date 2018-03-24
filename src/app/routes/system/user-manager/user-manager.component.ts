@@ -3,6 +3,8 @@ import { _HttpClient } from '@delon/theme';
 import {ApiService} from '@core/utility/api-service';
 import {APIResource} from '@core/utility/api-resource';
 import {environment} from '@env/environment';
+import {CacheService} from '@delon/cache';
+import {HttpParams} from '@angular/common/http';
 
 @Component({
   selector: 'app-user-manager',
@@ -13,11 +15,11 @@ export class UserManagerComponent implements OnInit {
   contentConfigPack:any;
   contentModule:any;
     constructor(
+      private cacheService: CacheService,
       private apiService: ApiService
     ) { }
 
     ngOnInit() {
-      this.content = "初始化信息";
     }
 
   getUser()
@@ -33,8 +35,8 @@ export class UserManagerComponent implements OnInit {
 
   getModule()
   {
-    this.apiService.get(APIResource.AppModuleConfig, {
-      _select: 'Id,Name'}).toPromise().then(
+    const proj =  this.cacheService.getNone('ParamsUrl');
+    this.apiService.getProj(APIResource.AppModuleConfig, new HttpParams().set('_select', 'Id,Name')).toPromise().then(
       response => {
         this.contentModule = JSON.stringify(response.Data);
       }
@@ -43,8 +45,12 @@ export class UserManagerComponent implements OnInit {
 
   getAppConfigPack()
   {
+    const proj =  this.cacheService.getNone('Proj');
     this.apiService.get(APIResource.AppConfigPack, {
-      _select: 'Id,Name'}).toPromise().then(
+      _select: 'Id,Name',
+      ProjId: proj['ProjId'],
+      ApplyId: proj['ApplyId']
+    }).toPromise().then(
       response => {
         this.contentConfigPack = JSON.stringify(response.Data);
       }

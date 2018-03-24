@@ -1,13 +1,16 @@
 
-<pro-header [title]="'Page Name'"></pro-header>
+<pro-header [title]=""></pro-header>
 <div class="content__title">
+  <div ns-row>
   <input type="button" value="点我获取用户信息"  (click)="getUser()">
   <h1>{{content}}</h1>
-
+  </div>
+  <div>
   <input type="button" value="点我获取模块信息"  (click)="getModule()">
   <h1>{{contentModule}}</h1>
-  <br>
+  </div>
+  <div>
   <input type="button" value="点我获取配置信息"  (click)="getAppConfigPack()">
   <h1>{{contentConfigPack}}</h1>
-
+  </div>
 </div>

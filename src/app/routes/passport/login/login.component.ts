@@ -5,12 +5,14 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd';
 import { SocialService, SocialOpenType, ITokenService, DA_SERVICE_TOKEN } from '@delon/auth';
 import { ReuseTabService } from '@delon/abc';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Md5} from 'ts-md5/dist/md5';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import { Md5 } from 'ts-md5/dist/md5';
 import {CacheService} from '@delon/cache';
 import {ApiService} from '@core/utility/api-service';
 import {environment} from '@env/environment';
 import {APIResource} from '@core/utility/api-resource';
+import {AppUser, CacheInfo } from '../../../model/APIModel/AppUser';
+import {OnlineUser } from '../../../model/APIModel/OnlineUser';
 
 
 @Component({
@@ -26,6 +28,8 @@ export class UserLoginComponent implements OnDestroy {
     loading = false;
     onlineUser: OnlineUser;
     appUser: AppUser;
+    cacheInfo: CacheInfo;
+
     constructor(
         fb: FormBuilder,
         private cacheService: CacheService,
@@ -36,6 +40,7 @@ export class UserLoginComponent implements OnDestroy {
         private socialService: SocialService,
         private menuService: MenuService,
         private apiService: ApiService,
+
         @Optional() @Inject(ReuseTabService,
             ) private reuseTabService: ReuseTabService,
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
@@ -94,6 +99,7 @@ export class UserLoginComponent implements OnDestroy {
         this.loading = false;
         setTimeout(() => {
           this.onlineUser = new OnlineUser();
+          this.cacheInfo = new CacheInfo();
             this.loading = false;
             if (this.type === 0) {
               this.onlineUser.Identify = this.userName.value;
@@ -108,8 +114,6 @@ export class UserLoginComponent implements OnDestroy {
               environment.COMMONCODE = APIResource.LoginCommonCode;
               this.cacheService.set('IsSettings','LOGING');
             }
-
-
           // this.tokenService.clear();
 
           this.apiService.post(APIResource.OnlineUser, this.onlineUser).toPromise()
@@ -120,26 +124,30 @@ export class UserLoginComponent implements OnDestroy {
                 return null;
               }
               this.cacheService.set('OnlineUser', this.onlineUser);
-              this.tokenService.set({
-                token: JSON.stringify({Token: response.Data.Token , RealName: response.Data.RealName, MailAddress: response.Data.MailAddress})
-              });
+              this.cacheInfo.ProjectId = this.onlineUser.ProjId;
+              this.cacheInfo.PlatCustomerId = this.onlineUser.PlatCustomerId;
+
               return response;
             }).then( param => {
               if (param) {
+                this.tokenService.set({
+                  token: param.Data.Token
+                });
                 this.apiService.get(APIResource.AppUser + '/' + param.Data.UserId)
                   .toPromise()
                   .then((response) => {
                     this.appUser = {...response.Data};
                     this.settingsService.setUser(this.appUser);
+                    this.cacheInfo.RealName = this.appUser.RealName;
                     this.cacheService.set('User', this.appUser);
                     return this.apiService.get(APIResource.SysCommonCode, {
                       name : environment.COMMONCODE,
-                      // ProjId: this.onlineUser.ProjId,
                       ApplyId : 'ApplyId'
                     }).toPromise();
                   })
                   .then( commonCode => {
-                    this.cacheService.set('ApplyId', commonCode['Data'][0].Id)
+                    this.cacheInfo.ApplyId = commonCode['Data'][0].Id;
+                    this.cacheService.set('ParamsUrl', this.cacheInfo);
                     return this.apiService.get(APIResource.AppModuleConfig,{
                       ProjId: this.onlineUser.ProjId,
                       ApplyId: commonCode['Data'][0].Id,
@@ -234,50 +242,5 @@ export class UserLoginComponent implements OnDestroy {
     ngOnDestroy(): void {
         if (this.interval$) clearInterval(this.interval$);
     }
-
 }
 
-export class OnlineUser{
-    Id: string;
-    Identify: string;
-    IdentifyType: string;
-    IP: string;
-    LoginTime: string;
-    MacAddr: string;
-    Message: string;
-    Online: boolean;
-    OrgList: any[];
-    Password: string;
-    PlatCustomerId: string;
-    PrivId: string;
-    ProjId: string;
-    ProjList: any[];
-    TryTimes: number;
-    RemainTimes: number;
-    UserId: string;
-    ValidCode: string;
-    ValidCodeId: string;
-    Token: string;
-
-}
-
-export class AppUser implements  User {
-    Birthday?: string;
-    Code: string;
-    CreateTime: string;
-    Grender: string;
-    Id: string;
-    IdCardNumber: string;
-    LoginLimitKind: string;
-    MailAddress: string;
-    MobileNumber: string;
-    Name: string;
-    NickName: string;
-    Password: string;
-    PersonId: string;
-    PlatCustomerId: string;
-    RealName: string;
-    Remark: string;
-    Status: string;
-    UserType: string;
-}

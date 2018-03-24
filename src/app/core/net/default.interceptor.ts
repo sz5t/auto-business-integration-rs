@@ -16,7 +16,7 @@ import { environment } from '@env/environment';
  */
 @Injectable()
 export class DefaultInterceptor implements HttpInterceptor {
-    constructor(private injector: Injector) {}
+    constructor(public msgSrv: NzMessageService,private injector: Injector) {}
 
     get msg(): NzMessageService {
         return this.injector.get(NzMessageService);
@@ -50,7 +50,9 @@ export class DefaultInterceptor implements HttpInterceptor {
             case 403:
             case 404:
             case 500:
-                this.goTo(`/${event.status}`);
+              const EvMsg: any = event;
+              this.msgSrv.error(`${EvMsg.error.Message}`);
+              // this.goTo(`/${event.status}`);
                 break;
         }
 

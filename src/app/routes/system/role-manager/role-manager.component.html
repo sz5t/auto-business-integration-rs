@@ -1,4 +1,15 @@
 <div class="content__title">
-    <h1>角色管理</h1>
+  <div ns-row>
+    <input type="button" value="点我获取用户信息"  (click)="getUser()">
+    <h4>{{content}}</h4>
+  </div>
+  <div>
+    <input type="button" value="点我获取模块信息"  (click)="getModule()">
+    <h4>{{contentModule}}</h4>
+  </div>
+  <div>
+    <input type="button" value="点我获取配置信息"  (click)="getAppConfigPack()">
+    <h4>{{contentConfigPack}}</h4>
+  </div>
 </div>
 <!--<pro-header [title]="'Page Name'"></pro-header>-->

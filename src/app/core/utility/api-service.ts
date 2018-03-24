@@ -14,11 +14,10 @@ export  class ApiService
 
   setHeaders() {
     const token = this.tokenService.get().token;
-    // console.log(22222,token)
     if ( token !== 'unll') {
-      const userToken = JSON.parse(this.tokenService.get().token);
+      // const userToken = JSON.parse(this.tokenService.get().token);
       return new HttpHeaders()
-        .set('Credential', userToken['Token'] ? userToken['Token'] : '')
+        .set('Credential', token ? token : '')
         .set('X-Requested-With', 'XMLHttpRequest')
         .set('Cache-Control', 'no-cache');
     }
@@ -73,7 +72,7 @@ export  class ApiService
 
   //region  操作项目配置的相关api
 
-  postProj(resource  , body?, params?) {
+  postProj(resource , body?, params?) {
   let param: HttpParams = this.setParamsProj(params)
   return this.httpClient.request<any>(
     'POST',
@@ -133,6 +132,7 @@ export  class ApiService
       .set('ProjId', '002905c7bf57c54c9e5e65ec0e5fafe8') //项目ID
       .set('ApplyId', '3935eb43532d435398d5189d5ece0f5d') //ApplyId
       .set('PlatCustomerId', 'f2771e4c90db29439e3c986d9859dc74');// PlatCutomerId
+
     for(let p in param) {
       httpParam = httpParam.set(p, param[p]);
     }

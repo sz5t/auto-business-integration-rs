@@ -3,14 +3,61 @@
 <div class="content__title">
   <div ns-row>
   <input type="button" value="点我获取用户信息"  (click)="getUser()">
-  <h1>{{content}}</h1>
+  <h4>{{content}}</h4>
   </div>
   <div>
   <input type="button" value="点我获取模块信息"  (click)="getModule()">
-  <h1>{{contentModule}}</h1>
+  <h4>{{contentModule}}</h4>
   </div>
   <div>
   <input type="button" value="点我获取配置信息"  (click)="getAppConfigPack()">
-  <h1>{{contentConfigPack}}</h1>
+  <h4>{{contentConfigPack}}</h4>
   </div>
 </div>
+<div class="content__title">
+  <div ns-row>
+    <input type="button" value="点我添加用户信息"  (click)="addUser()">
+    <h4>{{addcontent}}</h4>
+  </div>
+  <div>
+    <input type="button" value="点我添加模块信息"  (click)="addModule()">
+    <h4>{{addcontentModule}}</h4>
+  </div>
+  <div>
+    <input type="button" value="点我添加配置信息"  (click)="addAppConfigPack()">
+    <h4>{{addcontentConfigPack}}</h4>
+  </div>
+</div>
+
+<div class="content__title">
+  <div ns-row>
+    <input type="button" value="点我修改用户信息"  (click)="putUser()">
+    <h4>{{putcontent}}</h4>
+  </div>
+  <div>
+    <input type="text" #moduleId>
+    <input type="button" value="点我修改模块信息"  (click)="putModule()">
+    <h4>{{putcontentModule}}</h4>
+  </div>
+  <div>
+    <input type="button" value="点我修改配置信息"  (click)="putAppConfigPack()">
+    <h4>{{putcontentConfigPack}}</h4>
+  </div>
+</div>
+
+
+<div class="content__title">
+  <div ns-row>
+    <input type="button" value="点我删除用户信息"  (click)="delUser()">
+    <h4>{{delcontent}}</h4>
+  </div>
+  <div>
+    <input type="button" value="点我删除模块信息"  (click)="delModule()">
+    <h4>{{delcontentModule}}</h4>
+  </div>
+  <div>
+    <input type="button" value="点我删除配置信息"  (click)="delAppConfigPack()">
+    <h4>{{delcontentConfigPack}}</h4>
+  </div>
+</div>
+

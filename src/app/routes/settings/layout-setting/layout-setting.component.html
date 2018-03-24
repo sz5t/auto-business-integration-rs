@@ -9,33 +9,47 @@
       <ng-template #body>
         <form nz-form [formGroup]="_formGroup" (ngSubmit)="_submitForm($event)">
           <div nz-form-item nz-row>
-            <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+           <!-- <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
               <label [attr.for]="'功能模块'">功能模块</label>
-            </div>
-            <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+            </div>-->
+            <div nz-form-control nz-col [nzSm]="24" [nzXs]="24">
               <nz-cascader
                 [ngModelOptions]="{standalone: true}"
                 [class.class123]="true"
                 [nzOptions]="_funcOptions"
                 [(ngModel)]="_funcValue"
-                (ngModelChange)="_changeValue($event)"
-                (nzChange)="_changeValue($event)"
-                [nzPlaceHolder]="'请选择功能模块'">
+                (nzChange)="_changeModuleValue($event)"
+                [nzPlaceHolder]="'请选择功能模块'"
+                [nzExpandTrigger]="'hover'"
+              >
               </nz-cascader>
             </div>
           </div>
           <div nz-form-item nz-row>
-            <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+            <!--<div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
               <label [attr.for]="'布局模版'">布局模版</label>
-            </div>
-            <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
-              <nz-select [(ngModel)]="_layoutValue"  (ngModelChange)="_changeLayout($event)" [nzPlaceHolder]="'请选择布局类型'"  [ngModelOptions]="{standalone: true}">
+            </div>-->
+            <div nz-form-control nz-col [nzSm]="24" [nzXs]="24">
+              <nz-select [(ngModel)]="_layoutValue"
+                         (ngModelChange)="_changeLayout($event)"
+                         [nzPlaceHolder]="'请选择布局类型'"
+                         [ngModelOptions]="{standalone: true}">
                 <nz-option
                   *ngFor="let option of _layoutOptions"
                   [nzLabel]="option.label"
-                  [nzValue]="option.value">
+                  [nzValue]="option">
                 </nz-option>
               </nz-select>
+            </div>
+          </div>
+          <div  nz-form-item nz-row>
+           <!-- <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
+              <label [attr.for]="'配置名称'">配置名称</label>
+            </div>-->
+            <div nz-form-control nz-col [nzSm]="24" [nzXs]="24">
+              <nz-input [(ngModel)]="_configName"
+                        [nzPlaceHolder]="'请输入配置名称'"
+                        [ngModelOptions]="{standalone: true}"></nz-input>
             </div>
           </div>
           <div nz-form-item nz-row>
@@ -69,7 +83,7 @@
     <nz-card>
       <ng-template #title>模版预览</ng-template>
       <ng-template #body>
-        <cn-layout-resolver *ngIf="_layoutValue" [config]="_layoutValue"></cn-layout-resolver>
+        <cn-layout-resolver *ngIf="_layoutValue" [config]="_layoutValue.value"></cn-layout-resolver>
       </ng-template>
     </nz-card>
   </div>

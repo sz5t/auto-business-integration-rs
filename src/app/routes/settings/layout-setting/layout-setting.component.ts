@@ -1,57 +1,37 @@
 import {Component, OnInit} from '@angular/core';
 import {_HttpClient} from '@delon/theme';
 import {FormBuilder, FormGroup} from "@angular/forms";
-import {HttpHeaders} from "@angular/common/http";
+import {HttpHeaders, HttpParams} from "@angular/common/http";
 import {environment} from "@env/environment";
 import {ApiService} from "@core/utility/api-service";
 import {APIResource} from "@core/utility/api-resource";
 import {CacheService} from "@delon/cache";
 import {AppUser, OnlineUser} from "../../passport/login/login.component";
+import {NzMessageService} from "ng-zorro-antd";
+/**
+ * 功能设计：
+ * 1、用户的所有布局设置统一为添加新布局
+ * 2、布局维护提供列表选择和删除功能，用户可以自行设置启用和禁用布局效果
+ * 3、目前用户一次性只可以启用一种布局设置
+ */
 @Component({
   selector: 'layout-setting',
   templateUrl: './layout-setting.component.html',
 })
 export class LayoutSettingComponent implements OnInit {
   // 加载模块数据
-  _funcOptions = [
-    {
-      value: 'm_1',
-      label: '模块 1',
-      children: [
-        {
-          value: 'f_1',
-          label: '功能 1',
-          isLeaf: true
-        },
-        {
-          value: 'f_2',
-          label: '功能 2',
-          isLeaf: true
-        }
-      ],
-    },
-    {
-      value: 'm_2',
-      label: '模块 2',
-      children: [
-        {
-          value: 'f2_1',
-          label: '功能 1',
-          isLeaf: true
-        }
-      ]
-    }
-  ];
+  _funcOptions:any[] = [];
   // 定义布局模版
   _layoutOptions = [
     {
       value: {
-        title: '标题 1',
+        id: 'area1',
         rows: [
           {
             row: {
               cols: [
                 {
+                  id: 'area1',
                   title: '区域1',
                   span: 24,
                   size: {
@@ -81,7 +61,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -93,7 +73,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': 'icon-plus',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -105,8 +85,8 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
-              },
+                'size': 'default'
+              }
             ]
           }
         ]
@@ -115,12 +95,13 @@ export class LayoutSettingComponent implements OnInit {
     },
     {
       value: {
-        title: '标题 1',
+        id: 'area1',
         rows: [
           {
             row: {
               cols: [
                 {
+                  id: 'area1',
                   title: '区域1',
                   span: 6,
                   size: {
@@ -132,6 +113,7 @@ export class LayoutSettingComponent implements OnInit {
                   }
                 },
                 {
+                  id: 'area2',
                   title: '区域2',
                   span: 18,
                   size: {
@@ -161,7 +143,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -173,7 +155,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': 'icon-plus',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -185,8 +167,8 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
-              },
+                'size': 'default'
+              }
             ]
           },
           {
@@ -203,7 +185,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -215,7 +197,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': 'icon-plus',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -227,8 +209,8 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
-              },
+                'size': 'default'
+              }
             ]
           }
         ]
@@ -243,6 +225,7 @@ export class LayoutSettingComponent implements OnInit {
             row: {
               cols: [
                 {
+                  id: 'area1',
                   title: '区域1',
                   span: 24,
                   size: {
@@ -260,6 +243,7 @@ export class LayoutSettingComponent implements OnInit {
             row: {
               cols: [
                 {
+                  id: 'area2',
                   title: '区域2',
                   span: 24,
                   size: {
@@ -289,7 +273,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -301,7 +285,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': 'icon-plus',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -313,8 +297,8 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
-              },
+                'size': 'default'
+              }
             ]
           },
           {
@@ -331,7 +315,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -343,7 +327,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': 'icon-plus',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -355,8 +339,8 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
-              },
+                'size': 'default'
+              }
             ]
           }
         ]
@@ -371,6 +355,7 @@ export class LayoutSettingComponent implements OnInit {
             row: {
               cols: [
                 {
+                  id: 'area1',
                   title: '区域1',
                   span: 6,
                   size: {
@@ -396,6 +381,7 @@ export class LayoutSettingComponent implements OnInit {
                       row: {
                         cols: [
                           {
+                            id: 'area2',
                             title: '区域2',
                             span: 24,
                             size: {
@@ -413,6 +399,7 @@ export class LayoutSettingComponent implements OnInit {
                       row: {
                         cols: [
                           {
+                            id: 'area3',
                             title: '区域3',
                             span: 24,
                             size: {
@@ -447,7 +434,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -459,7 +446,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': 'icon-plus',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -471,8 +458,8 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
-              },
+                'size': 'default'
+              }
             ]
           },
           {
@@ -489,7 +476,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -501,7 +488,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': 'icon-plus',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -513,8 +500,8 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
-              },
+                'size': 'default'
+              }
             ]
           },
           {
@@ -531,7 +518,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -543,7 +530,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': 'icon-plus',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -555,8 +542,8 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
-              },
+                'size': 'default'
+              }
             ]
           }
         ]
@@ -571,6 +558,7 @@ export class LayoutSettingComponent implements OnInit {
             row: {
               cols: [
                 {
+                  id: 'area1',
                   title: '区域1',
                   span: 24,
                   size: {
@@ -588,7 +576,8 @@ export class LayoutSettingComponent implements OnInit {
             row: {
               cols: [
                 {
-                  title: '区域1',
+                  id: 'area2',
+                  title: '区域2',
                   span: 12,
                   size: {
                     nzXs: 12,
@@ -599,7 +588,8 @@ export class LayoutSettingComponent implements OnInit {
                   }
                 },
                 {
-                  title: '区域1',
+                  id: 'area3',
+                  title: '区域3',
                   span: 12,
                   size: {
                     nzXs: 12,
@@ -628,7 +618,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -640,7 +630,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': 'icon-plus',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -652,8 +642,8 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
-              },
+                'size': 'default'
+              }
             ]
           },
           {
@@ -670,7 +660,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -682,7 +672,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': 'icon-plus',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -694,8 +684,8 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
-              },
+                'size': 'default'
+              }
             ]
           },
           {
@@ -712,7 +702,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -724,7 +714,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': 'icon-plus',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -736,8 +726,8 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
-              },
+                'size': 'default'
+              }
             ]
           }
         ]
@@ -752,6 +742,7 @@ export class LayoutSettingComponent implements OnInit {
             row: {
               cols: [
                 {
+                  id: 'area1',
                   title: '区域1',
                   span: 12,
                   size: {
@@ -763,7 +754,8 @@ export class LayoutSettingComponent implements OnInit {
                   }
                 },
                 {
-                  title: '区域1',
+                  id: 'area2',
+                  title: '区域3',
                   span: 12,
                   size: {
                     nzXs: 12,
@@ -780,7 +772,8 @@ export class LayoutSettingComponent implements OnInit {
             row: {
               cols: [
                 {
-                  title: '区域1',
+                  id: 'area3',
+                  title: '区域3',
                   span: 24,
                   size: {
                     nzXs: 24,
@@ -810,7 +803,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -822,7 +815,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': 'icon-plus',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -834,8 +827,8 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
-              },
+                'size': 'default'
+              }
             ]
           },
           {
@@ -852,7 +845,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -864,7 +857,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': 'icon-plus',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -876,8 +869,8 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
-              },
+                'size': 'default'
+              }
             ]
           },
           {
@@ -894,7 +887,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -906,7 +899,7 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': 'icon-plus',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
+                'size': 'default'
               },
               {
                 'type': 'input',
@@ -918,8 +911,8 @@ export class LayoutSettingComponent implements OnInit {
                 'placeholder': '',
                 'disabled': false,
                 'readonly': false,
-                'size': 'default',
-              },
+                'size': 'default'
+              }
             ]
           }
         ]
@@ -929,6 +922,7 @@ export class LayoutSettingComponent implements OnInit {
   ];
   _funcValue;
   _layoutValue;
+  _configName;
   _formGroup: FormGroup;
   _editorConfig;
   _appUser: AppUser;
@@ -937,34 +931,118 @@ export class LayoutSettingComponent implements OnInit {
 
   constructor(private apiService: ApiService,
               private formBuilder: FormBuilder,
-              private cacheService: CacheService) {
+              private cacheService: CacheService,
+              private message: NzMessageService
+) {
     this._onlineUser = this.cacheService.getNone<OnlineUser>('OnlineUser');
     this._appUser = this.cacheService.getNone<AppUser>('User');
     this._applyId = this.cacheService.getNone('ApplyId');
   }
 
-  ngOnInit() {
-    const params = {
-      ProjId: this._onlineUser.ProjId,
-      PlatCustomerId: this._appUser.PlatCustomerId,
-      //ApplyId: this._applyId,
-      _select: 'Id,Name,ParentId'
-    };
-    this.apiService.get(APIResource.AppModuleConfig, params).subscribe(
-      response => {
-        const moduleList = [];
-        if (response && response.Data) {
-          this._funcOptions = this.arrayToTree(response.Data, '');
-        }
-      });
+  async ngOnInit() {
     this._formGroup = this.formBuilder.group({});
+    //const params = new HttpParams().set();
+    const params = { _select: 'Id,Name,ParentId' };
+    const moduleData = await this.getModuleData(params);
+    // 初始化模块列表，将数据加载到及联下拉列表当中
+    this._funcOptions = this.arrayToTree(moduleData.Data, '');
   }
 
+  // 获取模块信息
+  async getModuleData(params) {
+    return this.apiService.getProj(APIResource.AppModuleConfig, params).toPromise();
+  }
 
-  setModuleList(modules, id) {
-    return modules.filter(module => {
-      module.ParentId = id;
+  // 获取布局设置列表
+  async getLayoutConfigData (params) {
+    return this.apiService.getProj(APIResource.AppConfigPack,params).toPromise();
+  }
+
+  // 改变模块选项
+  async _changeModuleValue($event) {
+    // 选择功能模块，首先加载服务端配置列表
+    //const params = new HttpParams().set('TagA', this._funcValue.join(','));
+    const params = { TagA:this._funcValue.join(',') };
+    const serverLayoutData = await this.getLayoutConfigData(params);
+    if(serverLayoutData.status === 200 && serverLayoutData.Data.length > 0){
+      // todo 将数据加载入列表当中
+    }
+  }
+
+  // 改变布局选项
+  _changeLayout($event) {
+    // 生成布局设置表单
+    this._editorConfig = $event.value.layoutEditor;
+    // 创建表单操作对象
+    this._formGroup = this.createGroup();
+  }
+
+  resetForm($event: MouseEvent) {
+    $event.preventDefault();
+    this._formGroup.reset();
+    for (const key in this._formGroup.controls) {
+      this._formGroup.controls[key].markAsPristine();
+    }
+  }
+
+  _submitForm($event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const loadingMessage = this.message.loading('正在执行中...', {nzDuration:0}).messageId;
+    // 为每个区域设置标题
+    this.overrideLayoutTitle(this._layoutValue.value.rows, this.value);
+    // 获取模块ID，格式为将按照模块层级依次保存为数组形式，后续按照模块加载时，层级最后的ID即为对应加载模块ID
+    const moduleID = this._funcValue.join(',');
+    const layoutName = this._layoutValue.label;
+    const metadata = JSON.stringify(this._layoutValue.value);
+    const configName = this._configName;
+    // 配置信息保存入数据库
+    const configData = {
+      TagA: moduleID,
+      TagB: layoutName,
+      Name: configName,
+      Metadata: metadata
+    };
+    this.apiService.postProj(
+      APIResource.AppConfigPack,
+      configData).subscribe(response =>{
+      this.message.remove(loadingMessage);
+      if(response && response.Status === 200) {
+        this.message.create('success', '执行成功');
+      }else {
+        this.message.create('warning', `出现异常：${response.Message}`);
+      }
     });
+  }
+
+  overrideLayoutTitle(rows, formData) {
+    rows.forEach(rowItem => {
+      rowItem.row.cols.forEach(col => {
+        // 根据ID与布局区域对应名称，更新表单提交的区域标题
+        col.title = this.value[`${col.id}_title`];
+        if(col.rows) {
+          this.overrideLayoutTitle(col.rows, formData);
+        }
+      })
+    });
+  }
+
+  arrayToTree(data, parentid) {
+    const result = [];
+    let temp;
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].ParentId == parentid) {
+        const obj = { "label": data[i].Name, "value": data[i].Id };
+        temp = this.arrayToTree(data, data[i].Id);
+        if (temp.length > 0) {
+          obj['children'] = temp;
+        } else {
+          obj["isLeaf"] = true;
+        }
+        result.push(obj);
+      }
+    }
+    return result;
   }
 
   get controlsData() {
@@ -1005,45 +1083,5 @@ export class LayoutSettingComponent implements OnInit {
   createControl(config) {
     const {disabled, validation, value} = config;
     return this.formBuilder.control({disabled, value}, validation);
-  }
-
-  _changeValue($event) {
-    // console.log($event);
-  }
-
-  _changeLayout($event) {
-    this._editorConfig = $event.layoutEditor;
-    this._formGroup = this.createGroup();
-  }
-
-  resetForm($event: MouseEvent) {
-    $event.preventDefault();
-    this._formGroup.reset();
-    for (const key in this._formGroup.controls) {
-      this._formGroup.controls[key].markAsPristine();
-    }
-  }
-
-  _submitForm($event) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-
-  arrayToTree(data, parentid) {
-    const result = [];
-    let temp;
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].ParentId == parentid) {
-        const obj = { "label": data[i].Name, "value": data[i].Id };
-        temp = this.arrayToTree(data, data[i].Id);
-        if (temp.length > 0) {
-          obj['children'] = temp;
-        } else {
-          obj["isLeaf"] = true;
-        }
-        result.push(obj);
-      }
-    }
-    return result;
   }
 }

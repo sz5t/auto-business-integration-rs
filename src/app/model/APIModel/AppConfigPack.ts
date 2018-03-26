@@ -10,6 +10,9 @@ export class AppConfigPack_Layout {
    * 模块ID
    */
   TagA?;
+  /**
+   * 节点类型
+   */
   TagB?;
   UpdateTime?;
   ParentId?;
@@ -28,7 +31,7 @@ export class AppConfigPack_Layout {
   Metadata?;
 }
 
-export class AppConfigPack_ViewConfig {
+export class AppConfigPack_Block {
   /**
    * 配置数据
    */
@@ -36,10 +39,22 @@ export class AppConfigPack_ViewConfig {
   Format?;
   ProjId?;
   ApplyId?;
+  /**
+   * 区域ID
+   */
   TagA?;
+  /**
+   * 节点类型
+   */
   TagB?;
   UpdateTime?;
+  /**
+   * 布局ID（唯一）
+   */
   ParentId?;
+  /**
+   * 组件名称
+   */
   Name?;
   ShareScope?;
   Remark?;
@@ -51,3 +66,5 @@ export class AppConfigPack_ViewConfig {
    */
   Metadata?;
 }
+
+

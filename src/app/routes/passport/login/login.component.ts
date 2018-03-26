@@ -1,11 +1,11 @@
-import {MenuService, SettingsService, User} from '@delon/theme';
+import {MenuService, SettingsService, TitleService, User} from '@delon/theme';
 import {Component, OnDestroy, Inject, Optional, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd';
 import { SocialService, SocialOpenType, ITokenService, DA_SERVICE_TOKEN } from '@delon/auth';
 import { ReuseTabService } from '@delon/abc';
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import { Md5 } from 'ts-md5/dist/md5';
 import {CacheService} from '@delon/cache';
 import {ApiService} from '@core/utility/api-service';
@@ -21,7 +21,7 @@ import {OnlineUser } from '../../../model/APIModel/OnlineUser';
     styleUrls: [ './login.component.less' ],
     providers: [ SocialService ]
 })
-export class UserLoginComponent implements OnDestroy {
+export class UserLoginComponent implements OnDestroy, OnInit {
     form: FormGroup;
     error = '';
     type = 0;
@@ -30,6 +30,10 @@ export class UserLoginComponent implements OnDestroy {
     appUser: AppUser;
     cacheInfo: CacheInfo;
 
+    ngOnInit()
+    {
+      this.titleService.setTitle('配置平台');
+    }
     constructor(
         fb: FormBuilder,
         private cacheService: CacheService,
@@ -40,10 +44,11 @@ export class UserLoginComponent implements OnDestroy {
         private socialService: SocialService,
         private menuService: MenuService,
         private apiService: ApiService,
-
+        private titleService: TitleService,
         @Optional() @Inject(ReuseTabService,
             ) private reuseTabService: ReuseTabService,
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
+      this.titleService.setTitle('配置平台');
         this.form = fb.group({
             userName: [null, [Validators.required, Validators.minLength(1)]],
             password: [null, Validators.required],
@@ -52,7 +57,6 @@ export class UserLoginComponent implements OnDestroy {
             remember: [true]
         });
     }
-
     // region: fields
 
     get userName() { return this.form.controls.userName; }
@@ -64,10 +68,10 @@ export class UserLoginComponent implements OnDestroy {
 
     switch(ret: any) {
         this.type = ret.index;
-        // if(ret.index === 0)
-        //   console.log('配置平台');
-        // else
-        //   console.log('运行平台');
+        if(ret.index === 0)
+          this.titleService.setTitle('配置平台');
+        else
+          this.titleService.setTitle('解析平台');
     }
 
     // region: get captcha
@@ -160,9 +164,12 @@ export class UserLoginComponent implements OnDestroy {
                       //todo:将拿到的数据进行解析加载
                       menuList.Data.forEach( menu =>{
                         if(menu.ConfigData != ''){
+                          console.log(JSON.parse(menu.ConfigData));
                         this.menuService.add(JSON.parse(menu.ConfigData));
                         this.cacheService.set('Menus', JSON.parse(menu.ConfigData));
                       }} )
+                      console.log(1111,this.arrayToTree(menuList.Data,''));
+                      // this.cacheService.set('Menus',this.arrayToTree(menuList.Data,''));
                     }else
                     {
                       this.httpClient.get<any>(APIResource.localUrl).toPromise().then( apprem => {
@@ -170,7 +177,6 @@ export class UserLoginComponent implements OnDestroy {
                         this.menuService.add(apprem.menu);
                       } )
                     }
-
                     return this.apiService.get(APIResource.AppPermission + '/Func.SinoForceWeb端').toPromise();
                   })
                   .then((appPermission) => {
@@ -242,5 +248,23 @@ export class UserLoginComponent implements OnDestroy {
     ngOnDestroy(): void {
         if (this.interval$) clearInterval(this.interval$);
     }
+
+  arrayToTree(data, parentid) {
+    const result = [];
+    let temp;
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].ParentId == parentid) {
+        const obj = { "label": data[i].Name, "value": data[i].Id };
+        temp = this.arrayToTree(data, data[i].Id);
+        if (temp.length > 0) {
+          obj['children'] = temp;
+        } else {
+          obj["isLeaf"] = true;
+        }
+        result.push(obj);
+      }
+    }
+    return result;
+  }
 }
 

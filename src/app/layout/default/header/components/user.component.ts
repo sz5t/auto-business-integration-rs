@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { SettingsService } from '@delon/theme';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import {CacheService} from '@delon/cache';
+import { NzModalService } from 'ng-zorro-antd';
 
 @Component({
     selector: 'header-user',
@@ -22,10 +23,12 @@ import {CacheService} from '@delon/cache';
     `
 })
 export class HeaderUserComponent implements OnInit {
+   // confirmModal: NzModalRef;
     constructor(
         public settings: SettingsService,
         private cacheService: CacheService,
         private router: Router,
+        private modal: NzModalService,
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {}
 
     ngOnInit(): void {
@@ -43,8 +46,16 @@ export class HeaderUserComponent implements OnInit {
     }
 
     logout() {
-        this.tokenService.clear();
-        this.cacheService.clear();
-        this.router.navigateByUrl(this.tokenService.login_url);
+      this.modal.confirm({
+        title: '确认要关闭本系统吗？',
+        content: '关闭后将清空相关操作数据！',
+        onOk: () => {
+          new Promise((resolve, reject) => {
+            setTimeout(Math.random() > 0.5 ? resolve : reject , 1000);
+            this.tokenService.clear();
+            this.cacheService.clear();
+            this.router.navigateByUrl(this.tokenService.login_url);
+          }).catch(() => console.log('Oops errors!'))
+        }});
     }
 }

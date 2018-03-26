@@ -5,7 +5,7 @@ import {APIResource} from '@core/utility/api-resource';
 import {environment} from '@env/environment';
 import {CacheService} from '@delon/cache';
 import {Location} from '@angular/common';
-
+import { NzMessageService } from 'ng-zorro-antd';
 @Component({
   selector: 'app-user-manager',
   templateUrl: './user-manager.component.html',
@@ -30,7 +30,7 @@ export class UserManagerComponent implements OnInit {
     constructor(
       private cacheService: CacheService,
       private apiService: ApiService,
-      private location: Location
+      public msgSrv: NzMessageService
     ) { }
 
     ngOnInit() {
@@ -204,6 +204,7 @@ export class UserManagerComponent implements OnInit {
   {
     // console.log(1111,this.location);
     this.clear();
+
     this.apiService.deleteProj(APIResource.AppConfigPack, {
       _select: 'Id,Name'
     }).toPromise().then(

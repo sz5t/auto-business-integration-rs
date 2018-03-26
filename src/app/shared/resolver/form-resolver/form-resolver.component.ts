@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnChanges, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
@@ -8,7 +8,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 })
 export class FormResolverComponent implements OnInit, OnChanges {
 
-  config = [
+  @Input() config = [
     {
       'type': 'input',
       'labelSize': '6',
@@ -161,6 +161,8 @@ export class FormResolverComponent implements OnInit, OnChanges {
       'name': 'submit'
     }
   ];
+
+  @Input() dataList;
   form: FormGroup;
   @Output() submit: EventEmitter<any> = new EventEmitter<any>();
   constructor(
@@ -169,7 +171,6 @@ export class FormResolverComponent implements OnInit, OnChanges {
   ) { }
 
   get controls() {
-    console.log(this.config);
     return this.config.filter(({type}) => {
       return type !== 'button' && type !== 'submit';
     });

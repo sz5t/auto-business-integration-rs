@@ -60,7 +60,7 @@
     <nz-card>
       <ng-template #title>设置组件</ng-template>
       <ng-template #body>
-        <cn-layout-setting-resolver *ngIf="_layoutConfig" [config]="_layoutConfig"></cn-layout-setting-resolver>
+        <cn-layout-setting-resolver (submitSelectedComponent)="_getSelectedComponent($event)" *ngIf="_layoutConfig" [config]="_layoutConfig"></cn-layout-setting-resolver>
       </ng-template>
     </nz-card>
   </div>

@@ -148,11 +148,15 @@ export class ComponentSettingResolverComponent implements OnInit, OnChanges {
 
   }
 
+  getMenuData(event) {
+    console.log(event);
+    this.createBsnComponent(event);
+    //this.config = event;
+  }
+
 
   ngOnChanges() {
-    if (this.componentRef) {
-      this.createBsnComponent();
-    }
+    this.createBsnComponent();
   }
 
   createBsnComponent(event?) {
@@ -171,19 +175,22 @@ export class ComponentSettingResolverComponent implements OnInit, OnChanges {
         this.componentRef.instance.dataList = event.dataList;
       }
     }else {
-      if (!component[this.config.component]) {
-        const supportedTypes = Object.keys(component).join(', ');
-        throw new Error(
-          `Trying to use an unsupported types (${this.config.component}).Supported types: ${supportedTypes}`
-        );
+      if(this.config && this.config.component) {
+        if (!component[this.config.component]) {
+          const supportedTypes = Object.keys(component).join(', ');
+          throw new Error(
+            `Trying to use an unsupported types (${this.config.component}).Supported types: ${supportedTypes}`
+          );
+        }
+        this.container.clear();
+        const comp = this.resolver.resolveComponentFactory<any>(component[this.config.component]);
+        this.componentRef = this.container.createComponent(comp);
+        this.componentRef.instance.config = this.config.config;
+        if(this.componentRef.instance.dataList) {
+          this.componentRef.instance.dataList = this.config.dataList;
+        }
       }
-      this.container.clear();
-      const comp = this.resolver.resolveComponentFactory<any>(component[this.config.component]);
-      this.componentRef = this.container.createComponent(comp);
-      this.componentRef.instance.config = this.config.config;
-      if(this.componentRef.instance.dataList) {
-        this.componentRef.instance.dataList = [];
-      }
+
     }
 
 

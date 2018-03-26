@@ -26,15 +26,19 @@
 </nz-card>
 
 
-<nz-popover *ngIf="!config.rows && !config.tabs"  [nzTitle]="'组件选择'" [nzPlacement]="'right'" [nzTrigger]="'hover'">
+
+<nz-popover  [nzTitle]="'组件选择'" [nzPlacement]="'top'" [nzTrigger]="'click'">
   <ng-template #nzTemplate>
     <cn-context-menu [menuConfig]="menuConfig" (selectedMenu)="getMenuData($event)"></cn-context-menu>
   </ng-template>
-  <nz-card style="height: 300px">
+  <nz-card nz-popover *ngIf="!config.rows && !config.tabs">
     <ng-template #title>{{config.title}}</ng-template>
     <ng-template #body>
-      <cn-component-setting-resolver [config]="config"></cn-component-setting-resolver>
+      <cn-component-setting-resolver  [config]="config"></cn-component-setting-resolver>
     </ng-template>
   </nz-card>
 </nz-popover>
+
+
+
 

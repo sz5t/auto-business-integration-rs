@@ -1020,7 +1020,9 @@ export class LayoutSettingComponent implements OnInit {
     // 获取模块ID，格式为将按照模块层级依次保存为数组形式，后续按照模块加载时，层级最后的ID即为对应加载模块ID
     const moduleID = this._funcValue.join(',');
     const layoutName = this._layoutValue.label;
-    const metadata = JSON.stringify(this._layoutValue.value);
+    const copyLayout = JSON.parse(JSON.stringify(this._layoutValue.value));
+    this.overrideLayoutId(copyLayout);
+    const metadata = JSON.stringify(copyLayout);
     const configName = this._configName;
     // 配置信息保存入数据库
     const configData = {
@@ -1040,6 +1042,26 @@ export class LayoutSettingComponent implements OnInit {
         this.message.create('warning', `出现异常：${response.Message}`);
       }
     });
+  }
+
+  private uuID(w){
+    let s="";
+    let str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    for (let i = 0; i < w; i++) {
+      s += str.charAt(Math.round(Math.random() * (str.length - 1)));
+    }
+    return s;
+  }
+
+  overrideLayoutId(layoutValue) {
+    layoutValue.rows.forEach(row => {
+      row.row.cols.forEach(col => {
+        col.id =this.uuID(10);
+        if(col.rows) {
+          this.overrideLayoutId(col);
+        }
+      });
+    })
   }
 
   overrideLayoutTitle(rows, formData) {

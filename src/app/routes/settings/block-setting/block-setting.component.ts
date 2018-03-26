@@ -71,6 +71,9 @@ export class BlockSettingComponent implements OnInit {
     this._selectedModuleText = `【${selectedOptions.map(o => o.label).join(' / ')}】`;
   }
 
+  _getSelectedComponent($event) {
+    console.log($event);
+  }
   arrayToTree(data, parentid) {
     const result = [];
     let temp;

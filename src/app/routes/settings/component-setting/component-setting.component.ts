@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { ApiService } from '@core/utility/api-service';
 import { APIResource } from '@core/utility/api-resource';
+import { CommonUtility } from '@core/utility/Common-utility';
+import { NzMessageService } from 'ng-zorro-antd';
 
 @Component({
     selector: 'app-component-setting',
@@ -12,8 +14,8 @@ export class ComponentSettingComponent implements OnInit {
     _funcValue;
     _layoutValue;
     _selectedModuleText;
-     // 布局列表数据
-     _layoutList = [];
+    // 布局列表数据
+    _layoutList = [];
     _editorConfig = {
         title: '标题 1',
         rows: [
@@ -463,7 +465,7 @@ export class ComponentSettingComponent implements OnInit {
                                     title: '属性设置',
                                     icon: '',
                                     active: false,
-                                    viewCfg:[
+                                    viewCfg: [
                                         {
                                             'viewId': 'attribute',
                                             'component': 'form_view',
@@ -479,7 +481,7 @@ export class ComponentSettingComponent implements OnInit {
                                                     'disabled': false,
                                                     'readonly': false,
                                                     'size': 'default',
-                                                  }
+                                                }
                                             ],
                                             'dataList': []
                                         }
@@ -494,58 +496,167 @@ export class ComponentSettingComponent implements OnInit {
     };
     constructor(
         private http: _HttpClient,
-        private apiService: ApiService
+        private _http: ApiService,
+        private message: NzMessageService,
     ) { }
 
     async ngOnInit() {
+        const fieldIdentity = CommonUtility.uuID(6);
+        console.log('id', fieldIdentity);
+        this.attributeConfig = this.componentdic["bsn-datatable"].attributeConfig;
+        this.fildConfig = this.componentdic["bsn-datatable"].viewCfg[0]["config"];
+        console.log('this.fildConfig', this.fildConfig);
+        this.parameterConfig = this._editorConfig.rows[0].row.cols[0].tabs[0].viewCfg[1]["tabs"][1].viewCfg[0]["config"];
+
         const params = { _select: 'Id,Name,ParentId' };
         const moduleData = await this.getModuleData(params);
         // 初始化模块列表，将数据加载到及联下拉列表当中
         this._funcOptions = this.arrayToTree(moduleData.Data, '');
     }
- // 获取布局设置列表
- getLayoutConfigData (params) {
-    return this.apiService.getProj(APIResource.AppConfigPack,params).toPromise();
-  }
+    // 获取布局设置列表
+    getLayoutConfigData(params) {
+        return this._http.getProj(APIResource.AppConfigPack, params).toPromise();
+    }
 
-  // 获取模块信息
-  async getModuleData(params) {
-    return this.apiService.getProj(APIResource.AppModuleConfig, params).toPromise();
-  }
+    // 获取模块信息
+    async getModuleData(params) {
+        return this._http.getProj(APIResource.AppModuleConfig, params).toPromise();
+    }
 
-  // 选择布局名称
-  _changeLayoutName($event) {
-    // 创建布局
-   // this._layoutConfig = $event.metadata;
-  }
+    // 选择布局名称
+    async  _changeLayoutName($event) {
+        // 创建布局
+        // this._layoutConfig = $event.metadata;
+        console.log('选择布局名称', $event);
+        const str = [];
+        if ($event.metadata) {
+            const componentData = await this.getComponentByLayout($event.id);
+            let componentJson=[];
+            console.log("componentData:",componentData);
+            if(componentData && componentData.Status=== 200) {
+                componentJson=componentData.Data;
+              }
 
-  // 改变模块选项
-  _changeModuleValue($event?) {
-    this._layoutList = [];
-    // 选择功能模块，首先加载服务端配置列表
-    //const params = new HttpParams().set('TagA', this._funcValue.join(','));
-    if(this._funcValue.length >0) {
-      const params = {
-        TagA:this._funcValue.join(','),
-        _select: 'Id,Name,Metadata'
-      };
-      this.getLayoutConfigData(params).then(serverLayoutData => {
-        if(serverLayoutData.Status === 200 && serverLayoutData.Data.length > 0){
-          serverLayoutData.Data.forEach((data,index) => {
-            const metadata = JSON.parse(data.Metadata);
-            this._layoutList.push({label:data.Name,value:{id:data.Id,metadata:metadata}});
-          });
-        } else {
-          this._layoutList = [];
+           this.nodes=  this.arrayToTreeBylayout(this.layoutToarry($event.metadata,componentJson,'555'),'555') ; 
+           console.log(this.nodes);
+           console.log('初步简析布局', this.layoutToarry($event.metadata,componentJson,'555'));
         }
 
-      });
     }
-  }
-  _onSelectionChange(selectedOptions: any[]) {
-    this._selectedModuleText = `【${selectedOptions.map(o => o.label).join(' / ')}】`;
-  }
 
+    /**布局简析 */
+    layoutToarry(data?,component?,pid?) {
+        let result = [];
+        let temp;
+        if (data.rows) {
+            data.rows.forEach(rdata => {
+                if (rdata.row.cols) {
+                    rdata.row.cols.forEach(cdata => {
+                        const obj = { "Name": cdata.title, "Id": cdata.id,"ParentId":pid };
+                        if (cdata.rows) {
+                            temp = this.layoutToarry(cdata,component,pid) //递归调用行
+                        }
+                        else if (cdata.tabs) {
+
+                            temp = this.layoutToarry(cdata,component,cdata.id) //递归调用tab页
+                        }
+                        if (temp) {
+                            if (temp.length > 0) {
+                                result = [...result, ...temp]
+                            }
+                        }
+                        if (!cdata.rows) {
+                            result.push(obj);
+                            const cobj=  this.componentToarry(component,cdata.id);
+                            if(cobj){
+                                result.push(cobj);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        if (data.tabs) {
+            data.tabs.forEach(tab => {
+                const obj = { "Name": tab.title, "Id": tab.id };
+                result.push(obj);
+                const cobj=  this.componentToarry(component,tab.id);
+                if(cobj){
+                    result.push(cobj);
+                }
+            });
+        }
+        return result;
+
+    }
+
+    componentToarry(data?,pid?){
+        let obj={};
+        if(data){
+            const index = data.findIndex(item => item.TagA === pid);
+            obj["Id"]=data[index].Id;
+            obj["Name"]=data[index].Name;
+            obj["ParentId"]=data[index].TagA;
+
+
+        }
+       return obj;
+    }
+
+
+    async  getComponentByLayout(layoutId?) {
+        const params = {
+            ParentId: layoutId
+        };
+        return this._http.getProj(APIResource.AppConfigPack, params).toPromise();
+    }
+
+
+    // 改变模块选项
+    _changeModuleValue($event?) {
+        this._layoutList = [];
+        // 选择功能模块，首先加载服务端配置列表
+        //const params = new HttpParams().set('TagA', this._funcValue.join(','));
+        if (this._funcValue.length > 0) {
+            const params = {
+                TagA: this._funcValue.join(','),
+                _select: 'Id,Name,Metadata'
+            };
+            this.getLayoutConfigData(params).then(serverLayoutData => {
+                if (serverLayoutData.Status === 200 && serverLayoutData.Data.length > 0) {
+                    serverLayoutData.Data.forEach((data, index) => {
+                        const metadata = JSON.parse(data.Metadata);
+                        this._layoutList.push({ label: data.Name, value: { id: data.Id, metadata: metadata } });
+                    });
+                } else {
+                    this._layoutList = [];
+                }
+
+            });
+        }
+    }
+    _onSelectionChange(selectedOptions: any[]) {
+        this._selectedModuleText = `【${selectedOptions.map(o => o.label).join(' / ')}】`;
+    }
+
+    arrayToTreeBylayout(data, parentid) {
+        const result = [];
+        let temp;
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].ParentId == parentid) {
+                const obj = { "name": data[i].Name, "id": data[i].Id };
+                temp = this.arrayToTreeBylayout(data, data[i].Id);
+                if (temp.length > 0) {
+                    obj['children'] = temp;
+                } else {
+                    obj["isLeaf"] = true;
+                }
+                result.push(obj);
+            }
+        }
+        return result;
+    }
     arrayToTree(data, parentid) {
         const result = [];
         let temp;
@@ -612,6 +723,14 @@ export class ComponentSettingComponent implements OnInit {
         nzShowLine: false, // 显示连接线 false
     };
 
+
+    /**
+     * 页面组件渲染数据
+     */
+    attributeConfig;
+    fildConfig;
+    parameterConfig;
+    dataList = [];
     /**
     点击树节点 */
     onActivate(ev: any) {
@@ -621,19 +740,26 @@ export class ComponentSettingComponent implements OnInit {
         if (ev.node.data.type === 'component') {
             if (ev.node.data.value === 'bsn-datatable') {
                 this._editorConfig.rows[0].row.cols[0].tabs[0].viewCfg[1]["tabs"][0].viewCfg
-                =this.componentdic["bsn-datatable"].viewCfg;
+                    = this.componentdic["bsn-datatable"].viewCfg;
                 this._editorConfig.rows[0].row.cols[0].tabs[1].viewCfg[0]["config"]
-                 =this.componentdic["bsn-datatable"].attributeConfig;
+                    = this.componentdic["bsn-datatable"].attributeConfig;
+                this._editorConfig = JSON.parse(JSON.stringify(this._editorConfig));
 
-                 this._editorConfig=JSON.parse(JSON.stringify(this._editorConfig));
-              
+                this.attributeConfig = this.componentdic["bsn-datatable"].attributeConfig;
+                this.fildConfig = this.componentdic["bsn-datatable"].viewCfg[0]["config"];
+                this.parameterConfig = this._editorConfig.rows[0].row.cols[0].tabs[0].viewCfg[1]["tabs"][1].viewCfg[0]["config"];
             }
             if (ev.node.data.value === 'bsn-tree') {
                 this._editorConfig.rows[0].row.cols[0].tabs[0].viewCfg[1]["tabs"][0].viewCfg
-                =this.componentdic["bsn-tree"].viewCfg;
+                    = this.componentdic["bsn-tree"].viewCfg;
                 this._editorConfig.rows[0].row.cols[0].tabs[1].viewCfg[0]["config"]
-                =this.componentdic["bsn-tree"].attributeConfig;
-                this._editorConfig=JSON.parse(JSON.stringify(this._editorConfig));
+                    = this.componentdic["bsn-tree"].attributeConfig;
+
+                this._editorConfig = JSON.parse(JSON.stringify(this._editorConfig));
+                this.attributeConfig = this.componentdic["bsn-tree"].attributeConfig;
+                this.fildConfig = this.componentdic["bsn-tree"].viewCfg[0]["config"];
+                this.parameterConfig = this._editorConfig.rows[0].row.cols[0].tabs[0].viewCfg[1]["tabs"][1].viewCfg[0]["config"];
+
             }
 
         }
@@ -645,7 +771,9 @@ export class ComponentSettingComponent implements OnInit {
     }
 
 
-
+    /**
+     * 组件属性字典
+     */
     componentdic = {
         'bsn-datatable': {
             viewCfg: [
@@ -837,55 +965,55 @@ export class ComponentSettingComponent implements OnInit {
             ],
             attributeConfig: [
                 {
-                  'type': 'input',
-                  'labelSize': '6',
-                  'controlSize': '10',
-                  'inputType': 'text',
-                  'name': 'userName',
-                  'label': '数据网格名称',
-                  'placeholder': '例如：Company.cn.app',
-                  'disabled': false,
-                  'readonly': false,
-                  'size': 'default',
-                  'validations': [
-                    {
-                      'validator': 'required',
-                      'errorMessage': '不能为空'
-                    },
-                    {
-                      'validator': 'minlength',
-                      'length': 6,
-                      'errorMessage': '最小长度为6'
-                    }
-                  ],
+                    'type': 'input',
+                    'labelSize': '6',
+                    'controlSize': '10',
+                    'inputType': 'text',
+                    'name': 'userName',
+                    'label': '数据网格名称',
+                    'placeholder': '例如：Company.cn.app',
+                    'disabled': false,
+                    'readonly': false,
+                    'size': 'default',
+                    'validations': [
+                        {
+                            'validator': 'required',
+                            'errorMessage': '不能为空'
+                        },
+                        {
+                            'validator': 'minlength',
+                            'length': 6,
+                            'errorMessage': '最小长度为6'
+                        }
+                    ],
                 },
                 {
-                  'type': 'select',
-                  'labelSize': '6',
-                  'controlSize': '10',
-                  'inputType': 'submit',
-                  'name': 'sex',
-                  'label': '是否分页',
-                  'notFoundContent':'',
-                  'selectModel': false,
-                  'showSearch': true,
-                  'placeholder':'--请选择--',
-                  'disabled': false,
-                  'size': 'default',
-                  'options': [
-                    {
-                      'label':'是',
-                      'value': '1',
-                      'disabled': false
-                    },
-                    {
-                      'label':'否',
-                      'value': '2',
-                      'disabled': false
-                    }
-                  ]
+                    'type': 'select',
+                    'labelSize': '6',
+                    'controlSize': '10',
+                    'inputType': 'submit',
+                    'name': 'sex',
+                    'label': '是否分页',
+                    'notFoundContent': '',
+                    'selectModel': false,
+                    'showSearch': true,
+                    'placeholder': '--请选择--',
+                    'disabled': false,
+                    'size': 'default',
+                    'options': [
+                        {
+                            'label': '是',
+                            'value': '1',
+                            'disabled': false
+                        },
+                        {
+                            'label': '否',
+                            'value': '2',
+                            'disabled': false
+                        }
+                    ]
                 },
-              ]
+            ]
         },
         'bsn-tree': {
             viewCfg: [
@@ -975,7 +1103,7 @@ export class ComponentSettingComponent implements OnInit {
                                 }
                             },
                             { title: '数据类型', field: 'dataType', width: 80, hidden: true, },
-                           
+
 
                         ],
                         'toolbar': [
@@ -992,55 +1120,128 @@ export class ComponentSettingComponent implements OnInit {
             ],
             attributeConfig: [
                 {
-                  'type': 'input',
-                  'labelSize': '6',
-                  'controlSize': '10',
-                  'inputType': 'text',
-                  'name': 'userName',
-                  'label': '树组件名称',
-                  'placeholder': '例如：Company.cn.app',
-                  'disabled': false,
-                  'readonly': false,
-                  'size': 'default',
-                  'validations': [
-                    {
-                      'validator': 'required',
-                      'errorMessage': '不能为空'
-                    },
-                    {
-                      'validator': 'minlength',
-                      'length': 6,
-                      'errorMessage': '最小长度为6'
-                    }
-                  ],
+                    'type': 'input',
+                    'labelSize': '6',
+                    'controlSize': '10',
+                    'inputType': 'text',
+                    'name': 'userName',
+                    'label': '树组件名称',
+                    'placeholder': '例如：Company.cn.app',
+                    'disabled': false,
+                    'readonly': false,
+                    'size': 'default',
+                    'validations': [
+                        {
+                            'validator': 'required',
+                            'errorMessage': '不能为空'
+                        },
+                        {
+                            'validator': 'minlength',
+                            'length': 6,
+                            'errorMessage': '最小长度为6'
+                        }
+                    ],
                 },
                 {
-                  'type': 'select',
-                  'labelSize': '6',
-                  'controlSize': '10',
-                  'inputType': 'submit',
-                  'name': 'sex',
-                  'label': '是否异步树',
-                  'notFoundContent':'',
-                  'selectModel': false,
-                  'showSearch': true,
-                  'placeholder':'--请选择--',
-                  'disabled': false,
-                  'size': 'default',
-                  'options': [
-                    {
-                      'label':'是',
-                      'value': '1',
-                      'disabled': false
-                    },
-                    {
-                      'label':'否',
-                      'value': '2',
-                      'disabled': false
-                    }
-                  ]
+                    'type': 'select',
+                    'labelSize': '6',
+                    'controlSize': '10',
+                    'inputType': 'submit',
+                    'name': 'sex',
+                    'label': '是否异步树',
+                    'notFoundContent': '',
+                    'selectModel': false,
+                    'showSearch': true,
+                    'placeholder': '--请选择--',
+                    'disabled': false,
+                    'size': 'default',
+                    'options': [
+                        {
+                            'label': '是',
+                            'value': '1',
+                            'disabled': false
+                        },
+                        {
+                            'label': '否',
+                            'value': '2',
+                            'disabled': false
+                        }
+                    ]
                 },
-              ]
+            ]
         }
     }
+
+
+    // 理想布局结构  tabs 既是布局又是组件，故而保留两种属性，既能简析布局，又能交互关系
+    // 需要单独将tabs 封装成组件，简析（用于实现控制标签页的显示）
+    lay = {
+        layoutID: '页面大布局id',
+        rows: [
+            {
+                row: {
+                    pageID: '功能模块id',
+                    layoutID: '所属布局id',
+                    rowID: '当前行id',
+                    cols: [
+                        {
+                            pageID: '功能模块id',
+                            rowID: '所属行id',
+                            colsID: '列id',
+                            type: '组件、布局、布局组件（tabs）',
+                            tabs: {
+                                pageID: '功能模块id',
+                                colsID: '所属列id',
+                                tabsID: 'tabs页签id',
+                                viewID: '组件id，用于关系交互等',
+                                title: 'tabs属性',
+                                tab: [
+                                    {
+                                        pageID: '功能模块id',
+                                        tabsID: '所属tabs页签id',
+                                        tabID: '标签页id',
+                                        viewID: '组件id，用于关系交互等',
+                                        title: 'tab标签页',
+                                        layout: {
+                                            layoutID: '布局id',
+                                            rows: [
+                                                {
+                                                    row: {
+                                                        layoutID: '所属布局id',
+                                                        pageID: '功能模块id',
+                                                        rowID: '当前行id',
+                                                        cols: [{
+                                                            pageID: '功能模块id',
+                                                            rowID: '所属行id',
+                                                            colsID: '列id',
+                                                            type: '标识列内装载是什么',
+                                                            config: {
+                                                                viewID: '组件id，用于关系交互等',
+                                                                //列内组件信息
+                                                            }
+                                                        }]
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            pageID: '功能模块id',
+                            rowID: '所属行id',
+                            colsID: '列id',
+                            type: '标识列内装载是什么',
+                            config: {
+                                //列内组件信息
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+
+
 }

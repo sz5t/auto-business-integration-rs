@@ -1,2 +1,19 @@
-
+<div class="table-operations">
+  <nz-dropdown>
+    <button style="width: 120px" nz-button nz-dropdown [nzType]="'primary'">
+      选择组件 <i class="anticon anticon-down"></i>
+    </button>
+    <ul nz-menu *ngFor="let menu of menuConfig">
+      <li nz-submenu *ngIf="menu.children">
+        <span title>{{menu.label}}</span>
+        <ul *ngFor="let item of menu.children">
+          <li nz-menu-item (click)="createBsnComponent(item.value)">{{item.label}}</li>
+        </ul>
+      </li>
+    </ul>
+  </nz-dropdown>
+  &nbsp;&nbsp;
+  <button nz-button (click)="_saveComponent()">保存</button>
+</div>
+<br>
 <div #dynamicComponent></div>

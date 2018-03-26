@@ -1,14 +1,17 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild} from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import {Validators} from "@angular/forms";
+import {ComponentSettingResolverComponent} from "@shared/resolver/component-resolver/component-setting-resolver.component";
 
 @Component({
   selector: 'cn-layout-setting-resolver',
   templateUrl: './layout-setting-resolver.component.html',
 })
-export class LayoutSettingResolverComponent implements OnInit {
+export class LayoutSettingResolverComponent implements OnInit, OnChanges{
   @Input() config;
-  @Output() submitSelectedComponent:EventEmitter<any> = new EventEmitter<any>();
+  @Input() layoutId;
+  @ViewChild(ComponentSettingResolverComponent)
+  componentsettingResolver : ComponentSettingResolverComponent;
   _isRows = false;
   menuConfig = [
     {
@@ -288,11 +291,16 @@ export class LayoutSettingResolverComponent implements OnInit {
       private http: _HttpClient
   ) { }
 
+  ngOnChanges() {
+
+  }
+
   ngOnInit() {
     this._isRows = Array.isArray(this.config.rows);
   }
   getMenuData(event) {
     this.config = event;
-    this.submitSelectedComponent.emit(event);
+    //this.componentsettingResolver.setLayoutId(this.layoutId);
   }
+
 }

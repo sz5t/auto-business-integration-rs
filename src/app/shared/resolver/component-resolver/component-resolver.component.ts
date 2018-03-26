@@ -49,11 +49,7 @@ export class ComponentResolverComponent implements OnInit, OnChanges {
     this.componentRef = this.container.createComponent(comp);
     this.componentRef.instance.config = this.config.config;
     if(this.componentRef.instance.dataList) {
-      this.componentRef.instance.dataList = [];
+      this.componentRef.instance.dataList = this.config.dataList;
     }
-
   }
-
-
-
 }

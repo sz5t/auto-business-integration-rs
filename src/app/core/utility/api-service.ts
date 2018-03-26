@@ -98,7 +98,7 @@ export  class ApiService
       });
   }
 
-  putProj(resource, params?, body?) {
+  putProj(resource, body?, params?) {
     params = this.setParamsProj(params);
     return this.httpClient.request<any>(
       'PUT',

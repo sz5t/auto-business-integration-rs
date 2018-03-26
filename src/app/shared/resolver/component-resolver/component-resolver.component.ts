@@ -38,7 +38,6 @@ export class ComponentResolverComponent implements OnInit, OnChanges {
   }
 
   createBsnComponent() {
-    console.log(this.config);
     if (!component[this.config.component]) {
       const supportedTypes = Object.keys(component).join(', ');
       throw new Error(

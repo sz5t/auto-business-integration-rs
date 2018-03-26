@@ -2,10 +2,10 @@ import {Component, Input, OnInit} from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 
 @Component({
-  selector: 'cn-layout-resolver',
-  templateUrl: './layout-resolver.component.html',
+  selector: 'cn-layout-setting-resolver',
+  templateUrl: './layout-setting-resolver.component.html',
 })
-export class LayoutResolverComponent implements OnInit {
+export class LayoutSettingResolverComponent implements OnInit {
   @Input() config;
   _isRows = false;
   constructor(
@@ -15,9 +15,9 @@ export class LayoutResolverComponent implements OnInit {
   ngOnInit() {
     this._isRows = Array.isArray(this.config.rows);
   }
-
   getMenuData(event) {
+    console.log(event);
     this.config = event;
+    //this.config = event;
   }
-
 }

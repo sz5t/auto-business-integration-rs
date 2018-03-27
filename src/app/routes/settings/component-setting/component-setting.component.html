@@ -44,6 +44,69 @@
         </nz-card>
     </div>
     <div nz-col [nzSpan]="16">
-        <cn-layout-resolver [config]="_editorConfig"></cn-layout-resolver>
+        <!-- <cn-layout-resolver [config]="_editorConfig"></cn-layout-resolver> -->
+        <div nz-row [nzGutter]="8">
+            <div nz-col [nzSpan]="24">
+                <nz-card>
+                    <ng-template #body>
+                        <nz-tabset [nzType]="'line'">
+                            <nz-tab>
+                                <ng-template #nzTabHeading>
+                                    <i></i>
+                                    数据集设置
+                                </ng-template>
+                                <div>
+                                    <div nz-row [nzGutter]="8">
+                                        <div nz-col [nzSpan]="24">
+                                            <cn-code-edit></cn-code-edit>
+                                        </div>
+                                        <div nz-col [nzSpan]="24">
+                                            <br>
+                                            <button nz-button [nzType]="'primary'" [nzSize]="'default'">保存</button>
+                                        </div>
+
+                                    </div>
+                                    <div nz-row [nzGutter]="8">
+                                        <div nz-col [nzSpan]="24">
+                                            <nz-tabset [nzType]="'line'">
+                                                <nz-tab>
+                                                    <ng-template #nzTabHeading>
+                                                        <i></i>
+                                                        字段
+                                                    </ng-template>
+                                                    <div>
+                                                        <div bsn-data-table [config]="fildConfig" [dataList]="dataList"></div>
+
+                                                    </div>
+                                                </nz-tab>
+                                                <nz-tab>
+                                                    <ng-template #nzTabHeading>
+                                                        <i></i>
+                                                        参数
+                                                    </ng-template>
+                                                    <div>
+                                                        <div bsn-data-table [config]="parameterConfig" [dataList]="dataList"></div>
+                                                    </div>
+                                                </nz-tab>
+                                            </nz-tabset>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </nz-tab>
+                            <nz-tab>
+                                <ng-template #nzTabHeading>
+                                    <i></i>
+                                    属性设置
+                                </ng-template>
+                                <div>
+                                    <cn-form-resolver [config]="attributeConfig" [dataList]="dataList"></cn-form-resolver>
+                                </div>
+                            </nz-tab>
+                        </nz-tabset>
+                    </ng-template>
+                </nz-card>
+            </div>
+        </div>
     </div>
 </div>

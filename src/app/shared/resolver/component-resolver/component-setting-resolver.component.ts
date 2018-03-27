@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component, ComponentFactoryResolver, ComponentRef, EventEmitter, Input, OnChanges, OnInit, Output, Type, ViewChild,
   ViewContainerRef
 } from '@angular/core';
@@ -11,18 +12,210 @@ import {ApiService} from "@core/utility/api-service";
 import {APIResource} from "@core/utility/api-resource";
 import {AppConfigPack_Block} from "../../../model/APIModel/AppConfigPack";
 import {NzMessageService} from "ng-zorro-antd";
+import {TabsResolverComponent} from "@shared/resolver/tabs-resolver/tabs-resolver.component";
 const component: { [type: string]: Type<any> } = {
   bsnDataTable: BsnDataTableComponent,
-  form_view: FormResolverComponent
+  form_view: FormResolverComponent,
+  tabs: TabsResolverComponent
 };
 @Component({
   selector: 'cn-component-setting-resolver',
   templateUrl: './component-setting-resolver.component.html',
 })
-export class ComponentSettingResolverComponent implements OnInit, OnChanges {
+export class ComponentSettingResolverComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() config;
   @Input() blockId;
   @Input() layoutId;
+  _serverLayoutId;
+  _dataStruct = {
+    bsnDataTable:{
+      component: 'bsnDataTable',
+      config:{
+        'keyId': 'key',
+        'nzIsPagination': false, // 是否分页
+        'nzShowTotal': true,// 是否显示总数据量
+        'pageSize': 5, //默认每页数据条数
+        'nzPageSizeSelectorValues': [5, 10, 20, 30, 40, 50],
+        'nzLoading': false, // 是否显示加载中
+        'nzBordered': false,// 是否显示边框
+        'columns': [
+          {
+            title: '主键', field: 'key', width: 80, hidden: true
+          },
+          {
+            title: '姓名', field: 'name', width: 80
+          },
+          {
+            title: '性别', field: 'sexname', width: 80, hidden: false
+          },
+          {
+            title: '年龄', field: 'age', width: 80, hidden: false
+          },
+          {
+            title: '地址', field: 'address', width: 80, hidden: false,
+          }
+        ]
+      },
+      dataList:[]
+    },
+    form_view: {
+      component: 'form_view',
+      config:[
+        {
+          'type': 'input',
+          'labelSize': '6',
+          'controlSize': '10',
+          'inputType': 'text',
+          'name': 'userName',
+          'label': '用户姓名',
+          'placeholder': '例如：Company.cn.app',
+          'disabled': false,
+          'readonly': false,
+          'size': 'default',
+          'validations': [
+            {
+              'validator': 'required',
+              'errorMessage': '不能为空'
+            },
+            {
+              'validator': 'minlength',
+              'length': 6,
+              'errorMessage': '最小长度为6'
+            }
+          ],
+          'validation': [Validators.required,Validators.minLength(6)]
+        },
+        {
+          'type': 'input',
+          'labelSize': '6',
+          'controlSize': '10',
+          'inputType': 'text',
+          'name': 'userPassword',
+          'label': '用户密码',
+          'placeholder': '',
+          'disabled': false,
+          'readonly': false,
+          'size': 'default',
+          /*'validations': [
+           {
+           'validator': 'required',
+           'errorMessage': ''
+           },
+           {
+           'validator': 'minLength',
+           'length': 6,
+           'errorMessage': ''
+           }
+           ]*/
+        },
+        {
+          'type': 'select',
+          'labelSize': '6',
+          'controlSize': '10',
+          'inputType': 'submit',
+          'name': 'sex',
+          'label': '性别',
+          'notFoundContent':'',
+          'selectModel': false,
+          'showSearch': true,
+          'placeholder':'--请选择--',
+          'disabled': false,
+          'size': 'default',
+          'options': [
+            {
+              'label':'男',
+              'value': '1',
+              'disabled': false
+            },
+            {
+              'label':'女',
+              'value': '2',
+              'disabled': false
+            }
+          ]
+        },
+        {
+          'type': 'datePicker',
+          'labelSize': '6',
+          'controlSize': '10',
+          'name': 'datePicker',
+          'label': '日期',
+          'placeholder': '--请选择日期--',
+          'dateModel': 'day',
+          'format': 'YYYY-MM-DD',
+          'disabled': false,
+          'readonly': false,
+          'size': 'default'
+        },
+        {
+          'type': 'timePicker',
+          'labelSize': '6',
+          'controlSize': '10',
+          'format': 'HH:mm:ss',
+          'name': 'timePicker',
+          'label': '时间',
+          'placeholder': '--请选择时间--',
+          'disabled': false,
+          'readonly': false,
+          'size': 'default'
+        },
+        {
+          'type': 'rangePicker',
+          'labelSize': '6',
+          'controlSize': '10',
+          'format': 'YYYY-MM-DD',
+          'name': 'dateRangePicker',
+          'dateModel': 'day',
+          'label': '日期',
+          'placeholder': ['--开始日期--','--结束日期--'],
+          'disabled': false,
+          'readonly': false,
+          'size': 'default'
+        },
+        {
+          'type': 'checkbox',
+          'labelSize': '6',
+          'controlSize': '10',
+          'name': 'checkbox',
+          'label': '爱好',
+          'disabled': false
+        },
+        {
+          'type': 'checkboxGroup',
+          'labelSize': '6',
+          'controlSize': '10',
+          'name': 'checkbox',
+          'label': '特长',
+          'disabled': false,
+          'options': [
+            { label: 'Apple', value: 'Apple', checked: true },
+            { label: 'Pear', value: 'Pear' },
+            { label: 'Orange', value: 'Orange' }
+          ]
+        },
+        {
+          'type': 'radioGroup',
+          'labelSize': '6',
+          'controlSize': '10',
+          'name': 'radioGroup',
+          'label': '专业',
+          'disabled': false,
+          'options': [
+            { label: 'Apple', value: 'Apple', checked: true },
+            { label: 'Pear', value: 'Pear' },
+            { label: 'Orange', value: 'Orange' }
+          ]
+        },
+        {
+          'type': 'submit',
+          'offsetSize': '6',
+          'controlSize': '10',
+          'name': 'submit'
+        }
+      ],
+      dataList: []
+    }
+  };
   menuConfig = [
     {
       label: '表格组件',
@@ -284,7 +477,16 @@ export class ComponentSettingResolverComponent implements OnInit, OnChanges {
       children: [
         {
           label: '标签页',
-          value : {}
+          value : {
+            component:'tabs',
+            config: [
+              {
+                id:`tab_${this.uuID(6)}`,
+                name   : `Tab 1`,
+                config: {}
+              }
+            ]
+          }
         },
         {
           label: '分步页',
@@ -309,19 +511,49 @@ export class ComponentSettingResolverComponent implements OnInit, OnChanges {
 
   }
 
-  getMenuData(event) {
-    console.log(event);
-    this.createBsnComponent(event);
-    //this.config = event;
-  }
+  async ngAfterViewInit() {
+    // 获取组件区域数据
+    const params = {
+      TagA: this.blockId,     // 区域ID
+      TagB: '',               // 组件类型
+      ParentId: this.layoutId // 布局ID
+    };
+    this._http.get(APIResource.AppConfigPack, params).subscribe(result => {
+      if(result && result.Status === 200) {
+        result.Data.forEach(data => {
+          if (data.Name === 'tabs'){
+            const d = {};
+            d['config'] = JSON.parse(data.Metadata);
+            d['dataList'] = [];
+            d['component'] = data.Name;
+            this.createBsnComponent(d);
+          }else {
+            this.createBsnComponent(this._dataStruct[data.Name]);
+          }
 
+          this._serverLayoutId = data.Id;
+        });
+
+        /*result.Data.forEach(data => {
+          this.menuConfig.forEach(menu => {
+            menu.children.forEach(componentCfg => {
+              if(componentCfg.value.component === data.Name) {
+                this.createBsnComponent(componentCfg.value);
+                this._serverLayoutId = data.Id;
+              }
+            });
+          });
+        });*/
+      }
+    });
+  };
 
   ngOnChanges() {
-    //console.log(this.layoutId);
     this.createBsnComponent();
   }
 
   createBsnComponent(event?) {
+    console.log(event);
     if(event) {
       this.config = event;
     }
@@ -336,29 +568,31 @@ export class ComponentSettingResolverComponent implements OnInit, OnChanges {
       const comp = this.resolver.resolveComponentFactory<any>(component[this.config.component]);
       this.componentRef = this.container.createComponent(comp);
       this.componentRef.instance.config = this.config.config;
-      if(this.componentRef.instance.dataList) {
-        this.componentRef.instance.dataList = this.config.dataList;
-      }
-    }
+      this.componentRef.instance.dataList = this.config.dataList;
+      this.componentRef.instance.layoutId = this.layoutId;
+      this.componentRef.instance.blockId = this.blockId;
 
-      /*if(this.config && this.config.component) {
-        if (!component[this.config.component]) {
-          const supportedTypes = Object.keys(component).join(', ');
-          throw new Error(
-            `Trying to use an unsupported types (${this.config.component}).Supported types: ${supportedTypes}`
-          );
-        }
-        this.container.clear();
-        const comp = this.resolver.resolveComponentFactory<any>(component[this.config.component]);
-        this.componentRef = this.container.createComponent(comp);
+     /* if(this.config.component === 'tabs'){ // 异步获取tabs下的组件数据
+        this.config.config.forEach(c => {
+          this.getTabComponent(c.id).then(result => {
+            if(result && result.Data) {
+              result.Data.forEach(data => {
+                console.log(data);
+                this.componentRef.instance.config = this._dataStruct[data.Name];
+                this.componentRef.instance.layoutId = this.layoutId;
+                this.componentRef.instance.blockId = c.id;
+              });
+            }
+          });
+        });
+      } else {
         this.componentRef.instance.config = this.config.config;
-        if(this.componentRef.instance.dataList) {
-          this.componentRef.instance.dataList = this.config.dataList;
-        }
+        this.componentRef.instance.dataList = this.config.dataList;
+        this.componentRef.instance.layoutId = this.layoutId;
+        this.componentRef.instance.blockId = this.blockId;
       }*/
-    //}
-    // this.submitSelectedComponent.emit(this.config);
 
+    }
   }
 
   _saveComponent() {
@@ -368,16 +602,51 @@ export class ComponentSettingResolverComponent implements OnInit, OnChanges {
       TagA: this.blockId,
       TagB:''
     };
-    this._http.postProj(APIResource.AppConfigPack, body).subscribe(result=> {
-      if(result && result.Status=== 200) {
-          this.message.success('保存成功');
-        }else {
-          this.message.warning(`出现异常: ${result.Message}`);
+    if(this.config.component === 'tabs') {
+      console.log(this.config);
+      body.Metadata = JSON.stringify(this.config.config);
+    }
+    if(this._serverLayoutId) {
+      body.Id = this._serverLayoutId;
+      this._http.putProj(APIResource.AppConfigPack, body,{Id: this._serverLayoutId}).subscribe(result=> {
+          if(result && result.Status=== 200) {
+            this.message.success('保存成功');
+          }else {
+            this.message.warning(`出现异常: ${result.Message}`);
+          }
+        }, error => {
+          this.message.error(`出现错误：${error}`)
         }
-      }, error => {
-        this.message.error(`出现错误：${error}`)
-      }
-    );
+      );
+    } else {
+      this._http.postProj(APIResource.AppConfigPack, body).subscribe(result=> {
+          if(result && result.Status=== 200) {
+            this.message.success('保存成功');
+          } else {
+            this.message.warning(`出现异常: ${result.Message}`);
+          }
+        }, error => {
+          this.message.error(`出现错误：${error}`)
+        }
+      );
+    }
+  }
+
+  async getTabComponent(blockId) {
+    const params = {
+      ParentId: this.layoutId,
+      TagA: blockId
+    };
+    return this._http.get(APIResource.AppConfigPack, params).toPromise();
+  }
+
+  uuID(w){
+    let s="";
+    let str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    for (let i = 0; i < w; i++) {
+      s += str.charAt(Math.round(Math.random() * (str.length - 1)));
+    }
+    return s;
   }
 
 }

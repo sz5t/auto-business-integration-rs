@@ -42,6 +42,7 @@ import { BsnTreeComponent } from './business/bsn-tree/bsn-tree.component';
 import { CnCodeEditComponent } from './components/cn-code-edit/cn-code-edit.component';
 import {ComponentSettingResolverComponent} from "./resolver/component-resolver/component-setting-resolver.component";
 import {LayoutSettingResolverComponent} from "./resolver/layout-resolver/layout-setting-resolver.component";
+import { TabsResolverComponent } from './resolver/tabs-resolver/tabs-resolver.component';
 const THIRDMODULES = [
     CountdownModule,
     NzSchemaFormModule
@@ -73,7 +74,8 @@ const COMPONENTS = [
   CnGridCheckboxComponent,
   BsnDataTableComponent,
   CnContextMenuComponent,
-  CnCodeEditComponent
+  CnCodeEditComponent,
+  TabsResolverComponent
 
 ];
 const DIRECTIVES = [
@@ -140,7 +142,8 @@ const DIRECTIVES = [
       NzCheckboxGroupComponent,
       BsnDataTableComponent,
       FormResolverComponent,
-      CnCodeEditComponent
+      CnCodeEditComponent,
+      TabsResolverComponent
     ]
 })
 export class SharedModule { }

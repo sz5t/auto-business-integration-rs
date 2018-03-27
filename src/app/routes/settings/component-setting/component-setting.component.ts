@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { ApiService } from '@core/utility/api-service';
 import { APIResource } from '@core/utility/api-resource';
 import { CommonUtility } from '@core/utility/Common-utility';
 import { NzMessageService } from 'ng-zorro-antd';
+import { CnCodeEditComponent } from '@shared/components/cn-code-edit/cn-code-edit.component';
 
 @Component({
     selector: 'app-component-setting',
     templateUrl: './component-setting.component.html',
 })
 export class ComponentSettingComponent implements OnInit {
+    @ViewChild('editor') editor: CnCodeEditComponent;
     _funcOptions = [];
     _funcValue;
     _layoutValue;
@@ -531,34 +533,30 @@ export class ComponentSettingComponent implements OnInit {
         const str = [];
         if ($event.metadata) {
             const componentData = await this.getComponentByLayout($event.id);
-            let componentJson=[];
-            console.log("componentData:",componentData);
-            if(componentData && componentData.Status=== 200) {
-                componentJson=componentData.Data;
-              }
+            let componentJson = [];
+            console.log("componentData:", componentData);
+            if (componentData && componentData.Status === 200) {
+                componentJson = componentData.Data;
+            }
 
-           this.nodes=  this.arrayToTreeBylayout(this.layoutToarry($event.metadata,componentJson,'555'),'555') ; 
-           console.log(this.nodes);
-           console.log('初步简析布局', this.layoutToarry($event.metadata,componentJson,'555'));
+            this.nodes = this.arrayToTreeBylayout(this.layoutToarry($event.metadata, componentJson, '555'), '555');
+           // console.log(this.nodes);
+           // console.log('初步简析布局', this.layoutToarry($event.metadata, componentJson, '555'));
         }
 
     }
 
-    /**布局简析 */
-    layoutToarry(data?,component?,pid?) {
+    /**生成结构树-》 布局简析 */
+    layoutToarry(data?, component?, pid?) {
         let result = [];
         let temp;
         if (data.rows) {
             data.rows.forEach(rdata => {
                 if (rdata.row.cols) {
                     rdata.row.cols.forEach(cdata => {
-                        const obj = { "Name": cdata.title, "Id": cdata.id,"ParentId":pid };
+                        const obj = { "Name": cdata.title, "Id": cdata.id, "ParentId": pid };
                         if (cdata.rows) {
-                            temp = this.layoutToarry(cdata,component,pid) //递归调用行
-                        }
-                        else if (cdata.tabs) {
-
-                            temp = this.layoutToarry(cdata,component,cdata.id) //递归调用tab页
+                            temp = this.layoutToarry(cdata, component, pid) //递归调用行
                         }
                         if (temp) {
                             if (temp.length > 0) {
@@ -567,9 +565,9 @@ export class ComponentSettingComponent implements OnInit {
                         }
                         if (!cdata.rows) {
                             result.push(obj);
-                            const cobj=  this.componentToarry(component,cdata.id);
-                            if(cobj){
-                                result.push(cobj);
+                            const cobj = this.componentToarry(component, cdata.id,component);
+                            if (cobj) {
+                                result = [...result, ...cobj]
                             }
                         }
                     });
@@ -579,29 +577,38 @@ export class ComponentSettingComponent implements OnInit {
 
         if (data.tabs) {
             data.tabs.forEach(tab => {
-                const obj = { "Name": tab.title, "Id": tab.id };
+                const obj = { "Name": tab.name, "Id": tab.id,ParentId:pid };
                 result.push(obj);
-                const cobj=  this.componentToarry(component,tab.id);
-                if(cobj){
-                    result.push(cobj);
-                }
+                const cobj = this.componentToarry(component, tab.id,component);
+                if (cobj) {
+                    result = [...result, ...cobj]
+                } 
             });
         }
         return result;
-
     }
-
-    componentToarry(data?,pid?){
-        let obj={};
-        if(data){
+   /**生成结构树-》组件简析 */
+    componentToarry(data?, pid?,component?) {
+     
+        let obj = [];
+        let temp;
+        if (data) {
+          
+            const a={};
             const index = data.findIndex(item => item.TagA === pid);
-            obj["Id"]=data[index].Id;
-            obj["Name"]=data[index].Name;
-            obj["ParentId"]=data[index].TagA;
-
-
+            a["Id"] = data[index].Id;
+            a["Name"] = data[index].Name;
+            a["ParentId"] = data[index].TagA;
+            obj.push(a);
+            if(data[index].Name==='tabs'){
+                temp = this.layoutToarry({tabs: JSON.parse(data[index].Metadata)}, component,  data[index].Id) //递归调用行
+                if (temp) {
+                    obj = [...obj, ...temp]
+                }
+            }
+           
         }
-       return obj;
+        return obj;
     }
 
 
@@ -723,7 +730,49 @@ export class ComponentSettingComponent implements OnInit {
         nzShowLine: false, // 显示连接线 false
     };
 
+    /**
+     * 保存sql
+     * @param data 
+     */
+    async saveSql(data?) {
+         //保存sql前需要做判断，
+         //1.功能模块，布局选取。
+         //2.布局组件树选中节点是
+        const sql=  this.editor.getValue();
+       // const saveSqlStr=await this.saveSqlByApi(sql);
+       // const updateSqlStr=await this.updateSqlByApi(sql,"f4fa067fae1440c4a9ab29d1038add96");
+       // const sqlField=await this.getSqlFiledByApi("f4fa067fae1440c4a9ab29d1038add96");
+        console.log("保存sql",sql);
+      //  console.log("服务器保存sql",saveSqlStr);
+       // console.log("服务器返回sql",updateSqlStr);
+      //  console.log("服务器返回字段",sqlField);
+    }
 
+
+    async  saveSqlByApi(sql?) {
+        const params = {
+            ScriptText: sql
+        };
+        return this._http.postProj(APIResource.DbCommonConfig, params).toPromise();
+    }
+    async  updateSqlByApi(sql?,Id?) {
+        const params = {
+            Id:Id,
+            ScriptText: sql
+        };
+        return this._http.putProj(APIResource.DbCommonConfig, params).toPromise();
+    }
+    /**
+     * 获取sql对应的字段描述
+     * @param Id 
+     */
+    async  getSqlFiledByApi(Id?) {
+        const params = {
+            OwnerId:Id
+        };
+        return this._http.getProj(APIResource.EntityPropertyDefine, params).toPromise();
+    }
+    
     /**
      * 页面组件渲染数据
      */
@@ -1173,75 +1222,7 @@ export class ComponentSettingComponent implements OnInit {
     }
 
 
-    // 理想布局结构  tabs 既是布局又是组件，故而保留两种属性，既能简析布局，又能交互关系
-    // 需要单独将tabs 封装成组件，简析（用于实现控制标签页的显示）
-    lay = {
-        layoutID: '页面大布局id',
-        rows: [
-            {
-                row: {
-                    pageID: '功能模块id',
-                    layoutID: '所属布局id',
-                    rowID: '当前行id',
-                    cols: [
-                        {
-                            pageID: '功能模块id',
-                            rowID: '所属行id',
-                            colsID: '列id',
-                            type: '组件、布局、布局组件（tabs）',
-                            tabs: {
-                                pageID: '功能模块id',
-                                colsID: '所属列id',
-                                tabsID: 'tabs页签id',
-                                viewID: '组件id，用于关系交互等',
-                                title: 'tabs属性',
-                                tab: [
-                                    {
-                                        pageID: '功能模块id',
-                                        tabsID: '所属tabs页签id',
-                                        tabID: '标签页id',
-                                        viewID: '组件id，用于关系交互等',
-                                        title: 'tab标签页',
-                                        layout: {
-                                            layoutID: '布局id',
-                                            rows: [
-                                                {
-                                                    row: {
-                                                        layoutID: '所属布局id',
-                                                        pageID: '功能模块id',
-                                                        rowID: '当前行id',
-                                                        cols: [{
-                                                            pageID: '功能模块id',
-                                                            rowID: '所属行id',
-                                                            colsID: '列id',
-                                                            type: '标识列内装载是什么',
-                                                            config: {
-                                                                viewID: '组件id，用于关系交互等',
-                                                                //列内组件信息
-                                                            }
-                                                        }]
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            pageID: '功能模块id',
-                            rowID: '所属行id',
-                            colsID: '列id',
-                            type: '标识列内装载是什么',
-                            config: {
-                                //列内组件信息
-                            }
-                        }
-                    ]
-                }
-            }
-        ]
-    }
+
 
 
 }

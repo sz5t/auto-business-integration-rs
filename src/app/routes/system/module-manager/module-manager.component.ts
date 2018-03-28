@@ -71,7 +71,7 @@ export class ModuleManagerComponent implements OnInit {
 
     ngOnInit() {
       this.cacheInfo = this.cacheService.getNone('ParamsUrl');
-      this.apiService.getProj(`${APIResource.AppModuleConfig}/_root/${APIResource.AppModuleConfig}?_recursive=true&_deep=4&_root.ApplyId=${this.cacheInfo.ApplyId}&_root.parentid=in("",null)`,{
+      this.apiService.getProj(`${APIResource.AppModuleConfig}/_root/${APIResource.AppModuleConfig}?_recursive=true&_deep=4&_root.ApplyId=3935eb43532d435398d5189d5ece0f5d&_root.parentid=in("",null)`,{
         _orderBy: 'order asc'
       } ).toPromise().then(
         module => {

@@ -10,9 +10,7 @@ import {ApiService} from '@core/utility/api-service';
   templateUrl: './role-manager.component.html',
 })
 export class RoleManagerComponent implements OnInit {
-  content:any;
-  contentConfigPack:any;
-  contentModule:any;
+
     constructor(
       private cacheService: CacheService,
       private apiService: ApiService
@@ -20,45 +18,11 @@ export class RoleManagerComponent implements OnInit {
 
     clear()
     {
-      this.content = '';
-      this.contentConfigPack = '';
-      this.contentModule = '';
+
     }
 
     ngOnInit() {
     }
 
-  getUser()
-  {
-    this.clear();
-    this.apiService.get(APIResource.AppUser, {
-      _select: 'Id,RealName'}).toPromise().then(
-      response => {
-        this.content = JSON.stringify(response.Data);
-      }
-    );
-  }
-
-  getModule()
-  {
-    this.clear();
-      this.apiService.getProj(APIResource.AppModuleConfig, {_select: 'Id,Name'}).toPromise().then(
-      response => {
-        this.contentModule = JSON.stringify(response.Data);
-      }
-    );
-  }
-
-  getAppConfigPack()
-  {
-    this.clear();
-    this.apiService.getProj(APIResource.AppConfigPack, {
-      _select: 'Id,Name',
-    }).toPromise().then(
-      response => {
-        this.contentConfigPack = JSON.stringify(response.Data);
-      }
-    );
-  }
 
 }

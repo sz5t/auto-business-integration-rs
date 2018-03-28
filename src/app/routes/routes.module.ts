@@ -17,6 +17,7 @@ import {AuthGuard} from '@core/utility/auth-guard';
 import {AlainAuthModule, DA_STORE_TOKEN, MemoryStore} from '@delon/auth';
 import {ModuleWithProviders} from '@angular/compiler/src/core';
 
+
 @NgModule({
     imports: [ SharedModule, RouteRoutingModule, AlainAuthModule.forRoot({ login_url: '/passport/login' })],
     declarations: [
@@ -33,6 +34,7 @@ import {ModuleWithProviders} from '@angular/compiler/src/core';
     ],
     providers: [
       AuthGuard
+      // RandomUserService
     ]
 })
 

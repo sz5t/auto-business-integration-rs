@@ -35,7 +35,7 @@ export class BlockSettingComponent implements OnInit {
     //const params = new HttpParams().set('TagA', this._funcValue.join(','));
     if(this._funcValue.length >0) {
       const params = {
-        TagA:this._funcValue.join(','),
+        ParentId:this._funcValue[this._funcValue.length -1],
         _select: 'Id,Name,Metadata'
       };
       this.getLayoutConfigData(params).then(serverLayoutData => {

@@ -2,7 +2,7 @@
 <div nz-row [nzGutter]="8">
     <div nz-col [nzSpan]="24">
         <nz-card>
-            <!-- <ng-template #title>组件编辑</ng-template> -->
+         <!-- <ng-template #title><i class="icon icon-settings"></i>操作设置</ng-template>-->
             <ng-template #body>
                 <form nz-form (ngSubmit)="_submitForm($event)" [nzLayout]="'inline'">
                     <div nz-form-item nz-row>
@@ -38,8 +38,52 @@
 <div nz-row [nzGutter]="8">
     <div nz-col [nzSpan]="8">
         <nz-card>
-            <nz-tree [nzNodes]="nodes" [nzOptions]="options" (nzActivate)="onActivate($event)" [nzAllowChildLinkage]="treeconfig.nzAllowChildLinkage"
-                [nzAllowParentLinkage]="treeconfig.nzAllowParentLinkage" [nzCheckable]="treeconfig.nzCheckable" [nzShowLine]="treeconfig.nzShowLine">
+          <ng-template #title><i class="icon icon-settings"></i> 操作设置</ng-template>
+            <nz-tree
+              #tree
+              [nzNodes]="nodes"
+              [nzOptions]="options"
+              (nzActivate)="onActivate($event)"
+              [nzAutoExpandParent]="treeconfig.nzAutoExpandParent"
+              [nzAllowChildLinkage]="treeconfig.nzAllowChildLinkage"
+              [nzAllowParentLinkage]="treeconfig.nzAllowParentLinkage"
+              [nzCheckable]="treeconfig.nzCheckable"
+              [nzShowLine]="treeconfig.nzShowLine">
+              <ng-template #nzTitle let-node>
+                <span *ngIf="node.data.type === 'component'">
+                  <i class="anticon anticon-file"></i> {{node.displayField}}
+                </span>
+                <span *ngIf="node.data.type === 'tabs'">
+                  <i class="anticon anticon-tags-o"></i> {{node.displayField}}
+                </span>
+                <nz-dropdown [nzPlacement]="'bottomLeft'" *ngIf="node.data.type === 'tab'" [nzTrigger]="'click'">
+                  <a href nz-dropdown>
+                    <i class="anticon anticon-tag-o"></i>
+                    {{node.displayField}}
+                    <i class="anticon anticon-down"></i>
+                  </a>
+                  <ul nz-menu>
+                    <li nz-menu-item (click)="showModal(node)"><i class="anticon anticon-plus"></i> 新建操作</li>
+                  </ul>
+                </nz-dropdown>
+                <nz-dropdown [nzPlacement]="'bottomLeft'" *ngIf="node.data.type === 'operation'" [nzTrigger]="'click'">
+                  <a href nz-dropdown>
+                    <i class="anticon anticon-bars"></i>
+                    {{node.displayField}}
+                    <i class="anticon anticon-down"></i>
+                  </a>
+                  <ul nz-menu>
+                    <li nz-menu-item>
+                      <nz-popconfirm [nzTitle]="'确定要删除这个操作吗？'" (nzOnConfirm)="delOptConfirm(node)" (nzOnCancel)="delOptCancel()">
+                        <a nz-popconfirm>
+                          <i class="anticon anticon-plus"></i> 删除操作
+                        </a>
+                      </nz-popconfirm>
+
+                    </li>
+                  </ul>
+                </nz-dropdown>
+              </ng-template>
             </nz-tree>
         </nz-card>
     </div>
@@ -47,5 +91,18 @@
       <cn-layout-resolver [config]="_editorConfig"></cn-layout-resolver>
     </div>
 </div>
+
+<nz-modal [nzVisible]="isVisible"
+          [nzTitle]="'输入操作名称'"
+          [nzContent]="modalContent"
+          (nzOnCancel)="handleCancel($event)"
+          (nzOnOk)="handleOk($event)"
+          [nzConfirmLoading]="_isConfirmLoading"
+>
+
+  <ng-template #modalContent>
+    <input nz-input [(ngModel)]="_operationName"/>
+  </ng-template>
+</nz-modal>
 
 

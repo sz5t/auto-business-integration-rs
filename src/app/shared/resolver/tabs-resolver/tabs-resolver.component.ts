@@ -32,10 +32,10 @@ export class TabsResolverComponent implements OnInit {
   showModal = (type) => {
     if (type === 'new') {
       this.isEdit = false;
-      this._tabName = this._tab.name;
+      //this._tabName = this._tab.name;
     } else if (type === 'edit'){
       this.isEdit = true;
-      this._tabName = name;
+      //this._tabName = name;
     }
     this.isVisible = true;
   };
@@ -62,6 +62,7 @@ export class TabsResolverComponent implements OnInit {
 
   selectedTab = (tab) => {
     this._tab = tab;
+    console.log(this._tab);
   }
 
 }

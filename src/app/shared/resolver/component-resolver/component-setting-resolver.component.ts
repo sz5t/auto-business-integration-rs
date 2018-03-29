@@ -10,7 +10,7 @@ import { CnCodeEditComponent } from '@shared/components/cn-code-edit/cn-code-edi
 import {Validators} from "@angular/forms";
 import {ApiService} from "@core/utility/api-service";
 import {APIResource} from "@core/utility/api-resource";
-import {AppConfigPack_Block} from "../../../model/APIModel/AppConfigPack";
+import {AppConfigPack_Block, AppConfigPack_ConfigType} from "../../../model/APIModel/AppConfigPack";
 import {NzMessageService} from "ng-zorro-antd";
 import {TabsResolverComponent} from "@shared/resolver/tabs-resolver/tabs-resolver.component";
 const component: { [type: string]: Type<any> } = {
@@ -514,21 +514,22 @@ export class ComponentSettingResolverComponent implements OnInit, OnChanges, Aft
   async ngAfterViewInit() {
     // 获取组件区域数据
     const params = {
-      TagA: this.blockId,     // 区域ID
-      TagB: '',               // 组件类型
+      Name: this.blockId,     // 区域ID
+      //TagB: '',               // 组件类型
       ParentId: this.layoutId // 布局ID
     };
     this._http.get(APIResource.AppConfigPack, params).subscribe(result => {
       if(result && result.Status === 200) {
         result.Data.forEach(data => {
-          if (data.Name === 'tabs'){
+          const component = data.TagB.substring(data.TagB.lastIndexOf('.')+1, data.TagB.length);
+          if (component === 'tabs'){
             const d = {};
             d['config'] = JSON.parse(data.Metadata);
             d['dataList'] = [];
-            d['component'] = data.Name;
+            d['component'] = component;
             this.createBsnComponent(d);
           }else {
-            this.createBsnComponent(this._dataStruct[data.Name]);
+            this.createBsnComponent(this._dataStruct[component]);
           }
 
           this._serverLayoutId = data.Id;
@@ -553,7 +554,6 @@ export class ComponentSettingResolverComponent implements OnInit, OnChanges, Aft
   }
 
   createBsnComponent(event?) {
-    console.log(event);
     if(event) {
       this.config = event;
     }
@@ -571,40 +571,20 @@ export class ComponentSettingResolverComponent implements OnInit, OnChanges, Aft
       this.componentRef.instance.dataList = this.config.dataList;
       this.componentRef.instance.layoutId = this.layoutId;
       this.componentRef.instance.blockId = this.blockId;
-
-     /* if(this.config.component === 'tabs'){ // 异步获取tabs下的组件数据
-        this.config.config.forEach(c => {
-          this.getTabComponent(c.id).then(result => {
-            if(result && result.Data) {
-              result.Data.forEach(data => {
-                console.log(data);
-                this.componentRef.instance.config = this._dataStruct[data.Name];
-                this.componentRef.instance.layoutId = this.layoutId;
-                this.componentRef.instance.blockId = c.id;
-              });
-            }
-          });
-        });
-      } else {
-        this.componentRef.instance.config = this.config.config;
-        this.componentRef.instance.dataList = this.config.dataList;
-        this.componentRef.instance.layoutId = this.layoutId;
-        this.componentRef.instance.blockId = this.blockId;
-      }*/
-
     }
   }
 
   _saveComponent() {
     const body: AppConfigPack_Block = {
       ParentId: this.layoutId,
-      Name: this.config.component, // 组件名称
-      TagA: this.blockId,
-      TagB:''
+      Name: this.blockId, // 组件名称
+      TagA: this.uuID(10),
     };
     if(this.config.component === 'tabs') {
-      console.log(this.config);
       body.Metadata = JSON.stringify(this.config.config);
+      body.TagB = `tabs.${this.config.component}`;
+    } else {
+      body.TagB = `component.${this.config.component}`;
     }
     if(this._serverLayoutId) {
       body.Id = this._serverLayoutId;

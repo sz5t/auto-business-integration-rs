@@ -1,0 +1,17 @@
+字段强制要求：TagA、TagB
+#1、layout-setting
+##（1）保存布局配置
+###ParentId：所属功能模块 
+###Name: 布局名称  
+###TagA：随机数标识（uuID（10））
+###TagB：配置类别（layout.布局名称）
+
+#2、block-setting
+## （1）获取数据方式参照 layout-setting 保存参数设置
+## （2）保存布局组件:
+### ParentId: 布局ID
+### Name: 区域ID
+### TagA：uuID（10）
+### TagB：组件类别
+#3、operation-setting
+## （1）获取数据方式参照 layout-setting 保存参数设置

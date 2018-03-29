@@ -1,20 +1,19 @@
-import {HttpClient, HttpHeaders,HttpParams} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Inject} from '@angular/core';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 
 
-export  class ApiService
-{
+export class ApiService {
 
-  constructor(
-    @Inject(DA_SERVICE_TOKEN)
-    private tokenService: ITokenService,
-    private httpClient: HttpClient){}
+  constructor(@Inject(DA_SERVICE_TOKEN)
+              private tokenService: ITokenService,
+              private httpClient: HttpClient) {
+  }
 
 
   setHeaders() {
     const token = this.tokenService.get().token;
-    if ( token !== 'unll') {
+    if (token !== 'unll') {
       // const userToken = JSON.parse(this.tokenService.get().token);
       return new HttpHeaders()
         .set('Credential', token ? token : '')
@@ -24,15 +23,15 @@ export  class ApiService
   }
 
   //region 操作配置平台的相关资源
-  post(resource  , body?, params?) {
-  return this.httpClient.request<any>(
-    'POST',
-    resource,
-    {
-      body: body,
-      params: params,
-      headers: this.setHeaders()
-    } );
+  post(resource, body?, params?) {
+    return this.httpClient.request<any>(
+      'POST',
+      resource,
+      {
+        body: body,
+        params: params,
+        headers: this.setHeaders()
+      });
   }
 
 
@@ -59,7 +58,7 @@ export  class ApiService
       });
   }
 
-  delete(resource, params?){
+  delete(resource, params?) {
     return this.httpClient.request<any>(
       'DELETE',
       resource,
@@ -68,26 +67,30 @@ export  class ApiService
         headers: this.setHeaders()
       });
   }
+
   //endregion
 
   //region  操作项目配置的相关api
 
-  postProj(resource , body?, params?) {
-  let param: HttpParams = this.setParamsProj(params)
-  return this.httpClient.request<any>(
-    'POST',
-    resource,
-    {
-      body: body,
-      params: param,
-      headers: this.setHeaders()
-    } );
-}
+  postProj(resource, body?, params?) {
+    body['ProjId'] = '002905c7bf57c54c9e5e65ec0e5fafe8';
+    body['ApplyId'] = '3935eb43532d435398d5189d5ece0f5d';
+    body['PlatCustomerId'] = 'f2771e4c90db29439e3c986d9859dc74';
+    //let param: HttpParams = this.setParamsProj(params)
+    return this.httpClient.request<any>(
+      'POST',
+      resource,
+      {
+        body: body,
+        //params: param,
+        headers: this.setHeaders()
+      });
+  }
 
 
   getProj(resource, params?) {
-     params  = this.setParamsProj(params);
-        return this.httpClient.request<any>(
+    params = this.setParamsProj(params);
+    return this.httpClient.request<any>(
       'GET',
       resource,
       {
@@ -110,7 +113,7 @@ export  class ApiService
       });
   }
 
-  deleteProj(resource, params?){
+  deleteProj(resource, params?) {
     params = this.setParamsProj(params);
     return this.httpClient.request<any>(
       'DELETE',
@@ -133,7 +136,7 @@ export  class ApiService
       .set('ApplyId', '3935eb43532d435398d5189d5ece0f5d') //ApplyId
       .set('PlatCustomerId', 'f2771e4c90db29439e3c986d9859dc74');// PlatCutomerId
 
-    for(let p in param) {
+    for (let p in param) {
       httpParam = httpParam.set(p, param[p]);
     }
     return httpParam;

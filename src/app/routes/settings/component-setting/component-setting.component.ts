@@ -504,10 +504,8 @@ export class ComponentSettingComponent implements OnInit {
 
     async ngOnInit() {
         const fieldIdentity = CommonUtility.uuID(6);
-        console.log('id', fieldIdentity);
         this.attributeConfig = this.componentdic["bsn-datatable"].attributeConfig;
         this.fildConfig = this.componentdic["bsn-datatable"].viewCfg[0]["config"];
-        console.log('this.fildConfig', this.fildConfig);
         this.parameterConfig = this._editorConfig.rows[0].row.cols[0].tabs[0].viewCfg[1]["tabs"][1].viewCfg[0]["config"];
 
         const params = { _select: 'Id,Name,ParentId' };
@@ -529,7 +527,6 @@ export class ComponentSettingComponent implements OnInit {
     async  _changeLayoutName($event) {
         // 创建布局
         // this._layoutConfig = $event.metadata;
-        console.log('选择布局名称', $event);
         const str = [];
         if ($event.metadata) {
             const componentData = await this.getComponentByLayout($event.id);
@@ -582,18 +579,18 @@ export class ComponentSettingComponent implements OnInit {
                 const cobj = this.componentToarry(component, tab.id,component);
                 if (cobj) {
                     result = [...result, ...cobj]
-                } 
+                }
             });
         }
         return result;
     }
    /**生成结构树-》组件简析 */
     componentToarry(data?, pid?,component?) {
-     
+
         let obj = [];
         let temp;
         if (data) {
-          
+
             const a={};
             const index = data.findIndex(item => item.TagA === pid);
             a["Id"] = data[index].Id;
@@ -606,7 +603,7 @@ export class ComponentSettingComponent implements OnInit {
                     obj = [...obj, ...temp]
                 }
             }
-           
+
         }
         return obj;
     }
@@ -732,7 +729,7 @@ export class ComponentSettingComponent implements OnInit {
 
     /**
      * 保存sql
-     * @param data 
+     * @param data
      */
     async saveSql(data?) {
          //保存sql前需要做判断，
@@ -764,7 +761,7 @@ export class ComponentSettingComponent implements OnInit {
     }
     /**
      * 获取sql对应的字段描述
-     * @param Id 
+     * @param Id
      */
     async  getSqlFiledByApi(Id?) {
         const params = {
@@ -772,7 +769,7 @@ export class ComponentSettingComponent implements OnInit {
         };
         return this._http.getProj(APIResource.EntityPropertyDefine, params).toPromise();
     }
-    
+
     /**
      * 页面组件渲染数据
      */

@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup} from "@angular/forms";
 import {ApiService} from "@core/utility/api-service";
 import {APIResource} from "@core/utility/api-resource";
 import {NzMessageService} from "ng-zorro-antd";
+import {AppConfigPack_ConfigType} from "../../../model/APIModel/AppConfigPack";
 /**
  * 功能设计：
  * 1、用户的所有布局设置统一为添加新布局
@@ -980,7 +981,9 @@ export class LayoutSettingComponent implements OnInit {
     // 选择功能模块，首先加载服务端配置列表
     //const params = new HttpParams().set('TagA', this._funcValue.join(','));
     if(this._funcValue.length >0) {
-      const params = { TagA:this._funcValue.join(',')};
+      const params = {
+        ParentId: this._funcValue[this._funcValue.length -1]
+      };
       this.getLayoutConfigData(params).then(serverLayoutData => {
         if(serverLayoutData.Status === 200 && serverLayoutData.Data.length > 0){
           this._tableDataSource = serverLayoutData.Data;
@@ -1018,7 +1021,7 @@ export class LayoutSettingComponent implements OnInit {
     // 为每个区域设置标题
     this.overrideLayoutTitle(this._layoutValue.value.rows, this.value);
     // 获取模块ID，格式为将按照模块层级依次保存为数组形式，后续按照模块加载时，层级最后的ID即为对应加载模块ID
-    const moduleID = this._funcValue.join(',');
+    const moduleID = this._funcValue[this._funcValue.length-1];
     const layoutName = this._layoutValue.label;
     const copyLayout = JSON.parse(JSON.stringify(this._layoutValue.value));
     this.overrideLayoutId(copyLayout);
@@ -1026,8 +1029,9 @@ export class LayoutSettingComponent implements OnInit {
     const configName = this._configName;
     // 配置信息保存入数据库
     const configData = {
-      TagA: moduleID,
-      TagB: layoutName,
+      ParentId: moduleID,
+      TagA: this.uuID(10),
+      TagB: AppConfigPack_ConfigType.LAYOUT + '.' +layoutName,
       Name: configName,
       Metadata: metadata
     };

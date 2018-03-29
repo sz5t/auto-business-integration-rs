@@ -67,4 +67,12 @@ export class AppConfigPack_Block {
   Metadata?;
 }
 
+export class AppConfigPack_ConfigType {
+  public static LAYOUT = 'layout';
+  public static TABS = 'tabs';
+  public static TAB = 'tab';
+  public static COLUMN = 'col';
+  public static COMPONENT = 'component';
+}
+
 

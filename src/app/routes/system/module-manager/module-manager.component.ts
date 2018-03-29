@@ -1,11 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Injectable, OnInit} from '@angular/core';
 import {APIResource} from '@core/utility/api-resource';
 import {ApiService} from '@core/utility/api-service';
 import {CacheService} from '@delon/cache';
 import {CacheInfo} from '../../../model/APIModel/AppUser';
 
+@Injectable()
+export class ModuleService {
+  moduleServiceUrl = `${APIResource.AppModuleConfig}/_root/${APIResource.AppModuleConfig}?_recursive=true&_deep=4&_root.ApplyId=3935eb43532d435398d5189d5ece0f5d&_root.parentid=in("",null)`;
+  getModule(pageIndex = 1, pageSize = 2, sortField, sortOrder) {
+    return this.http.get(`${this.moduleServiceUrl}` , {
+      _page: pageIndex, _rows: pageSize, _orderBy: `${sortField} ${sortOrder}`
+    } );
+  }
+  constructor(private http: ApiService) {
+  }
+}
+
 @Component({
   selector: 'cn-module-manager',
+  providers: [ModuleService],
   templateUrl: './module-manager.component.html',
   styles: [
     `
@@ -23,14 +36,22 @@ import {CacheInfo} from '../../../model/APIModel/AppUser';
   ]
 })
 export class ModuleManagerComponent implements OnInit {
-    constructor(
+  _current = 1;
+  _pageSize = 10;
+  _total = 1;
+  _dataSet = [];
+  _loading = true;
+  _sortValue = 'asc';
+  _sortField = 'order';
+
+  constructor(
       private cacheService: CacheService,
-      private apiService: ApiService
+      private apiService: ApiService,
+      private _moduleService: ModuleService
     ) { }
-    data: any[];
+
     expandDataCache = {};
-    loading = true;
-    cacheInfo: CacheInfo;
+
   collapse(array, data, $event) {
     if ($event === false) {
       if (data.children) {
@@ -58,9 +79,13 @@ export class ModuleManagerComponent implements OnInit {
         }
       }
     }
-
     return array;
   }
+
+  reset() {
+    this.loadData(true);
+  }
+
 
   visitNode(node, hashMap, array) {
     if (!hashMap[ node.id ]) {
@@ -70,21 +95,24 @@ export class ModuleManagerComponent implements OnInit {
   }
 
     ngOnInit() {
-      this.cacheInfo = this.cacheService.getNone('ParamsUrl');
-      this.apiService.getProj(`${APIResource.AppModuleConfig}/_root/${APIResource.AppModuleConfig}?_recursive=true&_deep=4&_root.ApplyId=3935eb43532d435398d5189d5ece0f5d&_root.parentid=in("",null)`,{
-        _orderBy: 'order asc'
-      } ).toPromise().then(
-        module => {
-          this.data = this.arrayToTree(module.Data,'');
-        }
-      ).then( () => {
-        this.loading = false;
-        this.data.forEach(item => {
+      this.loadData();
+  }
+
+    loadData(reset = false, event?)
+    {
+      if (reset) {
+        this._current = 1;
+        this._pageSize = event;
+      }
+      this._loading = true;
+      this._moduleService.getModule(this._current, this._pageSize, this._sortField, this._sortValue).subscribe( (data:any) => {
+        this._loading = false;
+        this._total = data.Data.Total;
+        this._dataSet = this.arrayToTree(data.Data.Rows, '')
+        this._dataSet.forEach(item => {
           this.expandDataCache[ item.id ] = this.convertTreeToList(item);
         });
-        }
-      );
-
+      });
     }
 
     add(event?) {
@@ -92,6 +120,9 @@ export class ModuleManagerComponent implements OnInit {
     }
 
     refresh(event?){
+    this._current=1;
+    this._pageSize=10;
+      this.loadData();
       console.log('刷新',event);
     }
 
@@ -108,9 +139,21 @@ export class ModuleManagerComponent implements OnInit {
     let temp;
     for (let i = 0; i < data.length; i++) {
       if (data[i].ParentId == parentid || !data[i].ParentId) {
-        const obj = { text: data[i].Name, id: data[i].Id, group: JSON.parse(data[i].ConfigData).group, link: JSON.parse(data[i].ConfigData).link,
-          icon: JSON.parse(data[i].ConfigData).icon, hide:  JSON.parse(data[i].ConfigData).hide, remark: data[i].Remark, order: data[i].Order,
-          createtime: data[i].CreateTime};
+        const obj =
+          { text: data[i].Name,
+            id: data[i].Id,
+            group: JSON.parse(data[i].ConfigData).group,
+            link: JSON.parse(data[i].ConfigData).link,
+            icon: JSON.parse(data[i].ConfigData).icon,
+            hide:  JSON.parse(data[i].ConfigData).hide,
+            remark: data[i].Remark,
+            order: data[i].Order,
+            createtime: data[i].CreateTime,
+            applyid: data[i].ApplyId,
+            projid: data[i].ProjId,
+            platcustomerid: data[i].PlatCustomerId
+
+          };
         temp = this.arrayToTree(data[i].Children, data[i].Id);
         if (temp.length > 0) {
           obj['children'] = temp;

@@ -17,6 +17,7 @@ export class RoleService {
   }
 }
 
+
 @Component({
   selector: 'app-role-manager',
   providers: [RoleService],

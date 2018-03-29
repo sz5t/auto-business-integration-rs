@@ -10,7 +10,7 @@ export class RandomUserService {
 
   getUsers(pageIndex = 1, pageSize = 2, sortField, sortOrder, genders) {
     return this.http.get(`${this.randomUserUrl}`, {
-      _page: pageIndex, _rows: pageSize, _orderBy: `${sortField} ${sortOrder}`
+      _page: pageIndex, _rows: pageSize//, _orderBy: `${sortField} ${sortOrder}`
     });
   }
   constructor(private http: ApiService) {
@@ -59,7 +59,7 @@ export class UserManagerComponent implements OnInit {
   //endregion
 
   _current = 1;
-  _pageSize = 10;
+  _pageSize = 2;
   _total = 1;
   _dataSet = [];
   _loading = true;

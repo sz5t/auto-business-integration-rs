@@ -1,7 +1,5 @@
 <pro-header [title]=""></pro-header>
 
-<div nz-row [nzGutter]="16" >
-  <div nz-col [nzMd]="24">
     <nz-card>
       <div class = "table-operations">
         <button nz-button  (click)="refresh($event)">刷新</button>
@@ -10,16 +8,26 @@
         <button nz-button  (click)="delete($event)">删除</button>
       </div>
       <nz-table #nzTable
-                [nzAjaxData]="data"
-                [nzPageSize]="2"
-                [nzLoading]="loading"
-                [nzBordered] = "true">
+                [nzPageSizeSelectorValues]="[1, 2, 3, 5, 10]"
+                [nzAjaxData]="_dataSet"
+                nzShowSizeChanger
+                [nzLoading]="_loading"
+                [nzTotal]="_total"
+                [(nzPageIndex)]="_current"
+                (nzPageIndexChange)="loadData(false,$event)"
+                [nzPageSize]="_pageSize"
+                (nzPageSizeChange)="loadData(true,$event)"
+                [nzBordered] = "true"
+                nzSize = "small" >
         <thead nz-thead>
         <tr>
           <th nz-th ><span>名称</span></th>
           <th nz-th ><span>地址</span></th>
           <th nz-th ><span>有效</span></th>
           <th nz-th ><span>排序</span></th>
+          <th nz-th><span>项目ID</span></th>
+          <th nz-th><span>ApplyId</span></th>
+          <th nz-th><span>客户ID</span></th>
           <th nz-th><span>备注</span></th>
           <th nz-th><span>创建时间</span></th>
         </tr>
@@ -37,13 +45,11 @@
                 {{item.text}}
               </td>
               <td nz-td>{{item.link}}</td>
-              <td nz-td>
-                <label nz-radio [nzChecked]="item.hide">
-                  "item.hide"
-                </label>
-                 {{item.hide}}
-              </td>
+              <td nz-td>{{item.hide}}</td>
               <td nz-td>{{item.order}}</td>
+              <td nz-td>{{item.projid}}</td>
+              <td nz-td>{{item.applyid}}</td>
+              <td nz-td>{{item.platcustomerid}}</td>
               <td nz-td>{{item.remark}}</td>
               <td nz-td>{{item.createtime | date}}</td>
             </tr>
@@ -52,6 +58,4 @@
         </tbody>
       </nz-table>
     </nz-card>
-  </div>
-</div>
 

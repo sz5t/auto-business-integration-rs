@@ -152,24 +152,16 @@ export class UserLoginComponent implements OnDestroy, OnInit {
                   .then( commonCode => {
                     this.cacheInfo.ApplyId = commonCode['Data'][0].Id;
                     this.cacheService.set('ParamsUrl', this.cacheInfo);
-                    return this.apiService.get(APIResource.AppModuleConfig,{
-                      ProjId: this.onlineUser.ProjId,
-                      ApplyId: commonCode['Data'][0].Id,
-                      PlatCustomerId: commonCode['Data'][0].PlatCustomerId
+                    return this.apiService.getProj(`${APIResource.AppModuleConfig}/_root/${APIResource.AppModuleConfig}?_recursive=true&_deep=4&_root.ApplyId=${this.cacheInfo.ApplyId}&_root.parentid=in("",null)`,{
+                      _orderBy: 'order asc'
                     } ).toPromise();
                   } )
                   .then((menuList) => {
 
                     if(environment.COMMONCODE === APIResource.LoginCommonCode) {
-                      //todo:将拿到的数据进行解析加载
-                      menuList.Data.forEach( menu =>{
-                        if(menu.ConfigData != ''){
-                          console.log(JSON.parse(menu.ConfigData));
-                        this.menuService.add(JSON.parse(menu.ConfigData));
-                        this.cacheService.set('Menus', JSON.parse(menu.ConfigData));
-                      }} )
-                      console.log(1111,this.arrayToTree(menuList.Data,''));
-                      // this.cacheService.set('Menus',this.arrayToTree(menuList.Data,''));
+                      const Menu = this.arrayToTree(menuList.Data,'');
+                      this.menuService.add(Menu);
+                      this.cacheService.set('Menus', this.arrayToTree(menuList.Data,''));
                     }else
                     {
                       this.httpClient.get<any>(APIResource.localUrl).toPromise().then( apprem => {
@@ -253,9 +245,9 @@ export class UserLoginComponent implements OnDestroy, OnInit {
     const result = [];
     let temp;
     for (let i = 0; i < data.length; i++) {
-      if (data[i].ParentId == parentid) {
-        const obj = { "label": data[i].Name, "value": data[i].Id };
-        temp = this.arrayToTree(data, data[i].Id);
+      if (data[i].ParentId == parentid || !data[i].ParentId) {
+        const obj = { text: data[i].Name, id: data[i].Id, group: JSON.parse(data[i].ConfigData).group, link: JSON.parse(data[i].ConfigData).link, icon: JSON.parse(data[i].ConfigData).icon, hide:  JSON.parse(data[i].ConfigData).hide};
+        temp = this.arrayToTree(data[i].Children, data[i].Id);
         if (temp.length > 0) {
           obj['children'] = temp;
         } else {

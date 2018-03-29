@@ -1,16 +1,45 @@
-import { Component, OnInit } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { Component, Injectable, OnInit } from '@angular/core';
 import {ApiService} from '@core/utility/api-service';
 import {APIResource} from '@core/utility/api-resource';
-import {environment} from '@env/environment';
 import {CacheService} from '@delon/cache';
-import {Location} from '@angular/common';
 import { NzMessageService } from 'ng-zorro-antd';
+
+@Injectable()
+export class RandomUserService {
+  randomUserUrl = APIResource.AppUser;
+
+  getUsers(pageIndex = 1, pageSize = 2, sortField, sortOrder, genders) {
+    return this.http.get(`${this.randomUserUrl}`, {
+      _page: pageIndex, _rows: pageSize//, _orderBy: `${sortField} ${sortOrder}`
+    });
+  }
+  constructor(private http: ApiService) {
+  }
+}
+
 @Component({
   selector: 'app-user-manager',
+  providers: [ RandomUserService ],
   templateUrl: './user-manager.component.html',
+  styles: [
+    `
+    .table-operations {
+      margin-bottom: 16px;
+    }
+    
+    .table-operations > button {
+      margin-right: 8px;
+    }
+    .selectedRow{
+        color:blue;
+    }
+    `
+  ]
 })
+
+
 export class UserManagerComponent implements OnInit {
+  //region
   content:any;
   contentConfigPack:any;
   contentModule:any;
@@ -27,15 +56,54 @@ export class UserManagerComponent implements OnInit {
   delcontentConfigPack:any;
   delcontentModule:any;
   // location: Location;
+  //endregion
+
+  _current = 1;
+  _pageSize = 2;
+  _total = 1;
+  _dataSet = [];
+  _loading = true;
+  _sortValue = 'asc';
+  _sortField = 'order';
+  _filterGender = [];
+
+  Gender= {Unknown: '未知', Male: '男', Female: '女'};
+  sort(field , value) {
+    this._sortValue = (value === 'descend') ? 'DESC' : 'ASC';
+    this._sortField = field;
+    this.refreshData();
+  }
+
+  reset() {
+    this._filterGender.forEach(item => {
+      item.value = false;
+    });
+    this.refreshData(true);
+  }
     constructor(
       private cacheService: CacheService,
       private apiService: ApiService,
-      public msgSrv: NzMessageService
+      public msgSrv: NzMessageService,
+      private _randomUser: RandomUserService
     ) { }
 
-    ngOnInit() {
+  refreshData(reset = false) {
+    if (reset) {
+      this._current = 1;
+    }
+    this._loading = true;
+    this._randomUser.getUsers(this._current, this._pageSize, this._sortField, this._sortValue,'').subscribe((data: any) => {
+      this._loading = false;
+      this._total = data.Data.Total;
+      this._dataSet = data.Data.Rows;
+    });
+  };
+
+  ngOnInit() {
+    this.refreshData();
     }
 
+    //region
     clear()
     {
       this.content = '';
@@ -213,5 +281,6 @@ export class UserManagerComponent implements OnInit {
       }
     );
   }
+  //endregion
 
 }

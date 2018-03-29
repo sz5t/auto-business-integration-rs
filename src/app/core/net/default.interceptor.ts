@@ -51,7 +51,14 @@ export class DefaultInterceptor implements HttpInterceptor {
             case 404:
             case 500:
               const EvMsg: any = event;
-              this.msgSrv.error(`${EvMsg.error.Message}`);
+              if(EvMsg.error.Message === '请先登录或重新登录' || EvMsg.error.Message === '闲置时间过长，请重新登录')
+              {
+                this.goTo('/passport/login');
+              }
+              else
+              {
+                this.msgSrv.error(`${EvMsg.error.Message}`);
+              }
               // this.goTo(`/${event.status}`);
                 break;
         }

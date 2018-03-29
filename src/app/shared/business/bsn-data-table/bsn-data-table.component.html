@@ -3,7 +3,8 @@
         <button nz-button (click)="execFun(bar.name)" class="editable-add-btn">{{bar.text}}</button>
     </ng-container>
 </div>
-<nz-table #nzTable [nzDataSource]="dataList" [nzShowSizeChanger]="true" [nzTotal]="total" [(nzPageIndex)]="pi" (nzPageIndexChange)="load()"
+<!-- [nzDataSource]="dataList"nzAjaxData -->
+<nz-table #nzTable [nzDataSource]="dataList"  [nzShowSizeChanger]="true" [nzTotal]="total" [(nzPageIndex)]="pi" (nzPageIndexChange)="load()"
     [(nzPageSize)]="ps" (nzPageSizeChange)="load()" [nzShowTotal]="config.nzShowTotal" nzBordered>
     <thead nz-thead>
         <tr>

@@ -3,6 +3,7 @@ import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
 import { map } from 'rxjs/operators';
 import { TreeNode, TreeModel, TREE_ACTIONS, KEYS, IActionMapping, ITreeOptions } from 'angular-tree-component';
+import { RelativeService } from '@core/relative-Service/relative-service';
 
 //import { RandomUserService } from '../randomUser.service';
 @Component({
@@ -76,7 +77,11 @@ export class ListComponent implements OnInit {
         this._indeterminate = this._allChecked ? false : checkedCount > 0;
     }
     //private _randomUser: RandomUserService,
-    constructor(private http: _HttpClient, private message: NzMessageService, private modalService: NzModalService) {
+    constructor(private http: _HttpClient, private message: NzMessageService,
+        private modalService: NzModalService,
+        private relativeMessage: RelativeService
+
+    ) {
     }
     ngOnInit() {
         this.load();
@@ -287,6 +292,20 @@ export class ListComponent implements OnInit {
         'nzPageSizeSelectorValues': [5, 10, 20, 30, 40, 50],
         'nzLoading': false, // 是否显示加载中
         'nzBordered': false,// 是否显示边框
+        'relation': [{
+            'relationViewId': '0002',
+            'relationSendContent': [
+                {
+                    name: 'selectRow',
+                    sender: '0001',
+                    receiver: '0002',
+                    relationData: {
+                        name: 'refreshAsChild',
+                        params: [{ pid: 'key', cid: 'parentId' }]
+                    },
+                }
+            ]
+        }],
         'columns': [
             {
                 title: '主键', field: 'key', width: 80, hidden: true, editor: {
@@ -402,6 +421,147 @@ export class ListComponent implements OnInit {
         }
     ];
 
+    config1 = {
+        'viewId': '0002',
+        'component': 'form_view',
+        'keyId': 'key',
+        'nzIsPagination': false, // 是否分页
+        'nzShowTotal': true,// 是否显示总数据量
+        'pageSize': 5, //默认每页数据条数
+        'nzPageSizeSelectorValues': [5, 10, 20, 30, 40, 50],
+        'nzLoading': false, // 是否显示加载中
+        'nzBordered': false,// 是否显示边框
+        'ajaxConfig': {
+            'url': 'AppConfigPack',
+            'ajaxType': 'get',
+            'params': [
+                { name: 'Id', type: 'value', valueName: '_id', value: 'aee8f8386ba1410a8c2d079e2d4fe934' },
+            ]
+        },
+        'componentType': {
+            'parent': false,
+            'child': false,
+            'own': true
+        },
+        'relation': [{
+            'relationViewId': '0002',
+            'relationSendContent': [],
+            'relationReceiveContent': []
+        }],
+        'columns': [
+            {
+                title: '主键', field: 'key', width: 80, hidden: true, editor: {
+                    type: 'input',
+                    field: 'key',
+                    options: {
+                        'type': 'input',
+                        'labelSize': '6',
+                        'controlSize': '10',
+                        'inputType': 'text',
+                    }
+                }
+            },
+            {
+                title: '姓名', field: 'name', width: 80,
+                editor: {
+                    type: 'input',
+                    field: 'name',
+                    options: {
+                        'type': 'input',
+                        'labelSize': '6',
+                        'controlSize': '10',
+                        'inputType': 'text',
+                    }
+                }
+            },
+            {
+                title: '性别', field: 'sexname', width: 80, hidden: false,
+                editor: {
+                    type: 'select',
+                    field: 'sex',
+                    options: {
+                        'type': 'select',
+                        'labelSize': '6',
+                        'controlSize': '10',
+                        'inputType': 'submit',
+                        'name': 'sex',
+                        'label': '性别',
+                        'notFoundContent': '',
+                        'selectModel': false,
+                        'showSearch': true,
+                        'placeholder': '-请选择-',
+                        'disabled': false,
+                        'size': 'default',
+                        'clear': true,
+                        'width': '60px',
+                        'options': [
+                            {
+                                'label': '男',
+                                'value': '1',
+                                'disabled': false
+                            },
+                            {
+                                'label': '女',
+                                'value': '2',
+                                'disabled': false
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                title: '年龄', field: 'age', width: 80, hidden: false,
+                editor: {
+                    type: 'input',
+                    field: 'age',
+                    options: {
+                        'type': 'input',
+                        'labelSize': '6',
+                        'controlSize': '10',
+                        'inputType': 'text',
+                    }
+                }
+            },
+            {
+                title: '地址', field: 'address', width: 80, hidden: false,
+            }
+        ],
+        'toolbar': [
+            { 'name': 'refresh', 'class': 'editable-add-btn', 'text': '刷新' },
+            { 'name': 'addRow', 'class': 'editable-add-btn', 'text': '新增' },
+            { 'name': 'updateRow', 'class': 'editable-add-btn', 'text': '修改' },
+            { 'name': 'deleteRow', 'class': 'editable-add-btn', 'text': '删除' },
+            {
+                'name': 'saveRow', 'class': 'editable-add-btn', 'text': '保存',
+                'ajaxConfig': {
+                    add: {
+                        'url': 'AppConfigPack',
+                        'ajaxType': 'post',
+                        'params': [
+                            { name: 'ParentId', type: 'value', valueName: '取值参数名称', value: 'liutest11' },
+                            { name: 'Name', type: 'value', valueName: '取值参数名称', value: 'liutest11' },
+                            { name: 'TagA', type: 'value', valueName: '取值参数名称', value: 'liutest11' },
+                            { name: 'TagB', type: 'value', valueName: '取值参数名称', value: 'liutest11' },
+                            { name: 'Metadata', type: 'tempValue', valueName: 'dataList', value: 'liutest11' }
+
+                        ]
+                    },
+                    update: {
+                        'url': 'AppConfigPack',
+                        'ajaxType': 'put',
+                        'params': [
+                            { name: 'Id', type: 'tempValue', valueName: '_id', value: '' },
+                            { name: 'Metadata', type: 'tempValue', valueName: 'dataList', value: '' }
+
+                        ]
+                    }
+                },
+            },
+            { 'name': 'cancelRow', 'class': 'editable-add-btn', 'text': '取消' }
+        ]
+
+    }
+    dataList1 = [];
     /**
      * 动态执行方法
      * @param name 
@@ -553,7 +713,7 @@ export class ListComponent implements OnInit {
     onActivate(ev: any) {
         console.log('激活树节点', ev);
         this.visible = false;
-        console.log(this.fn(this.nodestree,0));
+        console.log(this.fn(this.nodestree, 0));
     }
 
     // nzAutoExpandParent 是否自动展开父节点，当数字时展开最大节点 false
@@ -579,13 +739,13 @@ export class ListComponent implements OnInit {
     //气泡
     visible = false;
 
-     nodestree = [
-        {"id":2,"title":"第一级1","parentid":0},
-        {"id":3,"title":"第二级1","parentid":2},
-        {"id":4,"title":"第二级2","parentid":2},
-        {"id":5,"title":"第三级1","parentid":4},
-        {"id":6,"title":"第三级2","parentid":3}
-        ];
+    nodestree = [
+        { "id": 2, "title": "第一级1", "parentid": 0 },
+        { "id": 3, "title": "第二级1", "parentid": 2 },
+        { "id": 4, "title": "第二级2", "parentid": 2 },
+        { "id": 5, "title": "第三级1", "parentid": 4 },
+        { "id": 6, "title": "第三级2", "parentid": 3 }
+    ];
     fn(data, parentid) {
         const result = [];
         let temp;

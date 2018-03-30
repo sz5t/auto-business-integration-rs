@@ -169,7 +169,13 @@ export class BsnDataTableComponent implements OnInit {
                   
                 }
                 else if (param.type == 'value') {
-                    params[param.name] = param.value;
+
+                 params[param.name] = param.value;
+
+                }
+                else if (param.type == 'GUID') {
+                    const fieldIdentity = CommonUtility.uuID(10);
+                    params[param.name]=fieldIdentity;
                 }
                 else if (param.type == 'componentValue') {
                     params[param.name] = componentValue.value;

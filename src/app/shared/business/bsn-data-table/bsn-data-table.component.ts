@@ -89,17 +89,25 @@ export class BsnDataTableComponent implements OnInit {
             if (ajaxData) {
                 console.log("异步加载表数据load", ajaxData);
                 this.loading = true;
-                if(ajaxData.Data[0].Metadata){
-                    this.updateEditCacheByLoad(JSON.parse(ajaxData.Data[0].Metadata));
-                    this.dataList = JSON.parse(ajaxData.Data[0].Metadata);
-                    this.total = this.dataList.length;
+                if(ajaxData.Data.length>0){
+                    if(ajaxData.Data[0].Metadata){
+                        this.updateEditCacheByLoad(JSON.parse(ajaxData.Data[0].Metadata));
+                        this.dataList = JSON.parse(ajaxData.Data[0].Metadata);
+                        this.total = this.dataList.length;
+                    }
+                    else{
+                        this.dataList=[];
+                        this.updateEditCacheByLoad([]);
+                        this.total = this.dataList.length;
+                    }
+                    this.tempParameters["_id"] = ajaxData.Data[0].Id;
                 }
                 else{
                     this.dataList=[];
                     this.updateEditCacheByLoad([]);
-                    this.total = this.dataList.length;
+                    this.tempParameters["_id"] && delete this.tempParameters["_id"];
+
                 }
-                this.tempParameters["_id"] = ajaxData.Data[0].Id;
                 console.log("当前记录id", this.tempParameters["_id"]);
             }else{
                 this.dataList=[];

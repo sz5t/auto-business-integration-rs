@@ -246,6 +246,7 @@ export class OperationSettingComponent implements OnInit, OnDestroy {
                       'viewId': 'operation_sqlColumns',
                       'component': 'bsnDataTable',
                       'config': {
+                        'viewId': 'operation_sqlColumns',
                         'keyId': 'key',
                         'nzIsPagination': false, // 是否分页
                         'nzShowTotal': true,// 是否显示总数据量
@@ -1783,6 +1784,6 @@ export class OperationSettingComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.relativeService.clearMessage();
+    this.relativeMessage.clearMessage();
   }
 }

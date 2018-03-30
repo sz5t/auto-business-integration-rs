@@ -258,18 +258,28 @@ export class OperationSettingComponent implements OnInit, OnDestroy {
                           'url': 'AppConfigPack',
                           'ajaxType': 'get',
                           'params': [
-                            { name: 'Id', type: 'tempValue', valueName: '_Id', value: '' },
+                            { name: 'ParentId', type: 'tempValue', valueName: '_Id', value: '' },
                             { name: 'TagB', type: 'tempValue', valueName: '_optType', value: '' }
                           ]
                         },
                         'componentType': {
-                          'parent': false,
+                          'parent': true,
                           'child': false,
                           'own': true
                         },
                         'relation': [{
                           'relationViewId': 'operation_sqlColumns',
-                          'relationSendContent': [],
+                          'relationSendContent': [
+                            {
+                              name: 'selectRow',
+                              sender: 'operation_sqlColumns',
+                              receiver: 'operation_sqlParams',
+                              relationData: {
+                                name: 'refreshAsChild',
+                                params: [{ pid: 'key', cid: '_parentId' }]
+                              },
+                            }
+                          ],
                           'relationReceiveContent': []
                         }],
                         'columns': [
@@ -373,8 +383,8 @@ export class OperationSettingComponent implements OnInit, OnDestroy {
                                 'ajaxType': 'post',
                                 'params': [
                                   { name: 'ParentId', type: 'tempValue', valueName: '_Id', value: '' },
-               /*                   { name: 'Name', type: 'tempValue', valueName: '取值参数名称', value: 'liutest11' },
-                                  { name: 'TagA', type: 'tempValue', valueName: '取值参数名称', value: 'liutest11' },*/
+               /*                   { name: 'Name', type: 'tempValue', valueName: '取值参数名称', value: 'liutest11' },*/
+                                  { name: 'TagA', type: 'GUID', valueName: '取值参数名称', value: 'GUID' },
                                   { name: 'TagB', type: 'value', valueName: '取值参数名称', value: 'opt_sqlList' },
                                   { name: 'Metadata', type: 'tempValue', valueName: 'dataList', value: '' }
 
@@ -400,6 +410,7 @@ export class OperationSettingComponent implements OnInit, OnDestroy {
                       'viewId': 'operation_sqlParams',
                       'component': 'bsnDataTable',
                       'config': {
+                        'viewId': 'operation_sqlParams',
                         'keyId': 'key',
                         'nzIsPagination': false, // 是否分页
                         'nzShowTotal': true,// 是否显示总数据量
@@ -407,6 +418,24 @@ export class OperationSettingComponent implements OnInit, OnDestroy {
                         'nzPageSizeSelectorValues': [5, 10, 20, 30, 40, 50],
                         'nzLoading': false, // 是否显示加载中
                         'nzBordered': false,// 是否显示边框
+                        'ajaxConfig': {
+                          'url': 'AppConfigPack',
+                          'ajaxType': 'get',
+                          'params': [
+                            { name: 'ParentId', type: 'tempValue', valueName: '_parentId', value: '' },
+                            { name: 'TagB', type: 'value', valueName: '_optType', value: 'opt_sqlParams' }
+                          ]
+                        },
+                        'componentType': {
+                          'parent': false,
+                          'child': true,
+                          'own': true
+                        },
+                        'relation': [{
+                          'relationViewId': 'operation_sqlParams',
+                          'relationSendContent': [],
+                          'relationReceiveContent': []
+                        }],
                         'columns': [
                           {
                             title: '主键', field: 'key', width: 80, hidden: true
@@ -545,7 +574,31 @@ export class OperationSettingComponent implements OnInit, OnDestroy {
                           { 'name': 'addRow', 'class': 'editable-add-btn', 'text': '新增' },
                           { 'name': 'updateRow', 'class': 'editable-add-btn', 'text': '修改' },
                           { 'name': 'deleteRow', 'class': 'editable-add-btn', 'text': '删除' },
-                          { 'name': 'saveRow', 'class': 'editable-add-btn', 'text': '保存' },
+                          { 'name': 'saveRow', 'class': 'editable-add-btn', 'text': '保存',
+                            'ajaxConfig': {
+                              add: {
+                                'url': 'AppConfigPack',
+                                'ajaxType': 'post',
+                                'params': [
+                                  { name: 'ParentId', type: 'tempValue', valueName: '_parentId', value: '' },
+                                  /*                   { name: 'Name', type: 'tempValue', valueName: '取值参数名称', value: 'liutest11' },*/
+                                   { name: 'TagA', type: 'GUID', valueName: '取值参数名称', value: 'GUID' },
+                                  { name: 'TagB', type: 'value', valueName: '取值参数名称', value: 'opt_sqlParams' },
+                                  { name: 'Metadata', type: 'tempValue', valueName: 'dataList', value: '' }
+
+                                ]
+                              },
+                              update: {
+                                'url': 'AppConfigPack',
+                                'ajaxType': 'put',
+                                'params': [
+                                  { name: 'Id', type: 'tempValue', valueName: '_id', value: '' },
+                                  { name: 'Metadata', type: 'tempValue', valueName: 'dataList', value: '' }
+
+                                ]
+                              }
+                            }
+                          },
                           { 'name': 'cancelRow', 'class': 'editable-add-btn', 'text': '取消' }
                         ]
                       },

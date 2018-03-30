@@ -1,16 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Validators } from "@angular/forms";
 import { ApiService } from '@core/utility/api-service';
 import { NzMessageService } from 'ng-zorro-antd';
 import { CommonUtility } from '@core/utility/Common-utility';
 import { APIResource } from '@core/utility/api-resource';
+import {RelativeService} from "@core/relative-Service/relative-service";
 
 @Component({
   selector: 'app-operation-setting',
   templateUrl: './operation-setting.component.html',
 })
-export class OperationSettingComponent implements OnInit {
+export class OperationSettingComponent implements OnInit, OnDestroy {
   _funcOptions = [];
   _funcValue;
   _layoutValue;
@@ -242,10 +243,6 @@ export class OperationSettingComponent implements OnInit {
                   active: false,
                   viewCfg: [
                     {
-                      viewId: 'opt_sql',
-                      component: 'sqlEditor'
-                    },
-                    {
                       'viewId': 'operation_sqlColumns',
                       'component': 'bsnDataTable',
                       'config': {
@@ -256,6 +253,24 @@ export class OperationSettingComponent implements OnInit {
                         'nzPageSizeSelectorValues': [5, 10, 20, 30, 40, 50],
                         'nzLoading': false, // 是否显示加载中
                         'nzBordered': false,// 是否显示边框
+                        'ajaxConfig': {
+                          'url': 'AppConfigPack',
+                          'ajaxType': 'get',
+                          'params': [
+                            { name: 'Id', type: 'tempValue', valueName: '_Id', value: '' },
+                            { name: 'TagB', type: 'tempValue', valueName: '_optType', value: '' }
+                          ]
+                        },
+                        'componentType': {
+                          'parent': false,
+                          'child': false,
+                          'own': true
+                        },
+                        'relation': [{
+                          'relationViewId': 'operation_sqlColumns',
+                          'relationSendContent': [],
+                          'relationReceiveContent': []
+                        }],
                         'columns': [
                           {
                             title: '主键', field: 'key', width: 'auto', hidden: true
@@ -284,7 +299,7 @@ export class OperationSettingComponent implements OnInit {
                                 'controlSize': '10',
                                 'inputType': 'submit',
                                 'name': 'sqlExecType',
-                                'label': '性别',
+                                'label': '',
                                 'notFoundContent': '',
                                 'selectModel': false,
                                 'showSearch': true,
@@ -292,7 +307,7 @@ export class OperationSettingComponent implements OnInit {
                                 'disabled': false,
                                 'size': 'default',
                                 'clear': true,
-                                'width': '60px',
+                                'width': '80px',
                                 'options': [
                                   {
                                     'label': '执行一次',
@@ -319,7 +334,7 @@ export class OperationSettingComponent implements OnInit {
                                 'controlSize': '10',
                                 'inputType': 'submit',
                                 'name': 'sex',
-                                'label': '性别',
+                                'label': '',
                                 'notFoundContent': '',
                                 'selectModel': false,
                                 'showSearch': true,
@@ -327,7 +342,7 @@ export class OperationSettingComponent implements OnInit {
                                 'disabled': false,
                                 'size': 'default',
                                 'clear': true,
-                                'width': '60px',
+                                'width': '80px',
                                 'options': [
                                   {
                                     'label': '新增',
@@ -349,7 +364,32 @@ export class OperationSettingComponent implements OnInit {
                           { 'name': 'addRow', 'class': 'editable-add-btn', 'text': '新增' },
                           { 'name': 'updateRow', 'class': 'editable-add-btn', 'text': '修改' },
                           { 'name': 'deleteRow', 'class': 'editable-add-btn', 'text': '删除' },
-                          { 'name': 'saveRow', 'class': 'editable-add-btn', 'text': '保存' },
+                          {
+                            'name': 'saveRow', 'class': 'editable-add-btn', 'text': '保存' ,
+                            'ajaxConfig': {
+                              add: {
+                                'url': 'AppConfigPack',
+                                'ajaxType': 'post',
+                                'params': [
+                                  { name: 'ParentId', type: 'tempValue', valueName: '_Id', value: '' },
+               /*                   { name: 'Name', type: 'tempValue', valueName: '取值参数名称', value: 'liutest11' },
+                                  { name: 'TagA', type: 'tempValue', valueName: '取值参数名称', value: 'liutest11' },*/
+                                  { name: 'TagB', type: 'value', valueName: '取值参数名称', value: 'opt_sqlList' },
+                                  { name: 'Metadata', type: 'tempValue', valueName: 'dataList', value: '' }
+
+                                ]
+                              },
+                              update: {
+                                'url': 'AppConfigPack',
+                                'ajaxType': 'put',
+                                'params': [
+                                  { name: 'Id', type: 'tempValue', valueName: '_id', value: '' },
+                                  { name: 'Metadata', type: 'tempValue', valueName: 'dataList', value: '' }
+
+                                ]
+                              }
+                            },
+                          },
                           { 'name': 'cancelRow', 'class': 'editable-add-btn', 'text': '取消' }
                         ]
                       },
@@ -1373,6 +1413,7 @@ export class OperationSettingComponent implements OnInit {
   constructor(
     private _http: ApiService,
     private message: NzMessageService,
+    private relativeMessage: RelativeService
   ) { }
 
   async ngOnInit() {
@@ -1643,30 +1684,21 @@ export class OperationSettingComponent implements OnInit {
     return result;
   }
 
-  /**
-   * 点击树节点
-   * @param ev
-   */
-  onActivate(ev: any) {
-    console.log('激活树节点', ev);
+  // 点击树节
+  onActivate(event: any) {
+    console.log('激活树节点', event);
+    const receiver = {
+      name: 'initParameters',
+      receiver: 'operation_sqlColumns' ,
+      parent: {
+        _Id: event.node.data.id,
+        _optType: 'opt_sqlList'
+      }
+    };
+    console.log("选中行发消息事件", receiver);
+    this.relativeMessage.sendMessage({ type: 'initParameters' }, receiver);
+
   }
-
-  /**
-   * 添加操作
-   * @param data
-   */
-  addOperation = (node) =>{
-
-
-  };
-
-  /**
-   * 删除操作
-   * @param node
-   */
-  delOperation = (node) => {
-    console.log(node);
-  };
 
   showModal = (node) => {
     this._currentNode = node;
@@ -1708,19 +1740,19 @@ export class OperationSettingComponent implements OnInit {
     return  this._http.postProj(APIResource.AppConfigPack, body).toPromise();
   };
 
+  // 删除操作
   delOptConfirm = (node) => {
     // 删除节点
-    console.log(node);
     this._http.deleteProj(APIResource.AppConfigPack, {id: node.id}).subscribe(result =>{
       if(result.Status === 200) {
         this.message.success(`删除：【${node.data.name}】成功`);
         //删除父节点的数据
-        node.parent.children.forEach((child, index) => {
-          if(child.id === node.id) {
-            node.parent.children.splice(index,1);
-            return;
+        for(let i=0,len=node.parent.children.length;i<len;i++) {
+          if(node.parent.children[i].id === node.id) {
+            node.parent.children.splice(i,1);
+            i = i-1;
           }
-        });
+        }
       }else {
         this.message.warning(`删除：【${node.Name}】异常, ${result.Message}`);
       }
@@ -1748,5 +1780,9 @@ export class OperationSettingComponent implements OnInit {
       s += str.charAt(Math.round(Math.random() * (str.length - 1)));
     }
     return s;
+  }
+
+  ngOnDestroy() {
+    this.relativeService.clearMessage();
   }
 }

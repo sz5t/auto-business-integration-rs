@@ -12,6 +12,17 @@
 ### ParentId: 布局ID
 ### Name: 区域ID
 ### TagA：uuID（10）
-### TagB：组件类别
+### TagB：组件类别 component.组件/tabs.tabs
 #3、operation-setting
-## （1）获取数据方式参照 layout-setting 保存参数设置
+## （1）获取数据方式参照 block-setting 保存参数设置
+## （2）保存操作
+### 添加树节点
+#### ParentId：blockId
+#### Name：树节点名称
+#### TagA：随机标识
+#### TagB：配置类别：component.operation
+### 编辑各个表单数据
+#### ParentId: Node节点ID
+#### Name: 
+#### TagA: 随机标识
+#### TagB: 对应表单的名称（opt_property,opt_sqlList,opt_sqlParams）

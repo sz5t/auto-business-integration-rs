@@ -2,41 +2,30 @@ import {Component, Injectable, OnInit} from '@angular/core';
 import {APIResource} from '@core/utility/api-resource';
 import {ApiService} from '@core/utility/api-service';
 import {NzMessageService} from 'ng-zorro-antd';
+import {AppModuleConfig} from '../../../model/APIModel/AppModuleConfig';
+import {CommonUtility} from '@core/utility/common-utility';
 
 
 @Injectable()
 export class RandomBaseService {
   randomBaseUrl = APIResource.AppModuleConfig;
 
-  getModule(pageIndex = 1, pageSize = 2, sortField, sortOrder) {
+  getModule(pageIndex, pageSize, sortField, sortOrder) {
     return this.http.getProj(`${this.randomBaseUrl}`, {
       _page: pageIndex, _rows: pageSize, _orderBy: `${sortField} ${sortOrder}`
     });
   }
 
-    deleteModule(name?)
-    {
-       let ids = name.join(',');
+    deleteModule(name?) {
+       const ids = name.join(',');
         return this.http.deleteProj(this.randomBaseUrl + '/' + ids);
     }
 
-    updateModule(data?)
-    {
-      // if(data.length === 1)
-      // {
-      //  console.log('修改单挑', data[0]);
-      // }else if(data.length >1) {
-      //   console.log('修改批量', data);
-      //   this.msgSrv.warning('修改不能进行批量操作');
-      // }
-      // else
-      // {
-      //   this.msgSrv.warning('没有要修改的数据');
-      // }
+    updateModule(data?) {
+     return this.http.putProj(this.randomBaseUrl, data);
     }
 
-    addModule(data?)
-    {
+    addModule(data?) {
       return this.http.postProj(this.randomBaseUrl, data);
     }
 
@@ -74,11 +63,13 @@ export class BaseManagerComponent implements OnInit {
   _total = 1;
   _dataSet = [];
   _loading = true;
-  _sortValue = 'asc';
-  _sortField = 'order';
+  _sortValue = 'Desc';
+  _sortField = 'CreateTime';
   editCache = {};
+  cacheMapData;
+  editRow = null;
+  tempEditObject = {};
 
-  items : {key:string,data:any}
   sort(field , value) {
     this._sortValue = (value === 'descend') ? 'DESC' : 'ASC';
     this._sortField = field;
@@ -99,7 +90,7 @@ export class BaseManagerComponent implements OnInit {
       this._current = 1;
     }
 
-    this.editCache = {};
+    this.cacheMapData = new Map();
     this._allChecked = false;
     this._loading = true;
     this._randomBase.getModule(this._current, this._pageSize, this._sortField, this._sortValue).subscribe((data: any) => {
@@ -108,12 +99,7 @@ export class BaseManagerComponent implements OnInit {
       this._dataSet = data.Data.Rows;
 
       this._dataSet.forEach(item => {
-        if (!this.editCache[item.Id]) {
-          this.editCache[item.Id] = {
-            checked: false,
-            dataItem: item
-          };
-        }
+        this.cacheMapData.set(item.Id, {checked: false, dataItem: item});
       });
     });
   }
@@ -121,9 +107,6 @@ export class BaseManagerComponent implements OnInit {
     ngOnInit() {
       this.refreshData();
     }
-
-  i = 100;
-
 
   refChecked() {
     const checkedCount = this._dataSet.filter(w => w.checked).length;
@@ -133,33 +116,22 @@ export class BaseManagerComponent implements OnInit {
 
   _checkAll() {
     this._dataSet.forEach(item => item.checked = this._allChecked);
-    for (let index in this.editCache) {
-      this.editCache[index].checked = this._allChecked;
-    }
+    this.cacheMapData.forEach( mpa =>{mpa.checked = this._allChecked});
   }
 
-    selectRow(data?)
-    {
+    selectRow(data?){
       this._dataSet.forEach( item => {
         item.selected = false;
       });
       data.selected = true;
-      this.editCache[data.Id].checked = data.checked;
+      this.cacheMapData.get(data.Id).checked = data.checked;
     }
 
-    refresh(event)
-    {
-      for (let item1 in this.editCache) {
-        if(this.editCache[item1].checked)
-        {
-          console.log(333,this.editCache[item1].dataItem.Name);
-        }
-      }
+    refresh(event) {
       this.refreshData();
     }
 
-    add(event)
-    {
+    add(event) {
       let data={
         "ParentId": "0854a1ddc42d493e8e8aa41117924d08",
         "Order": 0,
@@ -176,49 +148,121 @@ export class BaseManagerComponent implements OnInit {
       this._randomBase.addModule(data).subscribe( response => {
         if(response.Status === 200){
           this.msgSrv.success(response.Message ? response.Message : '添加成功！');
-          this.refreshData()
-        }else{
+          this.refreshData();
+        }else {
           this.msgSrv.error(response.Message);
         }
       });
-
     }
 
-    update(event)
-    {
-      let data=[] ;
-      for (let item1 in this.editCache) {
-        if(this.editCache[item1].checked)
-        {
-          data.push(this.editCache[item1].dataItem);
-        }
+  add1(event)
+  {
+    this._randomBase.addModule().subscribe(response => {
+      response.Data.ConfigData = JSON.stringify({group: false, link: 'system', icon: 'icon-speedometer'});
+      this._dataSet = [ ...this._dataSet, response.Data];
+      this.cacheMapData.set(response.Data.Id, {checked: false, dataItem: response.Data});
+      this.edit(response.Data);
+    });
+
+    // var module = new AppModuleConfig();
+    // module.Id='asdfasdfasf'
+    //   this._dataSet = [ ...this._dataSet, module];
+    //   this.cacheMapData.set(module.Id, {checked: false, dataItem: module});
+    //   this.edit(module);
+  }
+
+    update(event) {
+      const data = this.getSelectItem();
+      if(data.length === 1) {
+        this._randomBase.updateModule(data);
+        this.refreshData();
+      }else if (data.length > 1 ){
+          this.msgSrv.warning('不能修改多条记录！');
+          //处理缓存选中的数据
+      this.cacheMapData.forEach( item => {
+        item.dataItem.checked = false;
+        item.checked = false;
+      });} else {
+        this.msgSrv.warning('请选中要修改的记录！');
       }
-      this._randomBase.updateModule(data);
     }
 
-    delete(event)
-    {
-      let name = [] ;
-      for (let item1 in this.editCache) {
-        if(this.editCache[item1].checked)
-        {
-            name.push(this.editCache[item1].dataItem.Id);
-        }
-      }
-
+    delete(event) {
+      const name = this.getSelectId();
       if(name.length >= 1) {
         this._randomBase.deleteModule(name).subscribe(response => {
           if (response.Status === 200) {
             this.msgSrv.success(response.Message);
+
+            //移除缓存中的数据
+            name.forEach( na =>{
+              this.cacheMapData.delete(na);
+            })
             this.refreshData();
           } else {
             this.msgSrv.error(response.Message);
           }
         });
-      }else
-      {
+      }else {
         this.msgSrv.success('请选中要删除的数据！');
       }
+  }
 
-}
+  edit(data){
+    this.tempEditObject[ data.Id ] = { ...data };
+    this.editRow = data.Id;
+    console.log(111, data.Id, this.tempEditObject);
+  }
+
+  cancel(data){
+    this.tempEditObject[data.Id] = {};
+    this.editRow = null;
+  }
+
+  save(data){
+    if(data.Id) {
+      this._randomBase.updateModule(this.tempEditObject[data.Id]).subscribe(response => {
+        this.msgSrv.success(response.Message ? '操作成功' : response.Message);
+        this.editRow = null;
+        this.refreshData();
+      });
+    }else {
+      console.log(222,data);
+    }
+  }
+
+  delete1(data)
+  {
+    this._randomBase.deleteModule([data.Id]).subscribe( response => {
+      this.msgSrv.success(response.Message);
+      this.refreshData();
+    })
+  }
+  /**
+   *获取选中记录的主键集合
+   * @returns {any[]}
+   */
+  getSelectId() {
+    const name = [] ;
+    this.cacheMapData.forEach(item =>{
+      if(item.checked){
+        name.push(item.dataItem.Id);
+      }
+    })
+    return name;
+  }
+
+  /**
+   * 获取选中记录集合
+   * @returns {any[]}
+   */
+  getSelectItem() {
+    const data = [];
+    this.cacheMapData.forEach(item => {
+      if(item.checked){
+        data.push(item.dataItem);
+      }
+    })
+    return data;
+  }
 }

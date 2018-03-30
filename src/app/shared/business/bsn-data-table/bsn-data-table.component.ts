@@ -85,7 +85,7 @@ export class BsnDataTableComponent implements OnInit {
         }); 
         */
         if (type == "load") {
-            const ajaxData = await this.execAjax(this.config.ajaxConfig, null);
+            const ajaxData = await this.execAjax(this.config.ajaxConfig, null,'load');
             if (ajaxData) {
                 console.log("异步加载表数据load", ajaxData);
                 this.loading = true;
@@ -94,6 +94,9 @@ export class BsnDataTableComponent implements OnInit {
                 this.total = this.dataList.length;
                 this.tempParameters["_id"] = ajaxData.Data[0].Id;
                 console.log("当前记录id", this.tempParameters["_id"]);
+            }else{
+                this.dataList=[];
+                this.updateEditCacheByLoad([]);
             }
         }
 
@@ -113,7 +116,7 @@ export class BsnDataTableComponent implements OnInit {
      * @param ajaxType 异步请求类别，post、put、get
      * @param componentValue 
      */
-    async execAjax(p?, componentValue?) {
+    async execAjax(p?, componentValue?,type?) {
         const params = {
         };
         /*   p = {
@@ -128,7 +131,24 @@ export class BsnDataTableComponent implements OnInit {
         if (p) {
             p.params.forEach(param => {
                 if (param.type == 'tempValue') {
-                    params[param.name] = this.tempParameters[param.valueName];
+                    if(type){
+                        if(type==='load'){
+                            if(this.tempParameters[param.valueName]){
+                                params[param.name] = this.tempParameters[param.valueName];
+                            }
+                            else{
+                                console.log("参数不全不能加载");
+                                return null;
+                            }
+                        }
+                        else{
+                            params[param.name] = this.tempParameters[param.valueName];
+                        }
+                    }
+                    else{
+                        params[param.name] = this.tempParameters[param.valueName];
+                    }
+                  
                 }
                 else if (param.type == 'value') {
                     params[param.name] = param.value;
@@ -502,6 +522,7 @@ export class BsnDataTableComponent implements OnInit {
             this.tempParameters[d] = data[d];
         }
         console.log("初始化参数", this.tempParameters);
+        this.load('load');//参数完成后加载刷新
     }
 
     // 解析发布消息

@@ -89,9 +89,16 @@ export class BsnDataTableComponent implements OnInit {
             if (ajaxData) {
                 console.log("异步加载表数据load", ajaxData);
                 this.loading = true;
-                this.updateEditCacheByLoad(JSON.parse(ajaxData.Data[0].Metadata));
-                this.dataList = JSON.parse(ajaxData.Data[0].Metadata);
-                this.total = this.dataList.length;
+                if(ajaxData.Data[0].Metadata){
+                    this.updateEditCacheByLoad(JSON.parse(ajaxData.Data[0].Metadata));
+                    this.dataList = JSON.parse(ajaxData.Data[0].Metadata);
+                    this.total = this.dataList.length;
+                }
+                else{
+                    this.dataList=[];
+                    this.updateEditCacheByLoad([]);
+                    this.total = this.dataList.length;
+                }
                 this.tempParameters["_id"] = ajaxData.Data[0].Id;
                 console.log("当前记录id", this.tempParameters["_id"]);
             }else{
@@ -128,6 +135,8 @@ export class BsnDataTableComponent implements OnInit {
                   { name: 'id', type: 'componentValue', valueName: '取值参数名称', value: '' }
               ]
           } */
+
+         let tag=true; 
         if (p) {
             p.params.forEach(param => {
                 if (param.type == 'tempValue') {
@@ -138,7 +147,8 @@ export class BsnDataTableComponent implements OnInit {
                             }
                             else{
                                 console.log("参数不全不能加载");
-                                return null;
+                                tag=false;
+                                return;
                             }
                         }
                         else{
@@ -158,14 +168,14 @@ export class BsnDataTableComponent implements OnInit {
                 }
             });
         }
-        if (p.ajaxType === 'get') {
-            console.log("参数", params);
+        if (p.ajaxType === 'get' && tag) {
+            console.log("get参数", params);
             /*  const dd=await this._http.getProj(APIResource[p.url], params).toPromise();
              if (dd && dd.Status === 200) {
                 console.log("服务器返回执行成功返回",dd.Data);
              }
              console.log("服务器返回",dd); */
-
+ 
             return this._http.getProj(APIResource[p.url], params).toPromise();
         }
         else if (p.ajaxType === 'put') {
@@ -541,6 +551,7 @@ export class BsnDataTableComponent implements OnInit {
         //当操作什么的时候，接收消息
         console.log('表单接收消息', data);
         if (data) {
+            console.log('接收消息方法名称：',data.name);
             switch (data.name) {
                 case 'refreshAsChild':
                     this.refreshAsChild(data.parent);
@@ -577,6 +588,7 @@ export class BsnDataTableComponent implements OnInit {
                                 }
                                 break;
                             case 'initParameters':
+                            console.log(value.data.receiver,this.config);
                                 if (value.data.receiver === this.config.viewId) {
                                     this.formReceiveMessage(value.data);
                                 }

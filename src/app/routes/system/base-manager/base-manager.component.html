@@ -4,6 +4,7 @@
   <div class = "table-operations">
     <button nz-button  (click)="refresh($event)">刷新</button>
     <button nz-button  (click)="add($event)">新增</button>
+    <button nz-button  (click)="add1($event)">行内新增</button>
     <button nz-button  (click)="update($event)">修改</button>
     <button nz-button  (click)="delete($event)">删除</button>
   </div>
@@ -30,13 +31,17 @@
         <nz-table-sort (nzValueChange)="sort('Name',$event)"></nz-table-sort>
       </th>
       <th nz-th>
-        <span>主键</span>
+        <span>备注</span>
         <nz-table-sort (nzValueChange)="sort('Id',$event)"></nz-table-sort>
       </th>
       <th nz-th>
         <span>排序</span>
         <nz-table-sort (nzValueChange)="sort('Order',$event)"></nz-table-sort>
       </th>
+      <th nz-th>
+        <span>操作</span>
+      </th>
+
     </tr>
     </thead>
     <tbody nz-tbody>
@@ -46,10 +51,42 @@
         </label>
       </td>
       <td nz-td>
-        <a>{{data.Name}}</a>
+        <span *ngIf="editRow !== data.Id"><a>{{data.Name}}</a></span>
+        <span *ngIf="editRow===data.Id">
+              <nz-input [(ngModel)]="tempEditObject[data.Id].Name"></nz-input>
+        </span>
       </td>
-      <td nz-td>{{data.Id}}</td>
-      <td nz-td>{{data.Order}}</td>
+      <td nz-td>
+        <span *ngIf="editRow !== data.Id">{{data.Remark}}</span>
+        <span *ngIf="editRow===data.Id">
+              <nz-input [(ngModel)]="tempEditObject[data.Id].Remark"></nz-input>
+        </span>
+      </td>
+      <td nz-td>
+        <span *ngIf="editRow !== data.Id">{{data.Order}}</span>
+        <span *ngIf="editRow===data.Id">
+              <nz-input [(ngModel)]="tempEditObject[data.Id].Order"></nz-input>
+        </span>
+      </td>
+      <td nz-td>
+            <span *ngIf="editRow!==data.Id">
+              <a (click)="edit(data)">编辑 </a>
+            </span>
+            <span *ngIf="editRow===data.Id">
+              <a (click)="save(data)">保存</a>
+              <span nz-table-divider></span>
+                <nz-popconfirm [nzTitle]="'确定要取消该操作吗?'" (nzOnConfirm)="cancel(data)">
+                  <a nz-popconfirm>取消</a>
+                </nz-popconfirm>
+            </span>
+
+            <span *ngIf="editRow!==data.Id">
+              <span nz-table-divider></span>
+               <nz-popconfirm [nzTitle]="'确定要删除该条数据吗?'" (nzOnConfirm)="delete1(data)">
+                  <a nz-popconfirm>删除</a>
+                </nz-popconfirm>
+            </span>
+      </td>
     </tr>
     </tbody>
   </nz-table>

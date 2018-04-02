@@ -5,6 +5,7 @@ import {RoleManagerComponent} from './role-manager/role-manager.component';
 import {ModuleManagerComponent} from './module-manager/module-manager.component';
 import {BaseManagerComponent} from './base-manager/base-manager.component';
 import {RouterModule, Routes} from "@angular/router";
+import { ModalBaseComponent } from './base-manager/modal-base.component';
 
 const routes: Routes = [
     {path: 'base-manager', component: BaseManagerComponent},
@@ -28,9 +29,10 @@ const COMPONENT_NOROUNT = [
         RouterModule
     ],
     declarations: [
-        ...COMPONENT_NOROUNT
+        ...COMPONENT_NOROUNT,
+        ModalBaseComponent
     ],
-    entryComponents: COMPONENT_NOROUNT
+    entryComponents: [COMPONENT_NOROUNT,ModalBaseComponent]
 })
 export class SystemModule {
 }

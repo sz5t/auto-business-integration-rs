@@ -3,10 +3,15 @@
 <nz-card>
   <div class = "table-operations">
     <button nz-button  (click)="refresh($event)">刷新</button>
-    <button nz-button  (click)="add($event)">新增</button>
-    <button nz-button  (click)="add1($event)">行内新增</button>
-    <button nz-button  (click)="update($event)">修改</button>
+    <button nz-button  (click)="showModalForComponent()">新增</button><!--//add($event)-->
+    <button nz-button  (click)="add1($event)">行内新增(远程)</button>
+    <button nz-button  (click)="add2($event)">行内新增(本地)</button>
+    <button nz-button  (click)="showModalForComponent()">修改</button><!--update($event)-->
     <button nz-button  (click)="delete($event)">删除</button>
+
+    <nz-popconfirm [nzTitle]="'确定要删除这个任务吗？'" (nzOnConfirm)="delete($event)" (nzOnCancel)="cancel()">
+      <button nz-button nz-popconfirm>删除1</button>
+    </nz-popconfirm>
   </div>
   <nz-table #nzTable
             [nzAjaxData]="_dataSet"

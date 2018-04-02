@@ -4,11 +4,6 @@
 import construct = Reflect.construct;
 
 export class AppModuleConfig{
-
-  constructor(uid?)
-  {
-    this.Id = uid;
-  }
   ParentId;
   Order;
   CategoryId;
@@ -21,5 +16,4 @@ export class AppModuleConfig{
   ProjId;
   PlatCustomerId;
   Id;
-  checked?;
 }

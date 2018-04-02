@@ -7,7 +7,7 @@ import { APIResource } from '@core/utility/api-resource';
 import { RelativeService } from '@core/relative-Service/relative-service';
 
 @Component({
-    selector: 'bsn-table,[bsn-table]',
+    selector: 'cn-bsn-table,[cn-bsn-table]',
     templateUrl: './bsn-data-table.component.html',
     styles: [
         `
@@ -82,7 +82,7 @@ export class BsnTableComponent implements OnInit {
         .subscribe(data => {
             this.loading = false;
             this.dataList = data.results;
-        }); 
+        });
         */
         if (type == "load") {
             const ajaxData = await this.execAjax(this.config.ajaxConfig, null, 'load');
@@ -91,7 +91,7 @@ export class BsnTableComponent implements OnInit {
                 this.loading = true;
                 this.dataList = ajaxData.Data.rows;
                 this.total = ajaxData.Data.PageCount;
-        
+
                 if (ajaxData.Data) {
                     if (ajaxData.Data.rows) {
                         this.updateEditCacheByLoad(ajaxData.Data.rows);
@@ -103,11 +103,11 @@ export class BsnTableComponent implements OnInit {
                         this.updateEditCacheByLoad([]);
                         this.total = this.dataList.length;
                     }
-                   
+
                 }
                 else {
                     this.dataList = [];
-                    this.updateEditCacheByLoad([]);                 
+                    this.updateEditCacheByLoad([]);
                 }
                 console.log("当前记录id", this.tempParameters["_id"]);
             } else {
@@ -133,7 +133,7 @@ export class BsnTableComponent implements OnInit {
      * 执行异步数据
      * @param p 路由参数信息
      * @param ajaxType 异步请求类别，post、put、get
-     * @param componentValue 
+     * @param componentValue
      */
     async execAjax(p?, componentValue?, type?) {
         const params = {
@@ -354,7 +354,7 @@ export class BsnTableComponent implements OnInit {
     // copyData = [...this.dataList];
     sortMap = {};
     /**
-     * 排序 
+     * 排序
      */
     sort(sortName, value) {
         this.sortName = sortName;
@@ -494,8 +494,8 @@ export class BsnTableComponent implements OnInit {
     }
     /**
      * 选中行
-     * @param data 
-     * @param edit 
+     * @param data
+     * @param edit
      */
     selectRow(data?, edit?) {
         console.log("selectRow", this.dataList);
@@ -535,7 +535,7 @@ export class BsnTableComponent implements OnInit {
 
     /**
      * 动态执行方法
-     * @param name 
+     * @param name
      */
     execFun(name?) {
         switch (name) {

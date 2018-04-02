@@ -60,6 +60,11 @@
                       "i18n": ""
                     },
                     {
+                      "text": "SQL语句设置",
+                      "link": "/settings/sql-setting",
+                      "i18n": ""
+                    },
+                    {
                       "text": "组件编辑",
                       "link": "/settings/component-setting",
                       "i18n": ""

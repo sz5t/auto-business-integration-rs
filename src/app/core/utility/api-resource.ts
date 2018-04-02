@@ -164,7 +164,6 @@ export class APIResource {
    */
   public static AppModuleConfig = 'SinoForce.AppProject.AppModuleConfig';
 
-
   /**
    * 配置平台标识代码
    * @type {string}

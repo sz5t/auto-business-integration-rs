@@ -1,9 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { _HttpClient } from '@delon/theme';
-import { Validators } from "@angular/forms";
 import { ApiService } from '@core/utility/api-service';
 import { NzMessageService } from 'ng-zorro-antd';
-import { CommonUtility } from '@core/utility/Common-utility';
 import { APIResource } from '@core/utility/api-resource';
 import {RelativeService} from "@core/relative-Service/relative-service";
 
@@ -387,7 +384,6 @@ export class OperationSettingComponent implements OnInit, OnDestroy {
                                   { name: 'TagA', type: 'GUID', valueName: '取值参数名称', value: 'GUID' },
                                   { name: 'TagB', type: 'value', valueName: '取值参数名称', value: 'opt_sqlList' },
                                   { name: 'Metadata', type: 'tempValue', valueName: 'dataList', value: '' }
-
                                 ]
                               },
                               update: {

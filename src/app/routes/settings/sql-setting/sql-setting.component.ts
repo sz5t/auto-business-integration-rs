@@ -23,11 +23,21 @@ export class SqlSettingComponent implements OnInit {
     'nzLoading': true, // 是否显示加载中
     'nzBordered': false,// 是否显示边框
     'ajaxConfig': {
-      'url': 'Sinoforce.Resource.DbCommonConfig',
+      'url': {
+        parent:'SysDataCategoryLink',
+        child: 'DbCommandConfig',
+        params: [
+          {
+            type: 'value', value: '_parent'
+          }
+        ]
+        //self
+      },
       'ajaxType': 'get',
-      /*'params': [
-        { name: 'moduleId', type: 'tempValue', valueName: '_Id', value: '' }
-      ]*/
+      'params': [
+        { name: '_parent.LeftId', type: 'tempValue', valueName: '_moduleId', value: '' },
+        { name: '_parent.LinkNote', type: 'value', value: 'sql' },
+      ]
     },
     'componentType': {
       'parent': true,
@@ -56,10 +66,10 @@ export class SqlSettingComponent implements OnInit {
         title: '主键', field: 'key', width: 'auto', hidden: true
       },
       {
-        title: 'SQL 语句', field: 'sqlText', width: 80,
+        title: '名称', field: 'Name', width: 80,
         editor: {
           type: 'input',
-          field: 'sqlText',
+          field: 'Name',
           options: {
             'type': 'input',
             'labelSize': '6',
@@ -69,75 +79,109 @@ export class SqlSettingComponent implements OnInit {
         }
       },
       {
-        title: '执行方式', field: 'sqlExecType', width: 80, hidden: false,
+        title: 'SQL 语句', field: 'ScriptText', width: 80,
         editor: {
-          type: 'select',
-          field: 'sqlExecType',
+          type: 'input',
+          field: 'ScriptText',
           options: {
-            'type': 'select',
+            'type': 'input',
             'labelSize': '6',
             'controlSize': '10',
-            'inputType': 'submit',
-            'name': 'sqlExecType',
-            'label': '',
-            'notFoundContent': '',
-            'selectModel': false,
-            'showSearch': true,
-            'placeholder': '-请选择-',
-            'disabled': false,
-            'size': 'default',
-            'clear': true,
-            'width': '80px',
-            'options': [
-              {
-                'label': '执行一次',
-                'value': '1',
-                'disabled': false
-              },
-              {
-                'label': '执行两次',
-                'value': '2',
-                'disabled': false
-              }
-            ]
+            'inputType': 'text',
           }
         }
       },
       {
-        title: '执行状态', field: 'sqlExecStatus', width: 80, hidden: false,
+        title: '脚本类型', field: 'DbOjbType', width: 80,
         editor: {
-          type: 'select',
-          field: 'sqlExecStatus',
+          type: 'input',
+          field: 'DbOjbType',
           options: {
-            'type': 'select',
+            'type': 'input',
             'labelSize': '6',
             'controlSize': '10',
-            'inputType': 'submit',
-            'name': 'sex',
-            'label': '',
-            'notFoundContent': '',
-            'selectModel': false,
-            'showSearch': true,
-            'placeholder': '-请选择-',
-            'disabled': false,
-            'size': 'default',
-            'clear': true,
-            'width': '80px',
-            'options': [
-              {
-                'label': '新增',
-                'value': '1',
-                'disabled': false
-              },
-              {
-                'label': '编辑',
-                'value': '2',
-                'disabled': false
-              }
-            ]
+            'inputType': 'text',
           }
         }
-      }
+      },
+      {
+        title: '对象状态', field: 'DbOjbState', width: 80,
+        editor: {
+          type: 'input',
+          field: 'DbOjbState',
+          options: {
+            'type': 'input',
+            'labelSize': '6',
+            'controlSize': '10',
+            'inputType': 'text',
+          }
+        }
+      },
+      {
+        title: '发布状态', field: 'IssueFlag', width: 80,
+        editor: {
+          type: 'input',
+          field: 'IssueFlag',
+          options: {
+            'type': 'input',
+            'labelSize': '6',
+            'controlSize': '10',
+            'inputType': 'text',
+          }
+        }
+      },
+      {
+        title: '结果类型', field: 'ResultType', width: 80,
+        editor: {
+          type: 'input',
+          field: 'ResultType',
+          options: {
+            'type': 'input',
+            'labelSize': '6',
+            'controlSize': '10',
+            'inputType': 'text',
+          }
+        }
+      },
+      {
+        title: '应用范围', field: 'ShareScope', width: 80,
+        editor: {
+          type: 'input',
+          field: 'ShareScope',
+          options: {
+            'type': 'input',
+            'labelSize': '6',
+            'controlSize': '10',
+            'inputType': 'text',
+          }
+        }
+      },
+      {
+        title: '应用类型', field: 'References', width: 80,
+        editor: {
+          type: 'input',
+          field: 'References',
+          options: {
+            'type': 'input',
+            'labelSize': '6',
+            'controlSize': '10',
+            'inputType': 'text',
+          }
+        }
+      },
+      {
+        title: '是否启用', field: 'Enabled', width: 80,
+        editor: {
+          type: 'input',
+          field: 'Enabled',
+          options: {
+            'type': 'input',
+            'labelSize': '6',
+            'controlSize': '10',
+            'inputType': 'text',
+          }
+        }
+      },
     ],
     'toolbar': [
       { 'name': 'refresh', 'class': 'editable-add-btn', 'text': '刷新' },
@@ -147,24 +191,45 @@ export class SqlSettingComponent implements OnInit {
       {
         'name': 'saveRow', 'class': 'editable-add-btn', 'text': '保存' ,
         'ajaxConfig': {
-          add: {
-            'url': 'AppConfigPack',
-            'ajaxType': 'post',
-            'params': [
-              { name: 'ParentId', type: 'tempValue', valueName: '_Id', value: '' },
-              /*                   { name: 'Name', type: 'tempValue', valueName: '取值参数名称', value: 'liutest11' },*/
-              { name: 'TagA', type: 'GUID', valueName: '取值参数名称', value: 'GUID' },
-              { name: 'TagB', type: 'value', valueName: '取值参数名称', value: 'opt_sqlList' },
-              { name: 'Metadata', type: 'tempValue', valueName: 'dataList', value: '' }
-            ]
-          },
+          add: [
+            {
+              'url': 'DbCommandConfig',
+              'ajaxType': 'post',
+              'params': [
+                { name: 'Name', type: 'componentValue', valueName: 'Name', value: '' },
+                { name: 'ScriptText', type: 'componentValue', valueName: 'ScriptText', value: '' },
+                { name: 'DbOjbType', type: 'componentValue', valueName: 'DbOjbType', value: '' },
+                { name: 'DbOjbState', type: 'componentValue', valueName: 'DbOjbState', value: '' },
+                { name: 'IssueFlag', type: 'componentValue', valueName: 'IssueFlag', value: '' },
+                { name: 'ResultType', type: 'componentValue', valueName: 'ResultType', value: '' },
+                { name: 'ShareScope', type: 'componentValue', valueName: 'ShareScope', value: '' },
+                { name: 'References', type: 'componentValue', valueName: 'References', value: '' },
+                { name: 'Enabled', type: 'componentValue', valueName: 'Enabled', value: '' }
+              ],
+              'output': [
+                {
+                  name: '_dataId',
+                  type: '',
+                  dataName: 'Id'
+                }
+              ]
+            },
+            {
+              'url': 'SysDataCategoryLink',
+              'ajaxType': 'post',
+              'params': [
+                { name: 'LeftId', type: 'tempValue', valueName: '_moduleId', value: '' },
+                { name: 'RightId', type: 'tempValue', valueName: '_dataId', value: '' },
+                { name: 'LinkNote', type: 'value', valueName: '', value: 'sql' }
+              ]
+            }
+          ],
           update: {
             'url': 'AppConfigPack',
             'ajaxType': 'put',
             'params': [
               { name: 'Id', type: 'tempValue', valueName: '_id', value: '' },
               { name: 'Metadata', type: 'tempValue', valueName: 'dataList', value: '' }
-
             ]
           }
         },
@@ -201,7 +266,7 @@ export class SqlSettingComponent implements OnInit {
         name: 'initParameters',
         receiver: 'viewId_sqlSetting' ,
         parent: {
-          _Id: this._funcValue[this._funcValue.length -1],
+          _moduleId: this._funcValue[this._funcValue.length -1],
         }
       };
       console.log("选中行发消息事件", receiver);

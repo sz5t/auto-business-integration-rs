@@ -39,7 +39,7 @@
     <nz-card>
       <ng-template #title>SQL 语句设置</ng-template>
       <ng-template #body>
-        <cn-bsn-table></cn-bsn-table>
+        <cn-bsn-table [config]="_sqlDataConfig" [dataList]=""></cn-bsn-table>
         <!--<nz-table #nzTable
                   [nzAjaxData]="_sql_dataSet"
                   nzShowSizeChanger
@@ -58,8 +58,8 @@
             <th nz-th><span>SQL名称</span></th>
             <th nz-th><span>脚本</span></th>
             <th nz-th><span>脚本类型</span></th>
+            <th nz-th><span>数据对象</span></th>
             <th nz-th><span>发布状态</span></th>
-            <th nz-th><span>作用域</span></th>
             <th nz-th><span>结果类型</span></th>
             <th nz-th><span>应用范围</span></th>
             <th nz-th><span>引用</span></th>
@@ -88,7 +88,7 @@
     <nz-card>
       <ng-template #title>SQL 参数设置</ng-template>
       <ng-template #body>
-        <cn-bsn-table [config]="" [dataList]=""></cn-bsn-table>
+       <!-- <cn-bsn-table></cn-bsn-table>-->
       </ng-template>
     </nz-card>
   </div>

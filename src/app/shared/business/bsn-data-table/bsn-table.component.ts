@@ -90,9 +90,9 @@ export class BsnTableComponent implements OnInit {
                 console.log("异步加载表数据load", ajaxData);
                 this.loading = true;
                 if (ajaxData.Data) {
-                    if (ajaxData.Data.rows) {
-                        this.updateEditCacheByLoad(ajaxData.Data.rows);
-                        this.dataList = ajaxData.Data.rows;
+                    if (ajaxData.Data.Rows) {
+                        this.updateEditCacheByLoad(ajaxData.Data.Rows);
+                        this.dataList = ajaxData.Data.Rows;
                         this.total = ajaxData.Data.PageCount;
                     }
                     else {
@@ -123,7 +123,7 @@ export class BsnTableComponent implements OnInit {
 
     }
 
-    isString(obj) { //判断对象是否是字符串  
+    isString(obj) { //判断对象是否是字符串
         return Object.prototype.toString.call(obj) === "[object String]";
     }
     /**
@@ -183,7 +183,7 @@ export class BsnTableComponent implements OnInit {
                     params[param.name] = componentValue[param.valueName];
                 }
             });
-
+            console.log('ppppppppppp',p)
             if (this.isString(p.url)) {
                 url = APIResource[p.url]
             }
@@ -231,6 +231,7 @@ export class BsnTableComponent implements OnInit {
         }
         else if (p.ajaxType === 'post') {
             console.log("post参数", params);
+            console.log(url);
             return this._http.postProj(url, params).toPromise();
         }
         else {
@@ -445,7 +446,7 @@ export class BsnTableComponent implements OnInit {
         let selectRowData;
         dataList.forEach(element => {
             let row = {};
-            
+
                 if (element.selected) {
                     selectRowData=JSON.parse(JSON.stringify(element));
                 }
@@ -482,9 +483,13 @@ export class BsnTableComponent implements OnInit {
                             const ajaxData = await this.execAjax(pconfig["add"][i], selectRowData);
                             if (ajaxData) {
 
+                              //console.log(ajaxData, pconfig["add"][i]);
+                              if( pconfig["add"][i]["output"]) {
                                 pconfig["add"][i]["output"].forEach(out => {
-                                    this.tempParameters[out.name]=ajaxData.Data[out["dataName"]];
+                                  this.tempParameters[out.name]=ajaxData.Data[out["dataName"]];
                                 });
+                              }
+
                                 console.log("新增保存成功循环", ajaxData);
                                 this.dataList = JSON.parse(JSON.stringify(this.dataList));
                             }

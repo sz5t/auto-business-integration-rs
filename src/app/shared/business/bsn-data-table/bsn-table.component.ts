@@ -7,7 +7,7 @@ import { APIResource } from '@core/utility/api-resource';
 import { RelativeService } from '@core/relative-Service/relative-service';
 
 @Component({
-    selector: 'bsn-data-table,[bsn-data-table]',
+    selector: 'bsn-table,[bsn-table]',
     templateUrl: './bsn-data-table.component.html',
     styles: [
         `
@@ -24,7 +24,7 @@ import { RelativeService } from '@core/relative-Service/relative-service';
 `
     ]
 })
-export class BsnDataTableComponent implements OnInit {
+export class BsnTableComponent implements OnInit {
 
     @Input() config; //dataTables 的配置参数
     @Input() dataList = []; // 表格数据集合
@@ -89,24 +89,25 @@ export class BsnDataTableComponent implements OnInit {
             if (ajaxData) {
                 console.log("异步加载表数据load", ajaxData);
                 this.loading = true;
-                if (ajaxData.Data.length > 0) {
-                    if (ajaxData.Data[0].Metadata) {
-                        this.updateEditCacheByLoad(JSON.parse(ajaxData.Data[0].Metadata));
-                        this.dataList = JSON.parse(ajaxData.Data[0].Metadata);
-                        this.total = this.dataList.length;
+                this.dataList = ajaxData.Data.rows;
+                this.total = ajaxData.Data.PageCount;
+        
+                if (ajaxData.Data) {
+                    if (ajaxData.Data.rows) {
+                        this.updateEditCacheByLoad(ajaxData.Data.rows);
+                        this.dataList = ajaxData.Data.rows;
+                        this.total = ajaxData.Data.PageCount;
                     }
                     else {
                         this.dataList = [];
                         this.updateEditCacheByLoad([]);
                         this.total = this.dataList.length;
                     }
-                    this.tempParameters["_id"] = ajaxData.Data[0].Id;
+                   
                 }
                 else {
                     this.dataList = [];
-                    this.updateEditCacheByLoad([]);
-                    this.tempParameters["_id"] && delete this.tempParameters["_id"];
-
+                    this.updateEditCacheByLoad([]);                 
                 }
                 console.log("当前记录id", this.tempParameters["_id"]);
             } else {

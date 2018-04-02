@@ -37,6 +37,7 @@ import { CnGridTimePickerComponent } from './components/cn-grid-time-picker/cn-g
 import { CnGridRangePickerComponent } from './components/cn-grid-range-picker/cn-grid-range-picker.component';
 import { CnGridCheckboxComponent } from './components/cn-grid-checkbox/cn-grid-checkbox.component';
 import { BsnDataTableComponent } from './business/bsn-data-table/bsn-data-table.component';
+import { BsnTableComponent } from './business/bsn-data-table/bsn-table.component';
 import { CnContextMenuComponent } from './components/cn-context-menu/cn-context-menu.component';
 import { BsnTreeComponent } from './business/bsn-tree/bsn-tree.component';
 import { CnCodeEditComponent } from './components/cn-code-edit/cn-code-edit.component';
@@ -73,6 +74,7 @@ const COMPONENTS = [
   CnGridRangePickerComponent,
   CnGridCheckboxComponent,
   BsnDataTableComponent,
+  BsnTableComponent,
   CnContextMenuComponent,
   CnCodeEditComponent,
   TabsResolverComponent
@@ -103,6 +105,7 @@ const DIRECTIVES = [
         ...COMPONENTS,
         ...DIRECTIVES,
         BsnDataTableComponent,
+        BsnTableComponent,
         BsnTreeComponent,
         CnCodeEditComponent
     ],
@@ -141,6 +144,7 @@ const DIRECTIVES = [
       NzRadioGroupComponent,
       NzCheckboxGroupComponent,
       BsnDataTableComponent,
+      BsnTableComponent,
       FormResolverComponent,
       CnCodeEditComponent,
       TabsResolverComponent

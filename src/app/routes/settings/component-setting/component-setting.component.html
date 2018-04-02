@@ -50,6 +50,7 @@
                 <nz-card>
                     <ng-template #body>
                         <nz-tabset [nzType]="'line'">
+
                             <nz-tab>
                                 <ng-template #nzTabHeading>
                                     <i></i>
@@ -101,6 +102,19 @@
                                 </ng-template>
                                 <div>
                                     <cn-form-resolver [config]="attributeConfig" [dataList]="dataList"></cn-form-resolver>
+                                </div>
+                            </nz-tab>
+                            <nz-tab>
+                                <ng-template #nzTabHeading>
+                                    <i></i>
+                                    业务对象
+                                </ng-template>
+                                <div>
+                                    <div nz-row [nzGutter]="8">
+                                        <div nz-col [nzSpan]="24">
+                                            <div bsn-data-table [config]="tempConfig" [dataList]="tempdataList"></div>                                            
+                                        </div>
+                                    </div>
                                 </div>
                             </nz-tab>
                         </nz-tabset>

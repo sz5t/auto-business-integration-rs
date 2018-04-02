@@ -5,6 +5,7 @@ import { APIResource } from '@core/utility/api-resource';
 import { CommonUtility } from '@core/utility/Common-utility';
 import { NzMessageService } from 'ng-zorro-antd';
 import { CnCodeEditComponent } from '@shared/components/cn-code-edit/cn-code-edit.component';
+import { RelativeService } from '@core/relative-Service/relative-service';
 
 @Component({
     selector: 'app-component-setting',
@@ -500,6 +501,7 @@ export class ComponentSettingComponent implements OnInit {
         private http: _HttpClient,
         private _http: ApiService,
         private message: NzMessageService,
+        private relativeMessage: RelativeService
     ) { }
 
     async ngOnInit() {
@@ -527,6 +529,8 @@ export class ComponentSettingComponent implements OnInit {
     async  _changeLayoutName($event) {
         // 创建布局
         // this._layoutConfig = $event.metadata;
+
+        console.log("布局信息",$event);
         const str = [];
         if ($event.metadata) {
             const componentData = await this.getComponentByLayout($event.id);
@@ -537,8 +541,8 @@ export class ComponentSettingComponent implements OnInit {
             }
 
             this.nodes = this.arrayToTreeBylayout(this.layoutToarry($event.metadata, componentJson, '555'), '555');
-           // console.log(this.nodes);
-           // console.log('初步简析布局', this.layoutToarry($event.metadata, componentJson, '555'));
+            // console.log(this.nodes);
+            // console.log('初步简析布局', this.layoutToarry($event.metadata, componentJson, '555'));
         }
 
     }
@@ -562,7 +566,7 @@ export class ComponentSettingComponent implements OnInit {
                         }
                         if (!cdata.rows) {
                             result.push(obj);
-                            const cobj = this.componentToarry(component, cdata.id,component);
+                            const cobj = this.componentToarry(component, cdata.id, component);
                             if (cobj) {
                                 result = [...result, ...cobj]
                             }
@@ -574,9 +578,9 @@ export class ComponentSettingComponent implements OnInit {
 
         if (data.tabs) {
             data.tabs.forEach(tab => {
-                const obj = { "Name": tab.name, "Id": tab.id,ParentId:pid };
+                const obj = { "Name": tab.name, "Id": tab.id, ParentId: pid };
                 result.push(obj);
-                const cobj = this.componentToarry(component, tab.id,component);
+                const cobj = this.componentToarry(component, tab.id, component);
                 if (cobj) {
                     result = [...result, ...cobj]
                 }
@@ -584,21 +588,23 @@ export class ComponentSettingComponent implements OnInit {
         }
         return result;
     }
-   /**生成结构树-》组件简析 */
-    componentToarry(data?, pid?,component?) {
+    /**生成结构树-》组件简析 */
+    componentToarry(data?, pid?, component?) {
 
         let obj = [];
         let temp;
         if (data) {
 
-            const a={};
-            const index = data.findIndex(item => item.TagA === pid);
+            const a = {};
+
+            const index = data.findIndex(item => item.Name === pid);
+            let type = data[index].TagB.substring(data[index].TagB.lastIndexOf('.') + 1, data[index].TagB.length);
             a["Id"] = data[index].Id;
-            a["Name"] = data[index].Name;
-            a["ParentId"] = data[index].TagA;
+            a["Name"] = type;//data[index].TagB;
+            a["ParentId"] = data[index].Name;
             obj.push(a);
-            if(data[index].Name==='tabs'){
-                temp = this.layoutToarry({tabs: JSON.parse(data[index].Metadata)}, component,  data[index].Id) //递归调用行
+            if (type === 'tabs') {
+                temp = this.layoutToarry({ tabs: JSON.parse(data[index].Metadata) }, component, data[index].Id) //递归调用行
                 if (temp) {
                     obj = [...obj, ...temp]
                 }
@@ -624,7 +630,8 @@ export class ComponentSettingComponent implements OnInit {
         //const params = new HttpParams().set('TagA', this._funcValue.join(','));
         if (this._funcValue.length > 0) {
             const params = {
-                TagA: this._funcValue.join(','),
+                //TagA: this._funcValue.join(','),
+                ParentId: this._funcValue[this._funcValue.length -1],
                 _select: 'Id,Name,Metadata'
             };
             this.getLayoutConfigData(params).then(serverLayoutData => {
@@ -732,17 +739,17 @@ export class ComponentSettingComponent implements OnInit {
      * @param data
      */
     async saveSql(data?) {
-         //保存sql前需要做判断，
-         //1.功能模块，布局选取。
-         //2.布局组件树选中节点是
-        const sql=  this.editor.getValue();
-       // const saveSqlStr=await this.saveSqlByApi(sql);
-       // const updateSqlStr=await this.updateSqlByApi(sql,"f4fa067fae1440c4a9ab29d1038add96");
-       // const sqlField=await this.getSqlFiledByApi("f4fa067fae1440c4a9ab29d1038add96");
-        console.log("保存sql",sql);
-      //  console.log("服务器保存sql",saveSqlStr);
-       // console.log("服务器返回sql",updateSqlStr);
-      //  console.log("服务器返回字段",sqlField);
+        //保存sql前需要做判断，
+        //1.功能模块，布局选取。
+        //2.布局组件树选中节点是
+        const sql = this.editor.getValue();
+        // const saveSqlStr=await this.saveSqlByApi(sql);
+        // const updateSqlStr=await this.updateSqlByApi(sql,"f4fa067fae1440c4a9ab29d1038add96");
+        // const sqlField=await this.getSqlFiledByApi("f4fa067fae1440c4a9ab29d1038add96");
+        console.log("保存sql", sql);
+        //  console.log("服务器保存sql",saveSqlStr);
+        // console.log("服务器返回sql",updateSqlStr);
+        //  console.log("服务器返回字段",sqlField);
     }
 
 
@@ -752,9 +759,9 @@ export class ComponentSettingComponent implements OnInit {
         };
         return this._http.postProj(APIResource.DbCommonConfig, params).toPromise();
     }
-    async  updateSqlByApi(sql?,Id?) {
+    async  updateSqlByApi(sql?, Id?) {
         const params = {
-            Id:Id,
+            Id: Id,
             ScriptText: sql
         };
         return this._http.putProj(APIResource.DbCommonConfig, params).toPromise();
@@ -765,7 +772,7 @@ export class ComponentSettingComponent implements OnInit {
      */
     async  getSqlFiledByApi(Id?) {
         const params = {
-            OwnerId:Id
+            OwnerId: Id
         };
         return this._http.getProj(APIResource.EntityPropertyDefine, params).toPromise();
     }
@@ -810,6 +817,18 @@ export class ComponentSettingComponent implements OnInit {
 
         }
 
+
+        const receiver = {
+            name: 'initParameters',
+            receiver: 'operation_sqlColumns' ,
+            parent: {
+              _Id: ev.node.data.id,
+              _optType: 'opt_sqlList'
+            }
+          };
+          console.log("选中行发消息事件", receiver);
+          this.relativeMessage.sendMessage({ type: 'initParameters' }, receiver);
+      
     }
 
     _changeValue($event) {
@@ -1219,7 +1238,70 @@ export class ComponentSettingComponent implements OnInit {
     }
 
 
-
-
-
+    /**
+     * 临时变量 数据列表配置
+     */
+    tempConfig = {
+            'viewId': 'componentsetting_temp',
+            'component': 'bsnDataTable',
+            'keyId': 'key',
+            'nzIsPagination': false, // 是否分页
+            'nzShowTotal': true,// 是否显示总数据量
+            'pageSize': 5, //默认每页数据条数
+            'nzPageSizeSelectorValues': [5, 10, 20, 30, 40, 50],
+            'nzLoading': false, // 是否显示加载中
+            'nzBordered': false,// 是否显示边框
+            'columns': [
+                {
+                    title: '主键', field: 'key', width: 80, hidden: true, editor: {
+                        type: 'input',
+                        field: 'key',
+                        options: {
+                            'type': 'input',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'text',
+                        }
+                    }
+                },
+                {
+                    title: '业务字段名称', field: 'fieldName', width: 80,
+                    editor: {
+                        type: 'input',
+                        field: 'fieldName',
+                        options: {
+                            'type': 'input',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'text',
+                        }
+                    }
+                },
+                {
+                    title: '业务字段标题', field: 'title', width: 80,
+                    editor: {
+                        type: 'input',
+                        field: 'title',
+                        options: {
+                            'type': 'input',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'text',
+                        }
+                    }
+                }  
+            ],
+            'toolbar': [
+                { 'name': 'refresh', 'class': 'editable-add-btn', 'text': '刷新' },
+                { 'name': 'addRow', 'class': 'editable-add-btn', 'text': '新增' },
+                { 'name': 'updateRow', 'class': 'editable-add-btn', 'text': '修改' },
+                { 'name': 'deleteRow', 'class': 'editable-add-btn', 'text': '删除' },
+                { 'name': 'saveRow', 'class': 'editable-add-btn', 'text': '保存' },
+                { 'name': 'cancelRow', 'class': 'editable-add-btn', 'text': '取消' }
+            ]
+    }
+    /**
+     * 临时变量值
+     */
+    tempdataList = [];
 }

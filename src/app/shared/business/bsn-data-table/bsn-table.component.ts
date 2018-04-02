@@ -180,7 +180,7 @@ export class BsnTableComponent implements OnInit {
                     params[param.name] = fieldIdentity;
                 }
                 else if (param.type == 'componentValue') {
-                    params[param.name] = componentValue.value;
+                    params[param.name] = componentValue[param.valueName];
                 }
             });
 
@@ -198,7 +198,7 @@ export class BsnTableComponent implements OnInit {
                         pc = fieldIdentity;
                     }
                     else if (param.type == 'componentValue') {
-                        pc = componentValue.value;
+                        pc = componentValue[param.valueName];
                     }
                     else if (param.type == 'tempValue') {
                         pc = this.tempParameters[param.valueName];

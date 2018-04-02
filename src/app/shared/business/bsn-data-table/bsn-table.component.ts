@@ -442,6 +442,15 @@ export class BsnTableComponent implements OnInit {
         //需要判断当前是新增or修改=》保存，区别是看初次加载的时候，是否有数据库中有记录标识
         //当前记录数据集作为子表的时候，子表的一切操作均看是否有主表记录，才可以执行，否则操作均不能执行
         // 创建新json，将checked，select 标签去除，
+        let selectRowData;
+        dataList.forEach(element => {
+            let row = {};
+            
+                if (element.selected) {
+                    selectRowData=JSON.parse(JSON.stringify(element));
+                }
+
+        });
         const newdataList = [];
         dataList.forEach(element => {
             let row = {};
@@ -460,7 +469,7 @@ export class BsnTableComponent implements OnInit {
                 const pconfig = JSON.parse(JSON.stringify(this.config.toolbar[index].ajaxConfig));
                 if (this.tempParameters["_id"]) {
                     //修改保存
-                    const ajaxData = await this.execAjax(pconfig["update"], null);
+                    const ajaxData = await this.execAjax(pconfig["update"], selectRowData);
                     if (ajaxData) {
                         console.log("修改保存成功", ajaxData);
                         this.dataList = JSON.parse(JSON.stringify(this.dataList));
@@ -470,7 +479,7 @@ export class BsnTableComponent implements OnInit {
                     //新增保存
                     if (Array.isArray(pconfig["add"])) {
                         for (let i = 0; i < pconfig["add"].length; i++) {
-                            const ajaxData = await this.execAjax(pconfig["add"][i], null);
+                            const ajaxData = await this.execAjax(pconfig["add"][i], selectRowData);
                             if (ajaxData) {
 
                                 pconfig["add"][i]["output"].forEach(out => {
@@ -481,7 +490,7 @@ export class BsnTableComponent implements OnInit {
                             }
                         }
                     } else {
-                        const ajaxData = await this.execAjax(pconfig["add"], null);
+                        const ajaxData = await this.execAjax(pconfig["add"], selectRowData);
                         if (ajaxData) {
                             console.log("新增保存成功", ajaxData);
                             this.dataList = JSON.parse(JSON.stringify(this.dataList));

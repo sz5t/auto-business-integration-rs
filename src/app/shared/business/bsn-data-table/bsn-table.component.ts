@@ -259,7 +259,6 @@ export class BsnTableComponent implements OnInit {
     ) {
     }
     async ngOnInit() {
-        alert('bsn-table');
         this.analysisRelation(this.config);
         if (this.config.ajaxConfig) {
             if (this.config.componentType) {

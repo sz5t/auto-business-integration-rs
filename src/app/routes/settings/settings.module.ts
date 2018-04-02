@@ -6,10 +6,12 @@ import { ComponentSettingComponent } from './component-setting/component-setting
 import { OperationSettingComponent } from './operation-setting/operation-setting.component';
 import {LayoutSettingComponent} from "./layout-setting/layout-setting.component";
 import { BusinessSettingComponent } from './business-setting/business-setting.component';
+import {SqlSettingComponent} from "./sql-setting/sql-setting.component";
 
 const routes: Routes = [
   {path: 'layout-setting', component: LayoutSettingComponent},
   {path: 'block-setting', component: BlockSettingComponent},
+  {path: 'sql-setting', component: SqlSettingComponent},
   {path: 'component-setting', component: ComponentSettingComponent},
   {path: 'operation-setting', component: OperationSettingComponent},
   {path: 'business-setting', component: BusinessSettingComponent},
@@ -19,6 +21,7 @@ const COMPONENT_NOROUNT = [
   BlockSettingComponent,
   ComponentSettingComponent,
   OperationSettingComponent,
+  SqlSettingComponent,
   BusinessSettingComponent
 ];
 

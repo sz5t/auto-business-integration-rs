@@ -126,6 +126,9 @@ export class BsnTableComponent implements OnInit {
 
     }
 
+      isString(obj){ //判断对象是否是字符串  
+        return Object.prototype.toString.call(obj) === "[object String]";  
+      }  
     /**
      * 执行异步数据
      * @param p 路由参数信息
@@ -146,6 +149,7 @@ export class BsnTableComponent implements OnInit {
           } */
 
         let tag = true;
+        let url;
         if (p) {
             p.params.forEach(param => {
                 if (param.type == 'tempValue') {
@@ -182,24 +186,55 @@ export class BsnTableComponent implements OnInit {
                     params[param.name] = componentValue.value;
                 }
             });
+
+           if(this.isString(p.url)) {
+              url=APIResource[p.url]
+           }
+           else{
+             let pc='null';
+             p.url.params.forEach(param => {
+                 if(param["type"]==='value'){
+                    pc=param.value;
+                 }
+                 else if (param.type == 'GUID') {
+                    const fieldIdentity = CommonUtility.uuID(10);
+                    pc= fieldIdentity;
+                 }
+                 else if (param.type == 'componentValue') {
+                    pc = componentValue.value;
+                 }
+                 else if (param.type == 'tempValue') {
+                    pc = this.tempParameters[param.valueName];
+                 }
+             });
+
+            url=APIResource[p.url["parent"]]+"/"+pc+"/"+APIResource[p.url["child"]];
+           }
         }
         if (p.ajaxType === 'get' && tag) {
             console.log("get参数", params);
+            if (type === 'load') {
+                if(this.config["nzIsPagination"]){
+                    params["_page"]=this.pi;
+                    params["_rows"]=this.ps;
+                }
+                
+            }
             /*  const dd=await this._http.getProj(APIResource[p.url], params).toPromise();
              if (dd && dd.Status === 200) {
                 console.log("服务器返回执行成功返回",dd.Data);
              }
              console.log("服务器返回",dd); */
 
-            return this._http.getProj(APIResource[p.url], params).toPromise();
+            return this._http.getProj(url, params).toPromise();
         }
         else if (p.ajaxType === 'put') {
             console.log("put参数", params);
-            return this._http.putProj(APIResource[p.url], params).toPromise();
+            return this._http.putProj(url, params).toPromise();
         }
         else if (p.ajaxType === 'post') {
             console.log("post参数", params);
-            return this._http.postProj(APIResource[p.url], params).toPromise();
+            return this._http.postProj(url, params).toPromise();
         }
         else {
             return null;
@@ -227,6 +262,7 @@ export class BsnTableComponent implements OnInit {
     ) {
     }
     async ngOnInit() {
+        alert('bsn-table');
         this.analysisRelation(this.config);
         if (this.config.ajaxConfig) {
             if (this.config.componentType) {

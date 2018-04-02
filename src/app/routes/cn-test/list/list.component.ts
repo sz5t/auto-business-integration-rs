@@ -762,4 +762,61 @@ export class ListComponent implements OnInit {
         return result;
     }
 
+
+// 单行操作
+    config2 = {
+        'viewId': '0003',
+        'component': 'form_view',
+        'keyId': 'key',
+        'nzIsPagination': true, // 是否分页
+        'nzShowTotal': true,// 是否显示总数据量
+        'pageSize': 5, //默认每页数据条数
+        'nzPageSizeSelectorValues': [5, 10, 20, 30, 40, 50],
+        'nzLoading': false, // 是否显示加载中
+        'nzBordered': false,// 是否显示边框
+        'ajaxConfig': {
+            'url': 'DbCommonConfig',
+            'ajaxType': 'get',
+            'params': [ ]
+        },
+        'componentType': {
+            'parent': false,
+            'child': false,
+            'own': true
+        },
+        'relation': [{
+            'relationViewId': '0002',
+            'relationSendContent': [],
+            'relationReceiveContent': []
+        }],
+        'columns': [
+            {
+                title: '主键', field: 'key', width: 80, hidden: true, editor: {
+                    type: 'input',
+                    field: 'key',
+                    options: {
+                        'type': 'input',
+                        'labelSize': '6',
+                        'controlSize': '10',
+                        'inputType': 'text',
+                    }
+                }
+            },
+            {
+                title: 'sqlid', field: 'Id', width: 80, hidden: false,
+            }
+        ],
+        'toolbar': [
+            { 'name': 'refresh', 'class': 'editable-add-btn', 'text': '刷新' },
+            { 'name': 'addRow', 'class': 'editable-add-btn', 'text': '新增' },
+            { 'name': 'updateRow', 'class': 'editable-add-btn', 'text': '修改' },
+            { 'name': 'deleteRow', 'class': 'editable-add-btn', 'text': '删除' },
+            {
+                'name': 'saveRow', 'class': 'editable-add-btn', 'text': '保存'
+            },
+            { 'name': 'cancelRow', 'class': 'editable-add-btn', 'text': '取消' }
+        ]
+
+    }
+
 }

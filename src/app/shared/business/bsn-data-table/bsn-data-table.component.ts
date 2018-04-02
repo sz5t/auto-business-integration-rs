@@ -124,7 +124,9 @@ export class BsnDataTableComponent implements OnInit {
           }); */
 
     }
-
+    isString(obj){ //判断对象是否是字符串  
+        return Object.prototype.toString.call(obj) === "[object String]";  
+      }  
     /**
      * 执行异步数据
      * @param p 路由参数信息
@@ -143,7 +145,7 @@ export class BsnDataTableComponent implements OnInit {
                   { name: 'id', type: 'componentValue', valueName: '取值参数名称', value: '' }
               ]
           } */
-
+          let url;
         let tag = true;
         if (p) {
             p.params.forEach(param => {
@@ -181,6 +183,31 @@ export class BsnDataTableComponent implements OnInit {
                     params[param.name] = componentValue.value;
                 }
             });
+
+         
+            if(this.isString(p.url)) {
+                url=APIResource[p.url]
+             }
+             else{
+               let pc='null';
+               p.url.params.forEach(param => {
+                   if(param["type"]==='value'){
+                      pc=param.value;
+                   }
+                   else if (param.type == 'GUID') {
+                      const fieldIdentity = CommonUtility.uuID(10);
+                      pc= fieldIdentity;
+                   }
+                   else if (param.type == 'componentValue') {
+                      pc = componentValue.value;
+                   }
+                   else if (param.type == 'tempValue') {
+                      pc = this.tempParameters[param.valueName];
+                   }
+               });
+  
+              url=APIResource[p.url["parent"]]+"/"+pc+"/"+APIResource[p.url["child"]];
+             }
         }
         if (p.ajaxType === 'get' && tag) {
             console.log("get参数", params);
@@ -190,15 +217,15 @@ export class BsnDataTableComponent implements OnInit {
              }
              console.log("服务器返回",dd); */
 
-            return this._http.getProj(APIResource[p.url], params).toPromise();
+            return this._http.getProj(url, params).toPromise();
         }
         else if (p.ajaxType === 'put') {
             console.log("put参数", params);
-            return this._http.putProj(APIResource[p.url], params).toPromise();
+            return this._http.putProj(url, params).toPromise();
         }
         else if (p.ajaxType === 'post') {
             console.log("post参数", params);
-            return this._http.postProj(APIResource[p.url], params).toPromise();
+            return this._http.postProj(url, params).toPromise();
         }
         else {
             return null;

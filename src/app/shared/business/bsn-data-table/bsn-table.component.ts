@@ -123,9 +123,9 @@ export class BsnTableComponent implements OnInit {
 
     }
 
-      isString(obj){ //判断对象是否是字符串  
-        return Object.prototype.toString.call(obj) === "[object String]";  
-      }  
+    isString(obj) { //判断对象是否是字符串  
+        return Object.prototype.toString.call(obj) === "[object String]";
+    }
     /**
      * 执行异步数据
      * @param p 路由参数信息
@@ -184,38 +184,38 @@ export class BsnTableComponent implements OnInit {
                 }
             });
 
-           if(this.isString(p.url)) {
-              url=APIResource[p.url]
-           }
-           else{
-             let pc='null';
-             p.url.params.forEach(param => {
-                 if(param["type"]==='value'){
-                    pc=param.value;
-                 }
-                 else if (param.type == 'GUID') {
-                    const fieldIdentity = CommonUtility.uuID(10);
-                    pc= fieldIdentity;
-                 }
-                 else if (param.type == 'componentValue') {
-                    pc = componentValue.value;
-                 }
-                 else if (param.type == 'tempValue') {
-                    pc = this.tempParameters[param.valueName];
-                 }
-             });
+            if (this.isString(p.url)) {
+                url = APIResource[p.url]
+            }
+            else {
+                let pc = 'null';
+                p.url.params.forEach(param => {
+                    if (param["type"] === 'value') {
+                        pc = param.value;
+                    }
+                    else if (param.type == 'GUID') {
+                        const fieldIdentity = CommonUtility.uuID(10);
+                        pc = fieldIdentity;
+                    }
+                    else if (param.type == 'componentValue') {
+                        pc = componentValue.value;
+                    }
+                    else if (param.type == 'tempValue') {
+                        pc = this.tempParameters[param.valueName];
+                    }
+                });
 
-            url=APIResource[p.url["parent"]]+"/"+pc+"/"+APIResource[p.url["child"]];
-           }
+                url = APIResource[p.url["parent"]] + "/" + pc + "/" + APIResource[p.url["child"]];
+            }
         }
         if (p.ajaxType === 'get' && tag) {
             console.log("get参数", params);
             if (type === 'load') {
-                if(this.config["nzIsPagination"]){
-                    params["_page"]=this.pi;
-                    params["_rows"]=this.ps;
+                if (this.config["nzIsPagination"]) {
+                    params["_page"] = this.pi;
+                    params["_rows"] = this.ps;
                 }
-                
+
             }
             /*  const dd=await this._http.getProj(APIResource[p.url], params).toPromise();
              if (dd && dd.Status === 200) {
@@ -468,10 +468,24 @@ export class BsnTableComponent implements OnInit {
                 }
                 else {
                     //新增保存
-                    const ajaxData = await this.execAjax(pconfig["add"], null);
-                    if (ajaxData) {
-                        console.log("新增保存成功", ajaxData);
-                        this.dataList = JSON.parse(JSON.stringify(this.dataList));
+                    if (Array.isArray(pconfig["add"])) {
+                        for (let i = 0; i < pconfig["add"].length; i++) {
+                            const ajaxData = await this.execAjax(pconfig["add"][i], null);
+                            if (ajaxData) {
+
+                                pconfig["add"][i]["output"].forEach(out => {
+                                    this.tempParameters[out.name]=ajaxData.Data[out["dataName"]];
+                                });
+                                console.log("新增保存成功循环", ajaxData);
+                                this.dataList = JSON.parse(JSON.stringify(this.dataList));
+                            }
+                        }
+                    } else {
+                        const ajaxData = await this.execAjax(pconfig["add"], null);
+                        if (ajaxData) {
+                            console.log("新增保存成功", ajaxData);
+                            this.dataList = JSON.parse(JSON.stringify(this.dataList));
+                        }
                     }
                 }
             }

@@ -352,11 +352,22 @@ export class BaseManagerComponent implements OnInit {
       return data;
     }
 
-    showModalForComponent(flag?:) {
-      
+    showModalForComponent(flag?) {
 
+      switch (flag) {
+        case 'Add':
+          this.confirmAddData()
+          break;
+        case 'Edit':
+          this.confirmEditData( )
+          break;
+      }
+    }
+
+    confirmAddData()
+    {
       const subscription = this.modalService.open({
-        title          : '对话框444标题',
+        title          : '新增数据',
         content        : ModalBaseComponent,
         onOk() {
         },
@@ -365,11 +376,44 @@ export class BaseManagerComponent implements OnInit {
         },
         footer         : false,
         componentParams: {
-          name: '测试渲染Component'
+          name: ''
         }
       });
       subscription.subscribe(result => {
         console.log(result);
-      })
+      });
+    }
+
+    confirmEditData()
+    {
+      let data = this.getSelectItem();
+      if( data.length === 1) {
+        // this._randomBase.updateModule(data);
+        this.refreshData();
+        const subscription = this.modalService.open({
+          title          : '修改数据',
+          content        : ModalBaseComponent,
+          onOk() {
+          },
+          onCancel() {
+            console.log('Click cancel');
+          },
+          footer         : false,
+          componentParams: {
+            name: data
+          }
+        });
+        subscription.subscribe(result => {
+          console.log(result);
+        });
+      }else if (data.length > 1 ){
+        this.msgSrv.warning('不能修改多条记录！');
+        //处理缓存选中的数据
+        this.cacheMapData.forEach( item => {
+          item.dataItem.checked = false;
+          item.checked = false;
+        });} else {
+        this.msgSrv.warning('请选中要修改的记录！');
+      }
     }
 }

@@ -87,7 +87,7 @@ export class BaseManagerComponent implements OnInit {
   constructor(
     private _randomBase: RandomBaseService,
     public msgSrv: NzMessageService,
-    private modalService:NzModalService) {
+    private modalService: NzModalService) {
   }
 
   /**
@@ -379,8 +379,18 @@ export class BaseManagerComponent implements OnInit {
           name: ''
         }
       });
-      subscription.subscribe(result => {
-        console.log(result);
+      subscription.subscribe((result) => {
+        // console.log(result);
+        // console.log( typeof result);
+        if(typeof result === 'object')
+            this._randomBase.addModule(result).subscribe( response => {
+              if(response.Status === 200){
+                this.msgSrv.success(response.Message ? response.Message : '添加成功！');
+                this.refreshData();
+              }else {
+                this.msgSrv.error(response.Message);
+          }
+        });
       });
     }
 
@@ -396,15 +406,24 @@ export class BaseManagerComponent implements OnInit {
           onOk() {
           },
           onCancel() {
-            console.log('Click cancel');
+            // console.log('Click cancel');
           },
           footer         : false,
           componentParams: {
-            name: data
+            name: data[0]
           }
         });
         subscription.subscribe(result => {
-          console.log(result);
+          if(typeof result === 'object'){
+            result['Id'] = data[0].Id;
+            this._randomBase.updateModule(result).subscribe( response => {
+              if(response.Status === 200){
+                this.msgSrv.success(response.Message ? response.Message : '修改成功！');
+                this.refreshData();
+              }else {
+                this.msgSrv.error(response.Message);
+              }
+            });}
         });
       }else if (data.length > 1 ){
         this.msgSrv.warning('不能修改多条记录！');

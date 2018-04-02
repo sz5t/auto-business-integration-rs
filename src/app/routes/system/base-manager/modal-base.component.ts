@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, OnInit, Input } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
-import { NzModalSubject } from 'ng-zorro-antd';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder,  FormGroup, Validators} from '@angular/forms';
+import {NzModalSubject} from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-modal-base',
@@ -13,25 +13,42 @@ export class ModalBaseComponent implements OnInit {
 
   @Input()
   set name(value: any) {
-    this._name = JSON.stringify(value);
-  }
+    this._name = value;
 
+  }
+  constructor(
+    private http: _HttpClient,
+    private subject: NzModalSubject,
+    private fb: FormBuilder
+  ) {
+    this.subject.on('onDestory' ,() => {
+      // console.log( 'destory' );
+    })
+  }
   emitDataOutside() {
-    this.subject.next('传出数据');
+    if(!this.validateForm.valid)
+      return;
+    const data = {
+      Children: null,
+      ConfigData :  JSON.stringify({
+        group: this.validateForm.controls['Group'].value ? this.validateForm.controls['Group'].value : false,
+        link: this.validateForm.controls['Link'].value,
+        icon: this.validateForm.controls['Icon'].value,
+      }),
+      Name:   this.validateForm.controls['Name'].value,
+      Order:  this.validateForm.controls['Order'].value,
+      ParentId:  '0854a1ddc42d493e8e8aa41117924d08',
+      Remark: this.validateForm.controls['Remark'].value,
+      ShareScope: 'Project'
+    };
+    this.subject.next(data);
+    this.handleCancel('');
   }
 
   handleCancel(e) {
     this.subject.destroy('onCancel');
   }
-    constructor(
-        private http: _HttpClient,
-        private subject: NzModalSubject,
-        private fb: FormBuilder
-    ) {
-        this.subject.on('onDestory' ,() => {
-            console.log("destory");
-        })
-     }
+
 
   _submitForm() {
     for (const i in this.validateForm.controls) {
@@ -39,37 +56,24 @@ export class ModalBaseComponent implements OnInit {
     }
   }
 
-  updateConfirmValidator() {
-    /** wait for refresh value */
-    setTimeout(_ => {
-      this.validateForm.controls[ 'checkPassword' ].updateValueAndValidity();
-    });
-  }
-
-  confirmationValidator = (control: FormControl): { [s: string]: boolean } => {
-    if (!control.value) {
-      return { required: true };
-    } else if (control.value !== this.validateForm.controls[ 'password' ].value) {
-      return { confirm: true, error: true };
-    }
-  }
-
-  getCaptcha(e: MouseEvent) {
-    e.preventDefault();
-  }
-
     ngOnInit() {
       this.validateForm = this.fb.group({
-        email            : [ null, [ Validators.email ] ],
-        password         : [ null, [ Validators.required ] ],
-        checkPassword    : [ null, [ Validators.required, this.confirmationValidator ] ],
-        nickname         : [ null, [ Validators.required ] ],
-        phoneNumberPrefix: [ '+86' ],
-        phoneNumber      : [ null, [ Validators.required ] ],
-        website          : [ null, [ Validators.required ] ],
-        captcha          : [ null, [ Validators.required ] ],
-        agree            : [ false ]
+        Name     : [ null, [ Validators.required ] ],
+        ParentId : [ null],
+        Group    : [ null],
+        Link     : [ null],
+        Icon     : [ ],
+        Remark   : [ null],
+        Order    : []
       });
+      if(this._name !== '') {
+        this.validateForm.controls['Name'].setValue(this._name.Name);
+        this.validateForm.controls['Group'].setValue(JSON.parse(this._name.ConfigData).group);
+        this.validateForm.controls['Link'].setValue(JSON.parse(this._name.ConfigData).link);
+        this.validateForm.controls['Icon'].setValue(JSON.parse(this._name.ConfigData).icon);
+        this.validateForm.controls['Order'].setValue(this._name.Order);
+        this.validateForm.controls['Remark'].setValue(this._name.Remark);
+      }
     }
 
   getFormControl(name) {

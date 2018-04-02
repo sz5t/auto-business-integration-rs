@@ -89,9 +89,6 @@ export class BsnTableComponent implements OnInit {
             if (ajaxData) {
                 console.log("异步加载表数据load", ajaxData);
                 this.loading = true;
-                this.dataList = ajaxData.Data.rows;
-                this.total = ajaxData.Data.PageCount;
-
                 if (ajaxData.Data) {
                     if (ajaxData.Data.rows) {
                         this.updateEditCacheByLoad(ajaxData.Data.rows);

@@ -434,6 +434,7 @@ export class BsnDataTableComponent implements OnInit {
             newdataList.push(row);
         });
         this.tempParameters["dataList"] = JSON.stringify(newdataList);
+        this.tempParameters["arrayDataList"] = newdataList;
         console.log(this.tempParameters["dataList"]);
         if (this.config.toolbar) {
             const index = this.config.toolbar.findIndex(item => item.name === "saveRow");

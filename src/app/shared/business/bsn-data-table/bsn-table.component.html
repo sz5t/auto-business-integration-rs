@@ -4,7 +4,7 @@
     </ng-container>
 </div>
 <!-- [nzDataSource]="dataList"nzAjaxData -->
-<nz-table #nzTable [nzAjaxData]="dataList"  [nzShowSizeChanger]="true" [nzTotal]="total" [(nzPageIndex)]="pi" (nzPageIndexChange)="load('load')"
+<nz-table #nzTable [nzAjaxData]="dataList"  [nzShowSizeChanger]="true" [nzTotal]="total" [(nzPageIndex)]="pi" (nzPageIndexChange)="load('load')" [nzLoading]="config.nzLoading"
     [(nzPageSize)]="ps" (nzPageSizeChange)="load('load')" [nzShowTotal]="config.nzShowTotal"  [nzPageSizeSelectorValues]="config.nzPageSizeSelectorValues" nzBordered>
     <thead nz-thead>
         <tr>

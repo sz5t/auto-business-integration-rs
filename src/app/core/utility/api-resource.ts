@@ -157,6 +157,7 @@ export class APIResource {
    * @type {string}
    */
   public static SysCommonCode = 'SinoForce.SysData.SysCommonCode';
+  public static SysDataLink = 'SinoForce.SysData.SysDataLink';
   public static CommonCode = 'SinoForce.AppData.CommonCode';
   /**
    * 受限资源描述信息

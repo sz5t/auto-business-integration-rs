@@ -56,7 +56,7 @@ export class BsnDataTableComponent implements OnInit {
      */
     _formEvent = {
         selectRow: [],
-        reLoad: [],     
+        reLoad: [],
         selectRowBySetValue:[]
     };
 
@@ -83,7 +83,7 @@ export class BsnDataTableComponent implements OnInit {
         .subscribe(data => {
             this.loading = false;
             this.dataList = data.results;
-        }); 
+        });
         */
         if (type == "load") {
             const ajaxData = await this.execAjax(this.config.ajaxConfig, null, 'load');
@@ -125,14 +125,14 @@ export class BsnDataTableComponent implements OnInit {
           }); */
 
     }
-    isString(obj) { //判断对象是否是字符串  
+    isString(obj) { //判断对象是否是字符串
         return Object.prototype.toString.call(obj) === "[object String]";
     }
     /**
      * 执行异步数据
      * @param p 路由参数信息
      * @param ajaxType 异步请求类别，post、put、get
-     * @param componentValue 
+     * @param componentValue
      */
     async execAjax(p?, componentValue?, type?) {
         const params = {
@@ -339,7 +339,7 @@ export class BsnDataTableComponent implements OnInit {
     // copyData = [...this.dataList];
     sortMap = {};
     /**
-     * 排序 
+     * 排序
      */
     sort(sortName, value) {
         this.sortName = sortName;
@@ -471,8 +471,8 @@ export class BsnDataTableComponent implements OnInit {
     }
     /**
      * 选中行
-     * @param data 
-     * @param edit 
+     * @param data
+     * @param edit
      */
     selectRow(data?, edit?) {
 
@@ -528,7 +528,7 @@ export class BsnDataTableComponent implements OnInit {
 
     /**
      * 动态执行方法
-     * @param name 
+     * @param name
      */
     execFun(name?) {
         switch (name) {
@@ -586,7 +586,12 @@ export class BsnDataTableComponent implements OnInit {
     initComponentValue(data?) {
         for (const d in data) {
             if (d === 'dataList') {
+              if(!data[d]){
+                this.dataList = [];
+              }else {
                 this.dataList = JSON.parse(data[d]) ? JSON.parse(data[d]) : [];
+              }
+
                 this.total = this.dataList.length;
             }
             else {

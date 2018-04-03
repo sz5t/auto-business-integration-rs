@@ -24,19 +24,19 @@ export class SqlSettingComponent implements OnInit {
     'nzBordered': false,// 是否显示边框
     'ajaxConfig': {
       'url': {
-        parent:'SysDataCategoryLink',
+        parent:'AppModuleConfig',
         child: 'DbCommandConfig',
         params: [
           {
-            type: 'value', value: '_parent'
+            type: 'tempValue', valueName: '_moduleId'
           }
         ]
         //self
       },
       'ajaxType': 'get',
       'params': [
-        { name: '_parent.LeftId', type: 'tempValue', valueName: '_moduleId', value: '' },
-        { name: '_parent.LinkNote', type: 'value', value: 'sql' },
+       /* { name: '_parent.LeftId', type: 'tempValue', valueName: '_moduleId', value: '' },
+        { name: '_parent.LinkNote', type: 'value', value: 'sql' },*/
       ]
     },
     'componentType': {
@@ -46,17 +46,21 @@ export class SqlSettingComponent implements OnInit {
     },
     'relation': [
       {
-        'relationViewId': 'operation_sqlColumns',
+        'relationViewId': 'viewId_sqlSetting',
         'relationSendContent': [
-         /* {
-            name: 'selectRow',
-            sender: 'operation_sqlColumns',
-            receiver: 'operation_sqlParams',
+          {
+            name: 'selectRowBySetValue',
+            sender: 'viewId_sqlSetting',
+            receiver: 'viewId_sqlParams',
             relationData: {
-              name: 'refreshAsChild',
-              params: [{ pid: 'key', cid: '_parentId' }]
+              name: 'initComponentValue',
+              params: [
+                { pid: 'Id', cid: 'parentId' },
+                { pid: 'Id', cid: '_id' },
+                { pid: 'ParameterList', cid: 'dataList'}
+              ]
             },
-          }*/
+          }
         ],
         'relationReceiveContent': []
       }
@@ -157,7 +161,7 @@ export class SqlSettingComponent implements OnInit {
         }
       },
       {
-        title: '应用类型', field: 'References', width: 80,
+        title: '引用类型', field: 'References', width: 80,
         editor: {
           type: 'input',
           field: 'References',
@@ -185,8 +189,222 @@ export class SqlSettingComponent implements OnInit {
     ],
     'toolbar': [
       { 'name': 'refresh', 'class': 'editable-add-btn', 'text': '刷新' },
-      { 'name': 'addRow', 'class': 'editable-add-btn', 'text': '新增' },
-      { 'name': 'updateRow', 'class': 'editable-add-btn', 'text': '修改' },
+      {
+        'name': 'addRow', 'class': 'editable-add-btn', 'text': '新增数据'
+      },
+      {
+        'name': 'new', 'class': 'editable-add-btn', 'text': '新增SQL',
+        'operation': {
+          'rows': [
+            {
+              'row': {
+                'cols': [
+                  {
+                    'span': 24,
+                    'size': {
+                      'nzXs': 24,
+                      'nzSm': 24,
+                      'nzMd': 24,
+                      'nzLg': 24,
+                      'ngXl': 24
+                    },
+                    'viewCfg': [
+                      {
+                        'component': 'view_form',
+                        'config':[
+                          {
+                            'type': 'input',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'text',
+                            'name': 'Name',
+                            'label': '名称',
+                            'placeholder': '',
+                            'disabled': false,
+                            'readonly': false,
+                            'size': 'default'
+                          },
+                          {
+                            'type': 'input',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'text',
+                            'name': 'ScriptText',
+                            'label': '脚本',
+                            'placeholder': '',
+                            'disabled': false,
+                            'readonly': false,
+                            'size': 'default'
+                          },
+                          {
+                            'type': 'select',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'submit',
+                            'name': 'DbObjType',
+                            'label': '脚本类型',
+                            'notFoundContent': '',
+                            'selectModel': false,
+                            'showSearch': true,
+                            'placeholder': '--请选择--',
+                            'disabled': false,
+                            'size': 'default',
+                            'options': [
+                              {
+                                'label': 'SQL',
+                                'value': 'sql'
+                              },
+                              {
+                                'label': '视图',
+                                'value': 'view'
+                              },
+                              {
+                                'label': '存储过程',
+                                'value': 'procedure'
+                              }
+                            ]
+                          },
+                          {
+                            'type': 'select',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'submit',
+                            'name': 'DbObjState',
+                            'label': '对象状态',
+                            'notFoundContent': '',
+                            'selectModel': false,
+                            'showSearch': true,
+                            'placeholder': '--请选择--',
+                            'disabled': false,
+                            'size': 'default',
+                            'options': [
+                              {
+                                'label': '未创建',
+                                'value': '未创建'
+                              },
+                              {
+                                'label': '已创建',
+                                'value': '已创建'
+                              }
+                            ]
+                          },
+                          {
+                            'type': 'select',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'submit',
+                            'name': 'IssueFlag',
+                            'label': '发布状态',
+                            'notFoundContent': '',
+                            'selectModel': false,
+                            'showSearch': true,
+                            'placeholder': '--请选择--',
+                            'disabled': false,
+                            'size': 'default',
+                            'options': [
+                              {
+                                'label': '浏览状态',
+                                'value': 'normal'
+                              },
+                              {
+                                'label': '新增状态',
+                                'value': 'new'
+                              },
+                              {
+                                'label': '编辑状态',
+                                'value': 'edit'
+                              }
+                            ]
+                          },
+                          {
+                            'type': 'input',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'text',
+                            'name': 'ResultType',
+                            'label': '结果类型',
+                            'placeholder': '',
+                            'disabled': false,
+                            'readonly': false,
+                            'size': 'default'
+                          },
+                          {
+                            'type': 'select',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'submit',
+                            'name': 'ShareScope',
+                            'label': '应用范围',
+                            'notFoundContent': '',
+                            'selectModel': false,
+                            'showSearch': true,
+                            'placeholder': '--请选择--',
+                            'disabled': false,
+                            'size': 'default',
+                            'options': [
+                              {
+                                'label': '公有',
+                                'value': true
+                              },
+                              {
+                                'label': '私有',
+                                'value': false
+                              }
+                            ]
+                          },
+                          {
+                            'type': 'input',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'text',
+                            'name': 'References',
+                            'label': '引用',
+                            'placeholder': '',
+                            'disabled': false,
+                            'readonly': false,
+                            'size': 'default'
+                          },
+                          {
+                            'type': 'select',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'submit',
+                            'name': 'Enabled',
+                            'label': '是否启用',
+                            'notFoundContent': '',
+                            'selectModel': false,
+                            'showSearch': true,
+                            'placeholder': '--请选择--',
+                            'disabled': false,
+                            'size': 'default',
+                            'options': [
+                              {
+                                'label': '启用',
+                                'value': true
+                              },
+                              {
+                                'label': '禁用',
+                                'value': false
+                              }
+                            ]
+                          }
+                        ],
+                        'dataList':[]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        'name': 'update', 'class': 'editable-add-btn', 'text': '修改',
+        'operation': {
+
+        }
+      },
       { 'name': 'deleteRow', 'class': 'editable-add-btn', 'text': '删除' },
       {
         'name': 'saveRow', 'class': 'editable-add-btn', 'text': '保存' ,
@@ -215,7 +433,7 @@ export class SqlSettingComponent implements OnInit {
               ]
             },
             {
-              'url': 'SysDataCategoryLink',
+              'url': 'SysDataLink',
               'ajaxType': 'post',
               'params': [
                 { name: 'LeftId', type: 'tempValue', valueName: '_moduleId', value: '' },
@@ -238,7 +456,356 @@ export class SqlSettingComponent implements OnInit {
     ]
   };
   _paramDataConfig = {
+    'viewId': 'viewId_sqlParams',
+    'keyId': 'key',
+    'nzIsPagination': true, // 是否分页
+    'nzShowTotal': true,// 是否显示总数据量
+    'pageSize': 5, //默认每页数据条数
+    'nzPageSizeSelectorValues': [5, 10, 20, 30, 40, 50],
+    'nzLoading': true, // 是否显示加载中
+    'nzBordered': false,// 是否显示边框
+    'componentType': {
+      'parent': false,
+      'child': true,
+      'own': true
+    },
+    'relation': [
+      {
+        'relationViewId': 'viewId_sqlParams',
+        'relationSendContent': [],
+        'relationReceiveContent': []
+      }
+    ],
+    'columns': [
+      {
+        title: '主键', field: 'key', width: 'auto', hidden: true
+      },
+      {
+        title: '参数名称', field: 'ParameterName', width: 80,
+        editor: {
+          type: 'input',
+          field: 'ParameterName',
+          options: {
+            'type': 'input',
+            'labelSize': '6',
+            'controlSize': '10',
+            'inputType': 'text',
+          }
+        }
+      },
+      {
+        title: '数据类型', field: 'DbType', width: 80,
+        editor: {
+          type: 'input',
+          field: 'DbType',
+          options: {
+            'type': 'input',
+            'labelSize': '6',
+            'controlSize': '10',
+            'inputType': 'text',
+          }
+        }
+      },
+      {
+        title: '长度', field: 'Length', width: 80,
+        editor: {
+          type: 'input',
+          field: 'Length',
+          options: {
+            'type': 'input',
+            'labelSize': '6',
+            'controlSize': '10',
+            'inputType': 'text',
+          }
+        }
+      },
+      {
+        title: '默认值', field: 'DefaultValue', width: 80,
+        editor: {
+          type: 'input',
+          field: 'DefaultValue',
+          options: {
+            'type': 'input',
+            'labelSize': '6',
+            'controlSize': '10',
+            'inputType': 'text',
+          }
+        }
+      },
+      {
+        title: '参数类型', field: 'Direction', width: 80,
+        editor: {
+          type: 'input',
+          field: 'IssueFlag',
+          options: {
+            'type': 'input',
+            'labelSize': '6',
+            'controlSize': '10',
+            'inputType': 'text',
+          }
+        }
+      },
+      {
+        title: '结果类型', field: 'ValueParameter', width: 80,
+        editor: {
+          type: 'input',
+          field: 'ValueParameter',
+          options: {
+            'type': 'input',
+            'labelSize': '6',
+            'controlSize': '10',
+            'inputType': 'text',
+          }
+        }
+      },
+      {
+        title: '应用范围', field: 'ValueSource', width: 80,
+        editor: {
+          type: 'input',
+          field: 'ValueSource',
+          options: {
+            'type': 'input',
+            'labelSize': '6',
+            'controlSize': '10',
+            'inputType': 'text',
+          }
+        }
+      }
+    ],
+    'toolbar': [
+      { 'name': 'refresh', 'class': 'editable-add-btn', 'text': '刷新' },
+      {
+        'name': 'addRow', 'class': 'editable-add-btn', 'text': '新增数据'
+      },
+      {
+        'name': 'new', 'class': 'editable-add-btn', 'text': '新增',
+        'operation': {
+          'rows': [
+            {
+              'row': {
+                'cols': [
+                  {
+                    'span': 24,
+                    'size': {
+                      'nzXs': 24,
+                      'nzSm': 24,
+                      'nzMd': 24,
+                      'nzLg': 24,
+                      'ngXl': 24
+                    },
+                    'viewCfg': [
+                      {
+                        'component': 'view_form',
+                        'config':[
+                          {
+                            'type': 'input',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'text',
+                            'name': 'Name',
+                            'label': '名称',
+                            'placeholder': '',
+                            'disabled': false,
+                            'readonly': false,
+                            'size': 'default'
+                          },
+                          {
+                            'type': 'input',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'text',
+                            'name': 'ScriptText',
+                            'label': '脚本',
+                            'placeholder': '',
+                            'disabled': false,
+                            'readonly': false,
+                            'size': 'default'
+                          },
+                          {
+                            'type': 'select',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'submit',
+                            'name': 'DbObjType',
+                            'label': '脚本类型',
+                            'notFoundContent': '',
+                            'selectModel': false,
+                            'showSearch': true,
+                            'placeholder': '--请选择--',
+                            'disabled': false,
+                            'size': 'default',
+                            'options': [
+                              {
+                                'label': 'SQL',
+                                'value': 'sql'
+                              },
+                              {
+                                'label': '视图',
+                                'value': 'view'
+                              },
+                              {
+                                'label': '存储过程',
+                                'value': 'procedure'
+                              }
+                            ]
+                          },
+                          {
+                            'type': 'select',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'submit',
+                            'name': 'DbObjState',
+                            'label': '对象状态',
+                            'notFoundContent': '',
+                            'selectModel': false,
+                            'showSearch': true,
+                            'placeholder': '--请选择--',
+                            'disabled': false,
+                            'size': 'default',
+                            'options': [
+                              {
+                                'label': '未创建',
+                                'value': '未创建'
+                              },
+                              {
+                                'label': '已创建',
+                                'value': '已创建'
+                              }
+                            ]
+                          },
+                          {
+                            'type': 'select',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'submit',
+                            'name': 'IssueFlag',
+                            'label': '发布状态',
+                            'notFoundContent': '',
+                            'selectModel': false,
+                            'showSearch': true,
+                            'placeholder': '--请选择--',
+                            'disabled': false,
+                            'size': 'default',
+                            'options': [
+                              {
+                                'label': '浏览状态',
+                                'value': 'normal'
+                              },
+                              {
+                                'label': '新增状态',
+                                'value': 'new'
+                              },
+                              {
+                                'label': '编辑状态',
+                                'value': 'edit'
+                              }
+                            ]
+                          },
+                          {
+                            'type': 'input',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'text',
+                            'name': 'ResultType',
+                            'label': '结果类型',
+                            'placeholder': '',
+                            'disabled': false,
+                            'readonly': false,
+                            'size': 'default'
+                          },
+                          {
+                            'type': 'select',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'submit',
+                            'name': 'ShareScope',
+                            'label': '应用范围',
+                            'notFoundContent': '',
+                            'selectModel': false,
+                            'showSearch': true,
+                            'placeholder': '--请选择--',
+                            'disabled': false,
+                            'size': 'default',
+                            'options': [
+                              {
+                                'label': '公有',
+                                'value': true
+                              },
+                              {
+                                'label': '私有',
+                                'value': false
+                              }
+                            ]
+                          },
+                          {
+                            'type': 'input',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'text',
+                            'name': 'References',
+                            'label': '引用',
+                            'placeholder': '',
+                            'disabled': false,
+                            'readonly': false,
+                            'size': 'default'
+                          },
+                          {
+                            'type': 'select',
+                            'labelSize': '6',
+                            'controlSize': '10',
+                            'inputType': 'submit',
+                            'name': 'Enabled',
+                            'label': '是否启用',
+                            'notFoundContent': '',
+                            'selectModel': false,
+                            'showSearch': true,
+                            'placeholder': '--请选择--',
+                            'disabled': false,
+                            'size': 'default',
+                            'options': [
+                              {
+                                'label': '启用',
+                                'value': true
+                              },
+                              {
+                                'label': '禁用',
+                                'value': false
+                              }
+                            ]
+                          }
+                        ],
+                        'dataList':[]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        'name': 'update', 'class': 'editable-add-btn', 'text': '修改',
+        'operation': {
 
+        }
+      },
+      { 'name': 'deleteRow', 'class': 'editable-add-btn', 'text': '删除' },
+      {
+        'name': 'saveRow', 'class': 'editable-add-btn', 'text': '保存' ,
+        'ajaxConfig': {
+          update: {
+            'url': 'DbCommandConfig',
+            'ajaxType': 'put',
+            'params': [
+              { name: 'Id', type: 'tempValue', valueName: '_id', value: '' },
+              { name: 'ParameterList', type: 'tempValue', valueName: 'arrayDataList', value: '' }
+            ]
+          }
+        },
+      },
+      { 'name': 'cancelRow', 'class': 'editable-add-btn', 'text': '取消' }
+    ]
   };
   constructor(
     private apiService: ApiService,

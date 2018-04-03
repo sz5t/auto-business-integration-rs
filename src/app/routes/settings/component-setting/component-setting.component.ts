@@ -757,14 +757,14 @@ export class ComponentSettingComponent implements OnInit {
         const params = {
             ScriptText: sql
         };
-        return this._http.postProj(APIResource.DbCommonConfig, params).toPromise();
+        return this._http.postProj(APIResource.DbCommandConfig, params).toPromise();
     }
     async  updateSqlByApi(sql?, Id?) {
         const params = {
             Id: Id,
             ScriptText: sql
         };
-        return this._http.putProj(APIResource.DbCommonConfig, params).toPromise();
+        return this._http.putProj(APIResource.DbCommandConfig, params).toPromise();
     }
     /**
      * 获取sql对应的字段描述
@@ -828,7 +828,7 @@ export class ComponentSettingComponent implements OnInit {
           };
           console.log("选中行发消息事件", receiver);
           this.relativeMessage.sendMessage({ type: 'initParameters' }, receiver);
-      
+
     }
 
     _changeValue($event) {
@@ -1289,7 +1289,7 @@ export class ComponentSettingComponent implements OnInit {
                             'inputType': 'text',
                         }
                     }
-                }  
+                }
             ],
             'toolbar': [
                 { 'name': 'refresh', 'class': 'editable-add-btn', 'text': '刷新' },

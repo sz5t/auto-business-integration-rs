@@ -590,7 +590,7 @@ export class BsnDataTableComponent implements OnInit {
               if(!data[d]){
                 this.dataList = [];
               }else {
-                this.dataList = JSON.parse(data[d]) ? JSON.parse(data[d]) : [];
+                this.dataList = data[d];
               }
 
                 this.total = this.dataList.length;

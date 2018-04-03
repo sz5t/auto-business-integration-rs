@@ -92,7 +92,7 @@ export class SqlSettingComponent implements OnInit {
         }
       },
       {
-        title: '脚本类型', field: 'DbOjbType', width: 80,
+        title: '脚本类型', field: 'DbObjType', width: 80,
         editor: {
           type: 'input',
           field: 'DbOjbType',
@@ -105,10 +105,10 @@ export class SqlSettingComponent implements OnInit {
         }
       },
       {
-        title: '对象状态', field: 'DbOjbState', width: 80,
+        title: '对象状态', field: 'DbObjState', width: 80,
         editor: {
           type: 'input',
-          field: 'DbOjbState',
+          field: 'DbObjState',
           options: {
             'type': 'input',
             'labelSize': '6',

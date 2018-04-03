@@ -93,7 +93,7 @@ export class BsnTableComponent implements OnInit {
                     if (ajaxData.Data.Rows) {
                         this.updateEditCacheByLoad(ajaxData.Data.Rows);
                         this.dataList = ajaxData.Data.Rows;
-                        this.total = ajaxData.Data.PageCount;
+                        this.total = ajaxData.Data.Total;
                     }
                     else {
                         this.dataList = [];

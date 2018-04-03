@@ -56,7 +56,8 @@ export class BsnTableComponent implements OnInit {
      */
     _formEvent = {
         selectRow: [], //行选中
-        reLoad: []      //重新加载
+        reLoad: [],      //重新加载
+        selectRowBySetValue: []
     };
 
 
@@ -65,7 +66,7 @@ export class BsnTableComponent implements OnInit {
         if (typeof pi !== 'undefined') {
             this.pi = pi || 1;
         }
-console.log('当前页',this.pi);
+        console.log('当前页', this.pi);
         this.loading = true;
         this._allChecked = false;
         this._indeterminate = false;
@@ -91,11 +92,11 @@ console.log('当前页',this.pi);
                 this.loading = true;
                 if (ajaxData.Data) {
                     if (ajaxData.Data.Rows) {
-                        console.log("加载成功",ajaxData.Data.Total);
+                        console.log("加载成功", ajaxData.Data.Total);
                         this.updateEditCacheByLoad(ajaxData.Data.Rows);
                         this.dataList = ajaxData.Data.Rows;
                         this.total = ajaxData.Data.Total;
-                        console.log('总页数',this.total);
+                        console.log('总页数', this.total);
                     }
                     else {
                         this.dataList = [];
@@ -127,10 +128,10 @@ console.log('当前页',this.pi);
 
     }
 
-    nzPageIndexChange(data?){
+    nzPageIndexChange(data?) {
 
-        console.log("页面变化",data);
-        console.log("页面变化-当前页",this.pi);
+        console.log("页面变化", data);
+        console.log("页面变化-当前页", this.pi);
     }
 
     isString(obj) { //判断对象是否是字符串
@@ -193,7 +194,7 @@ console.log('当前页',this.pi);
                     params[param.name] = componentValue[param.valueName];
                 }
             });
-            console.log('ppppppppppp',p)
+            console.log('ppppppppppp', p)
             if (this.isString(p.url)) {
                 url = APIResource[p.url]
             }
@@ -457,9 +458,9 @@ console.log('当前页',this.pi);
         dataList.forEach(element => {
             let row = {};
 
-                if (element.selected) {
-                    selectRowData=JSON.parse(JSON.stringify(element));
-                }
+            if (element.selected) {
+                selectRowData = JSON.parse(JSON.stringify(element));
+            }
 
         });
         const newdataList = [];
@@ -493,12 +494,12 @@ console.log('当前页',this.pi);
                             const ajaxData = await this.execAjax(pconfig["add"][i], selectRowData);
                             if (ajaxData) {
 
-                              //console.log(ajaxData, pconfig["add"][i]);
-                              if( pconfig["add"][i]["output"]) {
-                                pconfig["add"][i]["output"].forEach(out => {
-                                  this.tempParameters[out.name]=ajaxData.Data[out["dataName"]];
-                                });
-                              }
+                                //console.log(ajaxData, pconfig["add"][i]);
+                                if (pconfig["add"][i]["output"]) {
+                                    pconfig["add"][i]["output"].forEach(out => {
+                                        this.tempParameters[out.name] = ajaxData.Data[out["dataName"]];
+                                    });
+                                }
 
                                 console.log("新增保存成功循环", ajaxData);
                                 this.dataList = JSON.parse(JSON.stringify(this.dataList));
@@ -554,6 +555,21 @@ console.log('当前页',this.pi);
 
                 console.log('主子关系字段', parent);
                 const receiver = { name: 'refreshAsChild', receiver: sendEvent.receiver, parent: parent };
+                console.log("选中行发消息事件", receiver);
+                this.relativeMessage.sendMessage({ type: 'relation' }, receiver);
+                console.log("选中行发消息事件over");
+            }
+        });
+        this._formEvent['selectRowBySetValue'].forEach(sendEvent => {
+            if (sendEvent.isRegister === true) {
+                console.log("关系描述", sendEvent);
+                let parent = {};
+                sendEvent.data.params.forEach(element => {
+                    parent[element["cid"]] = data[element["pid"]];
+                });
+
+                console.log('主子关系字段', parent);
+                const receiver = { name: 'initComponentValue', receiver: sendEvent.receiver, parent: parent };
                 console.log("选中行发消息事件", receiver);
                 this.relativeMessage.sendMessage({ type: 'relation' }, receiver);
                 console.log("选中行发消息事件over");
@@ -622,7 +638,18 @@ console.log('当前页',this.pi);
         console.log("初始化参数", this.tempParameters);
         this.load('load');//参数完成后加载刷新
     }
-
+    //初始化组件值
+    initComponentValue(data?) {
+        for (const d in data) {
+            if (d === 'dataList') {
+                this.dataList = JSON.parse(data[d]) ? JSON.parse(data[d]) : [];
+                this.total = this.dataList.length;
+            }
+            else {
+                this.tempParameters[d] = data[d];
+            }
+        }
+    }
     // 解析发布消息
     formSendMessage(data?) {
         // 当操作什么的时候发布消息
@@ -647,7 +674,9 @@ console.log('当前页',this.pi);
                 case 'initParameters':
                     this.initParameters(data.parent);
                     break;
-
+                case 'initComponentValue':
+                    this.initComponentValue(data.parent);
+                    break;
 
             }
         }

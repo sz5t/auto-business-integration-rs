@@ -589,8 +589,15 @@ export class BsnDataTableComponent implements OnInit {
             if (d === 'dataList') {
               if(!data[d]){
                 this.dataList = [];
+                this.updateEditCacheByLoad([]);
               }else {
-                this.dataList = data[d];
+                const _dataList = data[d];
+                _dataList.forEach(item => {
+                    const fieldIdentity = CommonUtility.uuID(6);
+                    item["key"] = fieldIdentity;
+                });
+                this.updateEditCacheByLoad(_dataList);
+                this.dataList=_dataList;
               }
 
                 this.total = this.dataList.length;

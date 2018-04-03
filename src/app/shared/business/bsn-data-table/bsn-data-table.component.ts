@@ -55,8 +55,9 @@ export class BsnDataTableComponent implements OnInit {
      * 事件API
      */
     _formEvent = {
-        selectRow: [], //行选中
-        reLoad: []      //重新加载
+        selectRow: [],
+        reLoad: [],     
+        selectRowBySetValue:[]
     };
 
 
@@ -124,9 +125,9 @@ export class BsnDataTableComponent implements OnInit {
           }); */
 
     }
-    isString(obj){ //判断对象是否是字符串  
-        return Object.prototype.toString.call(obj) === "[object String]";  
-      }  
+    isString(obj) { //判断对象是否是字符串  
+        return Object.prototype.toString.call(obj) === "[object String]";
+    }
     /**
      * 执行异步数据
      * @param p 路由参数信息
@@ -145,7 +146,7 @@ export class BsnDataTableComponent implements OnInit {
                   { name: 'id', type: 'componentValue', valueName: '取值参数名称', value: '' }
               ]
           } */
-          let url;
+        let url;
         let tag = true;
         if (p) {
             p.params.forEach(param => {
@@ -184,38 +185,33 @@ export class BsnDataTableComponent implements OnInit {
                 }
             });
 
-         
-            if(this.isString(p.url)) {
-                url=APIResource[p.url]
-             }
-             else{
-               let pc='null';
-               p.url.params.forEach(param => {
-                   if(param["type"]==='value'){
-                      pc=param.value;
-                   }
-                   else if (param.type == 'GUID') {
-                      const fieldIdentity = CommonUtility.uuID(10);
-                      pc= fieldIdentity;
-                   }
-                   else if (param.type == 'componentValue') {
-                      pc = componentValue.value;
-                   }
-                   else if (param.type == 'tempValue') {
-                      pc = this.tempParameters[param.valueName];
-                   }
-               });
-  
-              url=APIResource[p.url["parent"]]+"/"+pc+"/"+APIResource[p.url["child"]];
-             }
+
+            if (this.isString(p.url)) {
+                url = APIResource[p.url]
+            }
+            else {
+                let pc = 'null';
+                p.url.params.forEach(param => {
+                    if (param["type"] === 'value') {
+                        pc = param.value;
+                    }
+                    else if (param.type == 'GUID') {
+                        const fieldIdentity = CommonUtility.uuID(10);
+                        pc = fieldIdentity;
+                    }
+                    else if (param.type == 'componentValue') {
+                        pc = componentValue.value;
+                    }
+                    else if (param.type == 'tempValue') {
+                        pc = this.tempParameters[param.valueName];
+                    }
+                });
+
+                url = APIResource[p.url["parent"]] + "/" + pc + "/" + APIResource[p.url["child"]];
+            }
         }
         if (p.ajaxType === 'get' && tag) {
             console.log("get参数", params);
-            /*  const dd=await this._http.getProj(APIResource[p.url], params).toPromise();
-             if (dd && dd.Status === 200) {
-                console.log("服务器返回执行成功返回",dd.Data);
-             }
-             console.log("服务器返回",dd); */
 
             return this._http.getProj(url, params).toPromise();
         }
@@ -268,7 +264,7 @@ export class BsnDataTableComponent implements OnInit {
             this.total = this.dataList.length;
         }
         //  this.http.get('/chart/visit').subscribe((res: any) => this.events = res);
-        this.getContent(); //调用方法获取到行内填充数据格式
+        this.getContent();
 
 
     }
@@ -309,7 +305,6 @@ export class BsnDataTableComponent implements OnInit {
         this.dataList[index].selected = selected;
 
         this.editCache[key].edit = false;
-        console.log("saveEdit更新后的数据", this.dataList);
     }
 
     deleteEdit(i: string): void {
@@ -374,9 +369,6 @@ export class BsnDataTableComponent implements OnInit {
         })];
     }
 
-    /**
-     * 获取行内编辑是行填充数据
-     */
     getContent() {
         this.rowContent["key"] = null;
         this.config.columns.forEach(element => {
@@ -431,11 +423,6 @@ export class BsnDataTableComponent implements OnInit {
             }
         });
         const dataList = JSON.parse(JSON.stringify(this.dataList));
-        console.log("saveRow", this.dataList);
-        //创建新json，将checked，select 标签去除，写入到数据库中
-        //需要判断当前是新增or修改=》保存，区别是看初次加载的时候，是否有数据库中有记录标识
-        //当前记录数据集作为子表的时候，子表的一切操作均看是否有主表记录，才可以执行，否则操作均不能执行
-        // 创建新json，将checked，select 标签去除，
         const newdataList = [];
         dataList.forEach(element => {
             let row = {};
@@ -488,28 +475,44 @@ export class BsnDataTableComponent implements OnInit {
      * @param edit 
      */
     selectRow(data?, edit?) {
-        console.log("selectRow", this.dataList);
+
         this.dataList.forEach(item => {
             item.selected = false;
         });
         data.selected = true;// 行选中
+
         // 单选(check=select)，如果是未勾选，第一次点击选中，再次点击取消选中
         // 多选（check=select），如果是未勾选，第一次点击选中，再次点击取消选中
         // 多勾选单选中行（check》select）勾选和行选中各自独立，互不影响
 
         console.log("注册api事件", this._formEvent);
+        console.log("行选中selectRowdata", data);
         this._formEvent['selectRow'].forEach(sendEvent => {
             if (sendEvent.isRegister === true) {
 
                 console.log("关系描述", sendEvent);
                 let parent = {};
-
                 sendEvent.data.params.forEach(element => {
                     parent[element["cid"]] = data[element["pid"]];
                 });
 
                 console.log('主子关系字段', parent);
                 const receiver = { name: 'refreshAsChild', receiver: sendEvent.receiver, parent: parent };
+                console.log("选中行发消息事件", receiver);
+                this.relativeMessage.sendMessage({ type: 'relation' }, receiver);
+                console.log("选中行发消息事件over");
+            }
+        });
+        this._formEvent['selectRowBySetValue'].forEach(sendEvent => {
+            if (sendEvent.isRegister === true) {
+                console.log("关系描述", sendEvent);
+                let parent = {};
+                sendEvent.data.params.forEach(element => {
+                    parent[element["cid"]] = data[element["pid"]];
+                });
+
+                console.log('主子关系字段', parent);
+                const receiver = { name: 'initComponentValue', receiver: sendEvent.receiver, parent: parent };
                 console.log("选中行发消息事件", receiver);
                 this.relativeMessage.sendMessage({ type: 'relation' }, receiver);
                 console.log("选中行发消息事件over");
@@ -579,10 +582,21 @@ export class BsnDataTableComponent implements OnInit {
         this.load('load');//参数完成后加载刷新
     }
 
-    // 解析发布消息
+    //初始化组件值
+    initComponentValue(data?) {
+        for (const d in data) {
+            if (d === 'dataList') {
+                this.dataList = JSON.parse(data[d]) ? JSON.parse(data[d]) : [];
+                this.total = this.dataList.length;
+            }
+            else {
+                this.tempParameters[d] = data[d];
+            }
+        }
+    }
+
+
     formSendMessage(data?) {
-        // 当操作什么的时候发布消息
-        console.log("表单发布消息");
         if (data) {
             if (this._formEvent[data.name]) {
                 this._formEvent[data.name].push({ isRegister: true, receiver: data.receiver, data: data.relationData });
@@ -592,10 +606,8 @@ export class BsnDataTableComponent implements OnInit {
 
     // 接收消息
     formReceiveMessage(data?) {
-        //当操作什么的时候，接收消息
         console.log('表单接收消息', data);
         if (data) {
-            console.log('接收消息方法名称：', data.name);
             switch (data.name) {
                 case 'refreshAsChild':
                     this.refreshAsChild(data.parent);
@@ -603,28 +615,24 @@ export class BsnDataTableComponent implements OnInit {
                 case 'initParameters':
                     this.initParameters(data.parent);
                     break;
-
-
+                case 'initComponentValue':
+                    this.initComponentValue(data.parent);
+                    break;
             }
         }
     }
 
     // 解析关系
     analysisRelation(data?) {
-        // 判断组件的关系是否存在
         if (this.config.relation) {
-            console.log('解析关系信息数据', this.config.relation);
-            // 遍历关系，对于每个组件的
             this.config.relation.forEach(relation => {
                 if (relation.relationSendContent) {
                     relation.relationSendContent.forEach(relationSend => {
                         this.formSendMessage(relationSend);
                     });
                 }
-                // 接收消息 (接收到消息后，触发自己的操作)
                 if (relation.relationReceiveContent) {
                     const subMessage = this.relativeMessage.getMessage().subscribe(value => {
-                        console.log("收到消息", value);
                         switch (value.type.type) {
                             case 'relation':
                                 if (value.data.receiver === this.config.viewId) {

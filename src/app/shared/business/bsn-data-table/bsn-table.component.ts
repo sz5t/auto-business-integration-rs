@@ -532,7 +532,7 @@ console.log('当前页',this.pi);
      * @param edit
      */
     selectRow(data?, edit?) {
-        console.log("selectRow", this.dataList);
+        console.log("selectRow", data);
         this.dataList.forEach(item => {
             item.selected = false;
         });

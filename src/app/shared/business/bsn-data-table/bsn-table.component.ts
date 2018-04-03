@@ -8,7 +8,7 @@ import { RelativeService } from '@core/relative-Service/relative-service';
 
 @Component({
     selector: 'cn-bsn-table,[cn-bsn-table]',
-    templateUrl: './bsn-data-table.component.html',
+    templateUrl: './bsn-table.component.html',
     styles: [
         `
 .table-operations {
@@ -65,7 +65,7 @@ export class BsnTableComponent implements OnInit {
         if (typeof pi !== 'undefined') {
             this.pi = pi || 1;
         }
-
+console.log('当前页',this.pi);
         this.loading = true;
         this._allChecked = false;
         this._indeterminate = false;
@@ -91,24 +91,28 @@ export class BsnTableComponent implements OnInit {
                 this.loading = true;
                 if (ajaxData.Data) {
                     if (ajaxData.Data.Rows) {
+                        console.log("加载成功",ajaxData.Data.Total);
                         this.updateEditCacheByLoad(ajaxData.Data.Rows);
                         this.dataList = ajaxData.Data.Rows;
                         this.total = ajaxData.Data.Total;
+                        console.log('总页数',this.total);
                     }
                     else {
                         this.dataList = [];
                         this.updateEditCacheByLoad([]);
-                        this.total = this.dataList.length;
+                        this.total = 0;
                     }
 
                 }
                 else {
                     this.dataList = [];
+                    this.total = 0;
                     this.updateEditCacheByLoad([]);
                 }
-                console.log("当前记录id", this.tempParameters["_id"]);
+                //console.log("当前记录id", this.tempParameters["_id"]);
             } else {
                 this.dataList = [];
+                this.total = 0;
                 this.updateEditCacheByLoad([]);
             }
         }
@@ -121,6 +125,12 @@ export class BsnTableComponent implements OnInit {
               //this.total=data.Data.Metadata.length;
           }); */
 
+    }
+
+    nzPageIndexChange(data?){
+
+        console.log("页面变化",data);
+        console.log("页面变化-当前页",this.pi);
     }
 
     isString(obj) { //判断对象是否是字符串

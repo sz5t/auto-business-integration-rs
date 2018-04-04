@@ -86,10 +86,11 @@ export class BsnTableComponent implements OnInit {
         });
         */
         if (type == "load") {
+          this.loading = true;
             const ajaxData = await this.execAjax(this.config.ajaxConfig, null, 'load');
             if (ajaxData) {
                 console.log("异步加载表数据load", ajaxData);
-                this.loading = true;
+
                 if (ajaxData.Data) {
                     if (ajaxData.Data.Rows) {
                         console.log("加载成功", ajaxData.Data.Total);
@@ -116,6 +117,7 @@ export class BsnTableComponent implements OnInit {
                 this.total = 0;
                 this.updateEditCacheByLoad([]);
             }
+            this.loading = false;
         }
 
         // this.updateEditCache();
@@ -577,7 +579,7 @@ export class BsnTableComponent implements OnInit {
         });
     }
 
-    userNameChange(data?) {
+    valueChange(data?) {
         //console.log('子页面', data);
         const index = this.dataList.findIndex(item => item.key === data.key);
         this.editCache[data.key].data[data.name] = data.data;

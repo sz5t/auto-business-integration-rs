@@ -115,6 +115,7 @@ export class BsnDataTableComponent implements OnInit {
                 this.dataList = [];
                 this.updateEditCacheByLoad([]);
             }
+            this.loading = false;
         }
 
         // this.updateEditCache();
@@ -522,7 +523,7 @@ export class BsnDataTableComponent implements OnInit {
         });
     }
 
-    userNameChange(data?) {
+    valueChange(data?) {
         //console.log('子页面', data);
         const index = this.dataList.findIndex(item => item.key === data.key);
         this.editCache[data.key].data[data.name] = data.data;

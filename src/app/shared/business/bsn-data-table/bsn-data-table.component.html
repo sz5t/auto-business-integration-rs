@@ -4,7 +4,7 @@
     </ng-container>
 </div>
 <!-- [nzDataSource]="dataList"nzAjaxData -->
-<nz-table #nzTable [nzDataSource]="dataList"  [nzShowSizeChanger]="true" [nzTotal]="total" [(nzPageIndex)]="pi" (nzPageIndexChange)="load('load')" [nzLoading]="config.nzLoading"
+<nz-table #nzTable [nzDataSource]="dataList"  [nzShowSizeChanger]="true" [nzTotal]="total" [(nzPageIndex)]="pi" (nzPageIndexChange)="load('load')" [nzLoading]="loading"
     [(nzPageSize)]="ps" (nzPageSizeChange)="load('load')" [nzShowTotal]="config.nzShowTotal"  [nzPageSizeSelectorValues]="config.nzPageSizeSelectorValues" nzBordered>
     <thead nz-thead>
         <tr>
@@ -34,9 +34,9 @@
                             <div *ngIf="!editCache[data.key].edit">
                                 {{data[col.field]}}
                             </div>
-                            <ng-container CnGridEditorDirective *ngIf="editCache[data.key].edit" [config]="col.editor.options" [value]="{key:data.key,name:col.editor.field,data:editCache[data.key].data[col.editor.field]}"
-                                (updateValue)="userNameChange($event)">
-                            </ng-container>
+                          <ng-container [bsnData]="tempParameters" [rowData]="data" CnGridEditorDirective *ngIf="editCache[data.key].edit" [config]="col.editor.options" [value]="{key:data.key,name:col.editor.field,data:editCache[data.key].data[col.editor.field]}"
+                                        (updateValue)="valueChange($event)">
+                          </ng-container>
                         </ng-container>
                         <ng-container *ngIf="!col.editor">
                             {{data[col.field]}}
@@ -49,5 +49,8 @@
 
     </tbody>
 </nz-table>
+<<<<<<< HEAD
 <!-- [nzBody]="modal.nzBody"   [nzConfirmLoading]="modal.nzConfirmLoading" -->
 
+=======
+>>>>>>> 20e607c253360368b5a672abda7643c7f9e00f8d

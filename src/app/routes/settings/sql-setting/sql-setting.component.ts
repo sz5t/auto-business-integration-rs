@@ -546,7 +546,7 @@ export class SqlSettingComponent implements OnInit {
         }
       },
       {
-        title: '结果类型', field: 'ValueParameter', width: 80,
+        title: '取值参数', field: 'ValueParameter', width: 80,
         editor: {
           type: 'input',
           field: 'ValueParameter',
@@ -559,7 +559,7 @@ export class SqlSettingComponent implements OnInit {
         }
       },
       {
-        title: '应用范围', field: 'ValueSource', width: 80,
+        title: '参数来源', field: 'ValueSource', width: 80,
         editor: {
           type: 'input',
           field: 'ValueSource',

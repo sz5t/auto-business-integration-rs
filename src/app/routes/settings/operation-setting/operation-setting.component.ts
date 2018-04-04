@@ -273,7 +273,10 @@ export class OperationSettingComponent implements OnInit, OnDestroy {
                               receiver: 'operation_sqlParams',
                               relationData: {
                                 name: 'refreshAsChild',
-                                params: [{ pid: 'key', cid: '_parentId' }]
+                                params: [
+                                  { pid: 'key', cid: '_parentId' },
+                                  { pid: 'ScriptText', cid: '_scriptText' },
+                                ]
                               },
                             }
                           ],
@@ -284,15 +287,31 @@ export class OperationSettingComponent implements OnInit, OnDestroy {
                             title: '主键', field: 'key', width: 'auto', hidden: true
                           },
                           {
-                            title: 'SQL 语句', field: 'sqlText', width: 80,
+                            title: 'SQL 语句', field: 'ScriptText', width: 80,
                             editor: {
                               type: 'input',
-                              field: 'sqlText',
+                              field: 'ScriptText',
                               options: {
-                                'type': 'input',
+                                'type': 'select',
                                 'labelSize': '6',
                                 'controlSize': '10',
+                                'width': '120px',
                                 'inputType': 'text',
+                                'labelName':'Name',
+                                'valueName':'Id',
+                                'ajaxConfig': {
+                                  url: {
+                                    parent:'AppModuleConfig',
+                                    child: 'DbCommandConfig',
+                                    params: [
+                                      {
+                                        type: 'tempValue', valueName: '_moduleId'
+                                      }
+                                    ]
+                                  },
+                                  ajaxType:'get',
+                                  params: []
+                                }
                               }
                             }
                           },
@@ -365,6 +384,9 @@ export class OperationSettingComponent implements OnInit, OnDestroy {
                                 ]
                               }
                             }
+                          },
+                          {
+                            title: '', field: 'Id', width: 80, hidden: true,
                           }
                         ],
                         'toolbar': [
@@ -440,14 +462,28 @@ export class OperationSettingComponent implements OnInit, OnDestroy {
                             title: '参数编号', field: 'paramId', width: 80
                           },
                           {
-                            title: '参数名称', field: 'paramName', width: 80, hidden: false,
+                            title: '参数名称', field: 'ParameterName', width: 80, hidden: false,
                             editor: {
                               type: 'input',
-                              field: 'paramName',
+                              field: 'ParameterName',
                               options: {
-                                'type': 'input',
+                                'type': 'select',
+                                'labelSize': '6',
                                 'controlSize': '10',
+                                'width': '120px',
                                 'inputType': 'text',
+                                'labelName':'Id',
+                                'valueName':'ParameterList',
+                                'valueType': 'list',
+                                'ajaxConfig': {
+                                  url: 'DbCommandConfig',
+                                  ajaxType:'get',
+                                  params: [
+                                    {
+                                      name:'Id', type: 'tempValue', valueName: '_scriptText'
+                                    }
+                                  ]
+                                }
                               }
                             }
                           },
@@ -492,49 +528,45 @@ export class OperationSettingComponent implements OnInit, OnDestroy {
                           {
                             title: '参数类型', field: 'paramDataType', width: 80, hidden: false,
                             editor: {
-                              type: 'input',
-                              field: 'age',
-                              editor: {
-                                type: 'select',
-                                field: 'paramDataType',
-                                options: {
-                                  'type': 'select',
-                                  'labelSize': '6',
-                                  'controlSize': '10',
-                                  'inputType': 'submit',
-                                  'name': 'paramDataType',
-                                  'label': '',
-                                  'notFoundContent': '',
-                                  'selectModel': false,
-                                  'showSearch': true,
-                                  'placeholder': '-请选择-',
-                                  'disabled': false,
-                                  'size': 'default',
-                                  'clear': true,
-                                  'width': '60px',
-                                  'options': [
-                                    {
-                                      'label': '整型',
-                                      'value': '1',
-                                      'disabled': false
-                                    },
-                                    {
-                                      'label': '字符',
-                                      'value': '2',
-                                      'disabled': false
-                                    },
-                                    {
-                                      'label': '日期',
-                                      'value': '2',
-                                      'disabled': false
-                                    },
-                                    {
-                                      'label': '浮点',
-                                      'value': '2',
-                                      'disabled': false
-                                    }
-                                  ]
-                                }
+                              type: 'select',
+                              field: 'paramDataType',
+                              options: {
+                                'type': 'select',
+                                'labelSize': '6',
+                                'controlSize': '10',
+                                'inputType': 'submit',
+                                'name': 'paramDataType',
+                                'label': '',
+                                'notFoundContent': '',
+                                'selectModel': false,
+                                'showSearch': true,
+                                'placeholder': '-请选择-',
+                                'disabled': false,
+                                'size': 'default',
+                                'clear': true,
+                                'width': '60px',
+                                'options': [
+                                  {
+                                    'label': '整型',
+                                    'value': '1',
+                                    'disabled': false
+                                  },
+                                  {
+                                    'label': '字符',
+                                    'value': '2',
+                                    'disabled': false
+                                  },
+                                  {
+                                    'label': '日期',
+                                    'value': '2',
+                                    'disabled': false
+                                  },
+                                  {
+                                    'label': '浮点',
+                                    'value': '2',
+                                    'disabled': false
+                                  }
+                                ]
                               }
                             }
                           },
@@ -1742,7 +1774,8 @@ export class OperationSettingComponent implements OnInit, OnDestroy {
       receiver: 'operation_sqlColumns' ,
       parent: {
         _Id: event.node.data.id,
-        _optType: 'opt_sqlList'
+        _optType: 'opt_sqlList',
+        _moduleId: this._funcValue[this._funcValue.length -1]
       }
     };
     console.log("选中行发消息事件", receiver);

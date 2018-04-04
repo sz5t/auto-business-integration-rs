@@ -2,14 +2,20 @@ import {Component, Injectable, OnInit} from '@angular/core';
 import {APIResource} from '@core/utility/api-resource';
 import {ApiService} from '@core/utility/api-service';
 import {NzMessageService, NzModalService} from 'ng-zorro-antd';
-import {AppModuleConfig} from '../../../model/APIModel/AppModuleConfig';
-import {CommonUtility} from '@core/utility/common-utility';
 import { ModalBaseComponent } from './modal-base.component';
+import {CacheService} from '@delon/cache';
 
 
 @Injectable()
 export class RandomBaseService {
   randomBaseUrl = APIResource.AppModuleConfig;
+
+  moduleServiceUrl = `${APIResource.AppModuleConfig}/_root/${APIResource.AppModuleConfig}?_recursive=true&_deep=4&_root.ApplyId=3935eb43532d435398d5189d5ece0f5d&_root.parentid=in("",null)`;
+  getModuleTree(pageIndex = 1, pageSize = 2, sortField, sortOrder) {
+    return this.http.get(`${this.moduleServiceUrl}` , {
+      _page: pageIndex, _rows: pageSize, _orderBy: `${sortField} ${sortOrder}`
+    } );
+  }
 
   getModule(pageIndex, pageSize, sortField, sortOrder) {
     return this.http.getProj(`${this.randomBaseUrl}`, {
@@ -20,7 +26,7 @@ export class RandomBaseService {
     deleteModule(name?) {
        const ids = name.join(',');
        if( ids.length > 0 ) {
-         return this.http.deleteProj(this.randomBaseUrl + '/' + ids);
+         return this.http.deleteProj(this.randomBaseUrl, { _ids: ids});
        }
     }
 
@@ -65,6 +71,7 @@ export class BaseManagerComponent implements OnInit {
   _pageSize = 10;
   _total = 1;
   _dataSet = [];
+  _dataTree = [];
   _loading = true;
   _sortValue = 'Desc';
   _sortField = 'CreateTime';
@@ -86,6 +93,7 @@ export class BaseManagerComponent implements OnInit {
 
   constructor(
     private _randomBase: RandomBaseService,
+    private cacheService: CacheService,
     public msgSrv: NzMessageService,
     private modalService: NzModalService) {
   }
@@ -101,7 +109,7 @@ export class BaseManagerComponent implements OnInit {
     this.cacheMapData = new Map();
     this._allChecked = false;
     this._loading = true;
-    this._randomBase.getModule(this._current, this._pageSize, this._sortField, this._sortValue).subscribe((data: any) => {
+    this._randomBase.getModule(this._current, this._pageSize, this._sortField, this._sortValue).toPromise().then((data: any) => {
       this._loading = false;
       this._total = data.Data.Total;
       this._dataSet = data.Data.Rows;
@@ -109,12 +117,38 @@ export class BaseManagerComponent implements OnInit {
       this._dataSet.forEach(item => {
         this.cacheMapData.set(item.Id, {checked: false, dataItem: item});
       });
-    });
+    }).then( () => {
+      this._randomBase.getModuleTree(this._current, this._pageSize, this._sortField, this._sortValue).subscribe( (data:any) => {
+        this._dataTree = this.arrayToTree(data.Data.Rows, '');
+        this.cacheService.set('ModuleTree',this._dataTree);
+      });
+    } );
   }
 
     ngOnInit() {
       this.refreshData();
     }
+
+  arrayToTree(data, parentid) {
+    const result = [];
+    let temp;
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].ParentId == parentid || !data[i].ParentId) {
+        const obj =
+          { label: data[i].Name,
+            value: data[i].Id
+          };
+        temp = this.arrayToTree(data[i].Children, data[i].Id);
+        if (temp.length > 0) {
+          obj['children'] = temp;
+        } else {
+          obj['isLeaf'] = true;
+        }
+        result.push(obj);
+      }
+    }
+    return result;
+  }
 
   refChecked() {
     const checkedCount = this._dataSet.filter(w => w.checked).length;
@@ -265,7 +299,6 @@ export class BaseManagerComponent implements OnInit {
       }
   }
 
-
   /**
    * 编辑按钮操作
    * @param data
@@ -376,7 +409,8 @@ export class BaseManagerComponent implements OnInit {
         },
         footer         : false,
         componentParams: {
-          name: ''
+          name: '',
+          tree: this._dataTree
         }
       });
       subscription.subscribe((result) => {
@@ -410,7 +444,8 @@ export class BaseManagerComponent implements OnInit {
           },
           footer         : false,
           componentParams: {
-            name: data[0]
+            name: data[0],
+            tree: this._dataTree
           }
         });
         subscription.subscribe(result => {

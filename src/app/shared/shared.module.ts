@@ -147,7 +147,8 @@ const DIRECTIVES = [
       BsnTableComponent,
       FormResolverComponent,
       CnCodeEditComponent,
-      TabsResolverComponent
+      TabsResolverComponent,
+      LayoutResolverComponent
     ]
 })
 export class SharedModule { }

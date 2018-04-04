@@ -27,7 +27,7 @@
 </nz-card>
 
 <nz-card *ngIf="!config.rows && !config.tabs">
-  <ng-template #title>{{config.title}}</ng-template>
+  <ng-template *ngIf="config.title" #title>{{config.title}}</ng-template>
   <ng-template #body>
     <cn-component-resolver [config]="config"></cn-component-resolver>
   </ng-template>

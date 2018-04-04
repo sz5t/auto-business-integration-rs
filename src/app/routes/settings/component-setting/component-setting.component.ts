@@ -1297,7 +1297,10 @@ export class ComponentSettingComponent implements OnInit {
                 { 'name': 'updateRow', 'class': 'editable-add-btn', 'text': '修改' },
                 { 'name': 'deleteRow', 'class': 'editable-add-btn', 'text': '删除' },
                 { 'name': 'saveRow', 'class': 'editable-add-btn', 'text': '保存' },
-                { 'name': 'cancelRow', 'class': 'editable-add-btn', 'text': '取消' }
+                { 'name': 'cancelRow', 'class': 'editable-add-btn', 'text': '取消' },
+                { 'name': 'showDialog', 'class': 'editable-add-btn', 'text': '弹出框' },
+
+                
             ]
     }
     /**

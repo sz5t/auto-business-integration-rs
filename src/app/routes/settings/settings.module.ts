@@ -7,7 +7,6 @@ import { OperationSettingComponent } from './operation-setting/operation-setting
 import {LayoutSettingComponent} from "./layout-setting/layout-setting.component";
 import { BusinessSettingComponent } from './business-setting/business-setting.component';
 import {SqlSettingComponent} from "./sql-setting/sql-setting.component";
-
 const routes: Routes = [
   {path: 'layout-setting', component: LayoutSettingComponent},
   {path: 'block-setting', component: BlockSettingComponent},

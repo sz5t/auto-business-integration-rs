@@ -26,10 +26,8 @@ export class CnGridInputComponent implements OnInit {
         return this.value;
     }
 
-    userNameChange(name?){
-        console.log('input值发生变化',name);
-        this.value.data=name;
-        this.updateValue.emit(this.value);
-        console.log('input值发生变化后触发',name);
+    valueChange(name?){
+      this.value.data=name;
+      this.updateValue.emit(this.value);
     }
 }

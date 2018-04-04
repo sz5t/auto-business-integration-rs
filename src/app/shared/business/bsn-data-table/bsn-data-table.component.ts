@@ -5,6 +5,7 @@ import { CommonUtility } from '@core/utility/Common-utility';
 import { ApiService } from '@core/utility/api-service';
 import { APIResource } from '@core/utility/api-resource';
 import { RelativeService } from '@core/relative-Service/relative-service';
+import { LayoutResolverComponent } from '@shared/resolver/layout-resolver/layout-resolver.component';
 
 @Component({
     selector: 'bsn-data-table,[bsn-data-table]',
@@ -57,7 +58,7 @@ export class BsnDataTableComponent implements OnInit {
     _formEvent = {
         selectRow: [],
         reLoad: [],
-        selectRowBySetValue:[]
+        selectRowBySetValue: []
     };
 
 
@@ -114,6 +115,7 @@ export class BsnDataTableComponent implements OnInit {
                 this.dataList = [];
                 this.updateEditCacheByLoad([]);
             }
+            this.loading = false;
         }
 
         // this.updateEditCache();
@@ -521,7 +523,7 @@ export class BsnDataTableComponent implements OnInit {
         });
     }
 
-    userNameChange(data?) {
+    valueChange(data?) {
         //console.log('子页面', data);
         const index = this.dataList.findIndex(item => item.key === data.key);
         this.editCache[data.key].data[data.name] = data.data;
@@ -551,6 +553,10 @@ export class BsnDataTableComponent implements OnInit {
             case 'cancelRow':
                 this.cancelRow()
                 break;
+            case 'showDialog':
+                this.showDialog()
+                break;
+
             default:
                 break;
         }
@@ -587,18 +593,18 @@ export class BsnDataTableComponent implements OnInit {
     initComponentValue(data?) {
         for (const d in data) {
             if (d === 'dataList') {
-              if(!data[d]){
-                this.dataList = [];
-                this.updateEditCacheByLoad([]);
-              }else {
-                const _dataList = data[d];
-                _dataList.forEach(item => {
-                    const fieldIdentity = CommonUtility.uuID(6);
-                    item["key"] = fieldIdentity;
-                });
-                this.updateEditCacheByLoad(_dataList);
-                this.dataList=_dataList;
-              }
+                if (!data[d]) {
+                    this.dataList = [];
+                    this.updateEditCacheByLoad([]);
+                } else {
+                    const _dataList = data[d];
+                    _dataList.forEach(item => {
+                        const fieldIdentity = CommonUtility.uuID(6);
+                        item["key"] = fieldIdentity;
+                    });
+                    this.updateEditCacheByLoad(_dataList);
+                    this.dataList = _dataList;
+                }
 
                 this.total = this.dataList.length;
             }
@@ -684,5 +690,482 @@ export class BsnDataTableComponent implements OnInit {
         }
     }
 
+    isVisible = false;
+    modal = {
+        nzConfirmLoading: true,
+        nzTitle: '标题',
+        nzClosable: true,
+        nzBody: '这是内容',
+        nzWidth: "520",
+        nzContent: null,//"modalContent"
+        nzOkText: '确定',
+        nzCancelText: '取消',
+        nzMaskClosable: true,
+        nzZIndex: "1000",
+        // [nzStyle]="{}"
+        // [nzWrapClassName]="''"
+        // (nzOnCancel)="handleCancel($event)"
+        // (nzOnOk)="handleOk($event)"
+        config: {
+            'viewId': 'operation_sqlColumns1',
+            'component': 'bsnDataTable',
+            'config': {
+                'viewId': 'operation_sqlColumns1',
+                'keyId': 'key',
+                'nzIsPagination': false, // 是否分页
+                'nzShowTotal': true,// 是否显示总数据量
+                'pageSize': 5, //默认每页数据条数
+                'nzPageSizeSelectorValues': [5, 10, 20, 30, 40, 50],
+                'nzLoading': false, // 是否显示加载中
+                'nzBordered': false,// 是否显示边框
+                'columns': [
+                    {
+                        title: '主键', field: 'key', width: 80, hidden: true, editor: {
+                            type: 'input',
+                            field: 'key',
+                            options: {
+                                'type': 'input',
+                                'labelSize': '6',
+                                'controlSize': '10',
+                                'inputType': 'text',
+                            }
+                        }
+                    },
+                    {
+                        title: '字段名称', field: 'fieldName', width: 80,
+                        editor: {
+                            type: 'input',
+                            field: 'fieldName',
+                            options: {
+                                'type': 'input',
+                                'labelSize': '6',
+                                'controlSize': '10',
+                                'inputType': 'text',
+                            }
+                        }
+                    },
+                    {
+                        title: '标题', field: 'title', width: 80,
+                        editor: {
+                            type: 'input',
+                            field: 'title',
+                            options: {
+                                'type': 'input',
+                                'labelSize': '6',
+                                'controlSize': '10',
+                                'inputType': 'text',
+                            }
+                        }
+                    },
+                    {
+                        title: '数据类型', field: 'dataTypeName', width: 80, hidden: false,
+                        editor: {
+                            type: 'select',
+                            field: 'dataType',
+                            options: {
+                                'type': 'select',
+                                'labelSize': '6',
+                                'controlSize': '10',
+                                'inputType': 'submit',
+                                'name': 'sex',
+                                'label': '性别',
+                                'notFoundContent': '',
+                                'selectModel': false,
+                                'showSearch': true,
+                                'placeholder': '-请选择-',
+                                'disabled': false,
+                                'size': 'default',
+                                'clear': true,
+                                'width': '60px',
+                                'options': [
+                                    {
+                                        'label': '字符',
+                                        'value': '字符'
+                                    },
+                                    {
+                                        'label': '数值',
+                                        'value': '数值'
+                                    },
+                                    {
+                                        'label': '时间',
+                                        'value': '时间'
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        title: '展示样式', field: 'displayStyleName', width: 80, hidden: false,
+                        editor: {
+                            type: 'select',
+                            field: 'displayStyle',
+                            options: {
+                                'type': 'select',
+                                'labelSize': '6',
+                                'controlSize': '10',
+                                'inputType': 'submit',
+                                'notFoundContent': '',
+                                'selectModel': false,
+                                'showSearch': true,
+                                'placeholder': '-请选择-',
+                                'disabled': false,
+                                'size': 'default',
+                                'clear': true,
+                                'width': '60px',
+                                'options': [
+                                    {
+                                        'label': '居中',
+                                        'value': '居中'
+                                    },
+                                    {
+                                        'label': '左对齐',
+                                        'value': '左对齐'
+                                    },
+                                    {
+                                        'label': '右对齐',
+                                        'value': '右对齐'
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        title: '是否显示', field: 'isShowName', width: 80, hidden: false,
+                        editor: {
+                            type: 'select',
+                            field: 'isShow',
+                            options: {
+                                'type': 'select',
+                                'labelSize': '6',
+                                'controlSize': '10',
+                                'inputType': 'submit',
+                                'notFoundContent': '',
+                                'selectModel': false,
+                                'showSearch': true,
+                                'placeholder': '-请选择-',
+                                'disabled': false,
+                                'size': 'default',
+                                'clear': true,
+                                'width': '60px',
+                                'options': [
+                                    {
+                                        'label': '显示',
+                                        'value': '1',
+                                        'disabled': false
+                                    },
+                                    {
+                                        'label': '隐藏',
+                                        'value': '2',
+                                        'disabled': false
+                                    }
+                                ]
+                            }
+                        }
+                    },
+
+                    {
+                        title: '排序', field: 'order', width: 80, hidden: false,
+                        editor: {
+                            type: 'input',
+                            field: 'order',
+                            options: {
+                                'type': 'input',
+                                'labelSize': '6',
+                                'controlSize': '10',
+                                'inputType': 'text',
+                            }
+                        }
+                    },
+                    { title: '数据类型', field: 'dataType', width: 80, hidden: true, },
+                    { title: '展示样式', field: 'displayStyle', width: 80, hidden: true, },
+                    { title: '是否显示', field: 'isShow', width: 80, hidden: true, },
+
+                ],
+                'toolbar': [
+                    { 'name': 'refresh', 'class': 'editable-add-btn', 'text': '刷新' },
+                    { 'name': 'addRow', 'class': 'editable-add-btn', 'text': '新增' },
+                    { 'name': 'updateRow', 'class': 'editable-add-btn', 'text': '修改' },
+                    { 'name': 'deleteRow', 'class': 'editable-add-btn', 'text': '删除' },
+                    { 'name': 'saveRow', 'class': 'editable-add-btn', 'text': '保存' },
+                    { 'name': 'cancelRow', 'class': 'editable-add-btn', 'text': '取消' }
+                ]
+            },
+            'dataList': []
+        }
+    }
+
+
+    _editorConfig = {
+        rows: [
+            {
+                row: {
+                    cols: [
+                        {
+                            span: 24,
+                            size: {
+                                nzXs: 24,
+                                nzSm: 24,
+                                nzMd: 24,
+                                nzLg: 24,
+                                ngXl: 24
+                            },
+
+                           // 'title': '基本属性',
+                            'viewId': 'opt_base',
+                            'component': 'form_view',
+                            'config': [
+                                {
+                                    'type': 'input',
+                                    'labelSize': '6',
+                                    'controlSize': '10',
+                                    'inputType': 'text',
+                                    'name': 'operationName',
+                                    'label': '操作名称',
+                                    'placeholder': '',
+                                    'disabled': false,
+                                    'readonly': false,
+                                    'size': 'default'
+                                },
+                                {
+                                    'type': 'input',
+                                    'labelSize': '6',
+                                    'controlSize': '10',
+                                    'inputType': 'text',
+                                    'name': 'operationIcon',
+                                    'label': '操作图标',
+                                    'placeholder': '',
+                                    'disabled': false,
+                                    'readonly': false,
+                                    'size': 'default'
+                                },
+                                {
+                                    'type': 'select',
+                                    'labelSize': '6',
+                                    'controlSize': '10',
+                                    'inputType': 'submit',
+                                    'name': 'operationType',
+                                    'label': '操作类型',
+                                    'notFoundContent': '',
+                                    'selectModel': false,
+                                    'showSearch': true,
+                                    'placeholder': '--请选择--',
+                                    'disabled': false,
+                                    'size': 'default',
+                                    'options': [
+                                        {
+                                            'label': '无',
+                                            'value': 'none'
+                                        },
+                                        {
+                                            'label': '刷新数据',
+                                            'value': 'refresh'
+                                        },
+                                        {
+                                            'label': '执行SQL',
+                                            'value': 'exec_sql'
+                                        },
+                                        {
+                                            'label': '执行SQL后刷新',
+                                            'value': 'after_sql'
+                                        },
+                                        {
+                                            'label': '弹出确认框',
+                                            'value': 'confirm'
+                                        },
+                                        {
+                                            'label': '弹出窗体',
+                                            'value': 'dialog'
+                                        },
+                                        {
+                                            'label': '弹出表单',
+                                            'value': 'form'
+                                        },
+                                        {
+                                            'label': '执行SQL后刷新主界面',
+                                            'value': 'refresh_parent'
+                                        }
+                                    ]
+                                },
+                                {
+                                    'type': 'select',
+                                    'labelSize': '6',
+                                    'controlSize': '10',
+                                    'inputType': 'submit',
+                                    'name': 'operationActionType',
+                                    'label': '动作类型',
+                                    'notFoundContent': '',
+                                    'selectModel': false,
+                                    'showSearch': true,
+                                    'placeholder': '--请选择--',
+                                    'disabled': false,
+                                    'size': 'default',
+                                    'options': [
+                                        {
+                                            'label': '操作',
+                                            'value': 'operation'
+                                        },
+                                        {
+                                            'label': '动作',
+                                            'value': 'action'
+                                        }
+                                    ]
+                                },
+                                {
+                                    'type': 'select',
+                                    'labelSize': '6',
+                                    'controlSize': '10',
+                                    'inputType': 'submit',
+                                    'name': 'operationStatus',
+                                    'label': '操作后状态',
+                                    'notFoundContent': '',
+                                    'selectModel': false,
+                                    'showSearch': true,
+                                    'placeholder': '--请选择--',
+                                    'disabled': false,
+                                    'size': 'default',
+                                    'options': [
+                                        {
+                                            'label': '浏览状态',
+                                            'value': 'normal'
+                                        },
+                                        {
+                                            'label': '新增状态',
+                                            'value': 'new'
+                                        },
+                                        {
+                                            'label': '编辑状态',
+                                            'value': 'edit'
+                                        }
+                                    ]
+                                },
+                                {
+                                    'type': 'select',
+                                    'labelSize': '6',
+                                    'controlSize': '10',
+                                    'inputType': 'submit',
+                                    'name': 'operationNullData',
+                                    'label': '空数据状态',
+                                    'notFoundContent': '',
+                                    'selectModel': false,
+                                    'showSearch': true,
+                                    'placeholder': '--请选择--',
+                                    'disabled': false,
+                                    'size': 'default',
+                                    'options': [
+                                        {
+                                            'label': '启用',
+                                            'value': true
+                                        },
+                                        {
+                                            'label': '禁用',
+                                            'value': false
+                                        }
+                                    ]
+                                },
+                                {
+                                    'type': 'select',
+                                    'labelSize': '6',
+                                    'controlSize': '10',
+                                    'inputType': 'submit',
+                                    'name': 'operationDefaultStatus',
+                                    'label': '默认状态',
+                                    'notFoundContent': '',
+                                    'selectModel': false,
+                                    'showSearch': true,
+                                    'placeholder': '--请选择--',
+                                    'disabled': false,
+                                    'size': 'default',
+                                    'options': [
+                                        {
+                                            'label': '启用',
+                                            'value': true
+                                        },
+                                        {
+                                            'label': '禁用',
+                                            'value': false
+                                        }
+                                    ]
+                                },
+                                {
+                                    'type': 'input',
+                                    'labelSize': '6',
+                                    'controlSize': '10',
+                                    'inputType': 'text',
+                                    'name': 'operationOrder',
+                                    'label': '顺序',
+                                    'placeholder': '',
+                                    'disabled': false,
+                                    'readonly': false,
+                                    'size': 'default'
+                                },
+                                {
+                                    'type': 'submit',
+                                    'offsetSize': '6',
+                                    'controlSize': '10',
+                                    'name': 'submit'
+                                }
+                            ],
+                            'dataList': []
+
+                        }
+
+
+                    ]
+                }
+            },
+        ]
+    };
+
+    /**
+     * 弹出
+     * @param data 
+     */
+    showDialog(data?) {
+
+        // [(nzVisible)]="modal.isVisible"
+        // [nzConfirmLoading]="true|false"
+        // [nzTitle]="'标题'"
+        // [nzClosable]="false|true"
+        // [nzBody]="'这是内容'"
+        // [nzWidth]="520"
+        // [nzContent]="modalContent"
+        // [nzOkText]="'确定'"
+        // [nzCancelText]="'取消'"
+        // [nzMaskClosable]="false|true"
+        // [nzZIndex]="1000"
+        // [nzStyle]="{}"
+        // [nzWrapClassName]="''"
+        // (nzOnCancel)="handleCancel($event)"
+        // (nzOnOk)="handleOk($event)"
+        // this.isVisible = true;
+        //  this.modal.config=
+        this.showModalForComponent();
+
+    }
+
+    showModalForComponent() {
+        const subscription = this.modalService.open({
+            title: '弹出表单测试-liu',
+            content: LayoutResolverComponent,
+            width: 800,
+            okText: '确定',
+            cancelText: '取消',
+            onOk() {
+                console.log('Click ok');
+            },
+            onCancel() {
+                console.log('Click cancel');
+            },
+            footer: true,
+            componentParams: {
+                config: this._editorConfig //dataTables 的配置参数
+            }
+        });
+        subscription.subscribe(result => {
+            console.log(result);
+            //onCancel 、 onOk
+          
+        })
+    }
 
 }

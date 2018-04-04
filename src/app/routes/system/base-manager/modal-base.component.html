@@ -1,7 +1,4 @@
-<div>
-  <!--<h4>{{_name}}</h4>-->
-    <br/>
-    <!--<p>可以通过Subject传递数据</p>-->
+<div xmlns="http://www.w3.org/1999/html">
   <form nz-form [formGroup]="validateForm" (ngSubmit)="_submitForm()">
     <div nz-form-item nz-row>
       <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
@@ -16,9 +13,16 @@
       <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
         <label for="ParentId" >父模块</label>
       </div>
-      <div nz-form-control nz-col [nzSm]="14" [nzXs]="24" nzHasFeedback>
-        <nz-input [nzSize]="'large'" formControlName="ParentId" [nzType]="'ParentId'" [nzId]="'ParentId'"></nz-input>
-      </div>
+        <div nz-form-control nz-col [nzSm]="14" [nzXs]="24">
+          <nz-cascader
+            formControlName = "ParentId"
+            nzChangeOnSelect
+            [nzOptions]="_tree"
+            [(ngModel)] = "values"
+            (nzChange)="onChanges($event)"
+            (nzSelectionChange) ="onSelectionChange($event)">
+          </nz-cascader>
+        </div>
     </div>
     <div nz-form-item nz-row>
       <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
@@ -49,16 +53,14 @@
         <nz-input [nzSize]="'large'" formControlName="Icon" [nzId]="'Icon'"></nz-input>
       </div>
     </div>
-
     <div nz-form-item nz-row>
       <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
         <label for="Order" >排序</label>
       </div>
       <div nz-form-control nz-col [nzSm]="14" [nzXs]="24" nzHasFeedback>
-        <nz-input [nzSize]="'large'" formControlName="Order" [nzId]="'Icon'"></nz-input>
+        <nz-input-number [nzSize]="'large'" formControlName="Order" ></nz-input-number>
       </div>
     </div>
-
     <div nz-form-item nz-row>
       <div nz-form-label nz-col [nzSm]="6" [nzXs]="24">
         <label for="Remark" >备注</label>
@@ -67,7 +69,6 @@
         <nz-input [nzSize]="'large'" formControlName="Remark" [nzId]="'Icon'"></nz-input>
       </div>
     </div>
-
     <div class="customize-footer">
       <button nz-button [nzType]="'primary'" [nzSize]="'large'" (click)="emitDataOutside($event)">
         保存

@@ -116,22 +116,22 @@ export class ModuleManagerComponent implements OnInit {
     }
 
     add(event?) {
-      console.log('新增',event);
+      console.log('新增', event );
     }
 
     refresh(event?){
     this._current=1;
     this._pageSize=10;
       this.loadData();
-      console.log('刷新',event);
+      console.log('刷新', event);
     }
 
     update(event?){
-      console.log('更新',event);
+      console.log('更新', event);
     }
 
     delete(event?){
-      console.log('删除',event);
+      console.log('删除', event);
     }
 
   arrayToTree(data, parentid) {
@@ -165,5 +165,9 @@ export class ModuleManagerComponent implements OnInit {
     }
     return result;
   }
+
+
+
+
 
 }

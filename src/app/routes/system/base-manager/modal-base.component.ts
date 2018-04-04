@@ -28,16 +28,13 @@ export class ModalBaseComponent implements OnInit{
     private http: _HttpClient,
     private subject: NzModalSubject,
     private cacheService: CacheService,
-    private fb: FormBuilder
-  ) {
+    private fb: FormBuilder) {
     this.subject.on('onDestory' ,() => {
-
     })
   }
   emitDataOutside() {
     if(!this.validateForm.valid)
       return;
-    console.log(this.values);
     const data = {
       Children: null,
       ConfigData :  JSON.stringify({
@@ -86,6 +83,8 @@ export class ModalBaseComponent implements OnInit{
           this.validateForm.controls['Order'].setValue(this._name.Order);
           this.validateForm.controls['Remark'].setValue(this._name.Remark);
           this.values = JSON.parse(this._name.ConfigData).ids;
+          this._ids = this.values;
+
         }
   }
 
@@ -96,7 +95,6 @@ export class ModalBaseComponent implements OnInit{
   public onChanges(values: any)
   {
     this._parentId = values.pop();
-    console.log(this._parentId);
   }
 
   public onSelectionChange(options: any)
@@ -107,9 +105,6 @@ export class ModalBaseComponent implements OnInit{
         label: item.label,
         value: item.value
       })
-      console.log(this._ids);
     })
   }
-
-
 }

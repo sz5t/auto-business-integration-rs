@@ -80,7 +80,21 @@ export class BaseManagerComponent implements OnInit {
   editRow = null;
   tempEditObject = {};
   rowLine=null;
+  // isVisible=false;
 
+  // showModal(): void {
+  //   this.isVisible = true;
+  // }
+  //
+  // handleOk(): void {
+  //   console.log('Button ok clicked!');
+  //   this.isVisible = false;
+  // }
+  //
+  // handleCancel1(): void {
+  //   console.log('Button cancel clicked!');
+  //   this.isVisible = false;
+  // }
   sort(field , value) {
     this._sortValue = (value === 'descend') ? 'DESC' : 'ASC';
     this._sortField = field;

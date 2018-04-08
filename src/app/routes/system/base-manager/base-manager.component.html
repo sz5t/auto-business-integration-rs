@@ -8,7 +8,14 @@
     <button nz-button  (click)="add2($event)">行内新增(本地)</button>
     <button nz-button  (click)="showModalForComponent('Edit')">修改</button><!--update($event)-->
     <button nz-button  (click)="delete($event)">删除</button>
-
+    <!--<button nz-button [nzType]="'primary'" (click)="showModal()"><span>Show Modal</span></button>-->
+    <!--<nz-modal [nzVisible]="isVisible" [nzTitle]="'第一个 Modal'" [nzContent]="modalContent" (nzOnCancel)="handleCancel1($event)" (nzOnOk)="handleOk($event)">-->
+      <!--<ng-template #modalContent>-->
+        <!--<p>对话框的内容</p>-->
+        <!--<p>对话框的内容</p>-->
+        <!--<p>对话框的内容</p>-->
+      <!--</ng-template>-->
+    <!--</nz-modal>-->
     <nz-popconfirm [nzTitle]="'确定要删除这个任务吗？'" (nzOnConfirm)="delete($event)" (nzOnCancel)="cancel()">
       <button nz-button nz-popconfirm>删除1</button>
     </nz-popconfirm>
